@@ -229,6 +229,13 @@ agent-dir override pointing elsewhere (`PI_CODING_AGENT_DIR`,
 `PRIME_AGENT_CODING_AGENT_DIR`), a host without a usable export gets `.pi`, as before.
 `ACP_LOG_FILE` still overrides the log path on every host.
 
+For `acp.json` only, a non-empty `PI_CODING_AGENT_DIR` redirects the global file
+to `<agentDir>/acp.json` (with Pi-style tilde expansion). This explicit profile
+override does not fall back to the legacy global file; an absent profile file
+means no global settings. Project paths, log paths, and prompt-pack discovery
+are unchanged. The shared `acpJsonFiles()` lookup applies to loading, the
+factory-time enabled gate, prompt surface overrides, and risk acknowledgement.
+
 Existing files keep working. Earlier releases used `.pi` on every host, so on a fork each
 user-authored path (`acp.json`, `acp/packs`, global and project) falls back to its `.pi`
 counterpart while the fork's own path does not exist (`userConfigPath()` in

@@ -19,6 +19,8 @@ Settings are read from JSON files named `acp.json`. The global file applies to e
 
 > **Precedence:** Environment variable &gt; Project file &gt; Global file &gt; Built-in default.
 
+When `PI_CODING_AGENT_DIR` is non-empty, the global file is **`$PI_CODING_AGENT_DIR/acp.json`** instead. `~` and `~/` are expanded as in Pi. This isolates profiles: the legacy global file is not read, even if the profile file is missing. The project file keeps its existing location and overrides the profile file per-field. With the variable unset or empty, the legacy global lookup is unchanged.
+
 On a Pi fork, `.pi` is the fork's own config directory — `~/.prime/acp.json` and `<project>/.prime/acp.json` on Prime. Until that file exists, the `.pi` path above is still read. See [docs/host-adapter.md §4](./docs/host-adapter.md#4-config-directory-config_dir_name).
 
 Files are loaded at session start. Missing files, malformed JSON, and unknown keys are silently ignored — the extension never fails to start because of a config issue. Only the documented keys are read; everything else is discarded.

@@ -9,7 +9,8 @@ import type { ThrottleRetryConfig } from "./throttle-retry.js";
 import { debug } from "./log.js";
 
 /** User-facing config keys (subset of AdapterConfig). Loaded from
- *  ~/.<CONFIG_DIR_NAME>/acp.json (global) and <cwd>/.<CONFIG_DIR_NAME>/acp.json
+ *  $PI_CODING_AGENT_DIR/acp.json (or the legacy global file when unset)
+ *  and <cwd>/.<CONFIG_DIR_NAME>/acp.json
  *  (project-local overrides project-global). Project wins over global. */
 export interface UserAcpConfig {
   enabled?: boolean;

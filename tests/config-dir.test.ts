@@ -86,5 +86,5 @@ test("#574 userConfigPathIn: legacy fallback also covers directories (prompt pac
 
 test("#574 acpJsonFiles: global then project, under the real pi package", () => {
   const cwd = path.resolve("/work/project");
-  assert.deepEqual(acpJsonFiles(cwd), [path.join(homedir(), ".pi", "acp.json"), path.join(cwd, ".pi", "acp.json")]);
+  assert.deepEqual(acpJsonFiles(cwd, {}), [path.join(homedir(), ".pi", "acp.json"), path.join(cwd, ".pi", "acp.json")]);
 });

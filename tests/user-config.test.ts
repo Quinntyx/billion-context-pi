@@ -16,20 +16,23 @@ async function writeConfig(dir: string, data: object): Promise<string> {
   return filePath;
 }
 
-type HomeEnv = { HOME: string | undefined; USERPROFILE: string | undefined };
+type HomeEnv = { HOME: string | undefined; USERPROFILE: string | undefined; PI_CODING_AGENT_DIR: string | undefined };
 
 function snapshotHome(): HomeEnv {
-  return { HOME: process.env.HOME, USERPROFILE: process.env.USERPROFILE };
+  return { HOME: process.env.HOME, USERPROFILE: process.env.USERPROFILE, PI_CODING_AGENT_DIR: process.env.PI_CODING_AGENT_DIR };
 }
 
 function setHome(dir: string): void {
   process.env.HOME = dir;
   process.env.USERPROFILE = dir;
+  delete process.env.PI_CODING_AGENT_DIR;
 }
 
 function restoreHome(env: HomeEnv): void {
   process.env.HOME = env.HOME;
   process.env.USERPROFILE = env.USERPROFILE;
+  if (env.PI_CODING_AGENT_DIR === undefined) delete process.env.PI_CODING_AGENT_DIR;
+  else process.env.PI_CODING_AGENT_DIR = env.PI_CODING_AGENT_DIR;
 }
 
 let savedHome: HomeEnv;

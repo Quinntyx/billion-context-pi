@@ -221,6 +221,8 @@ billion-context-pi 开箱即用,无需任何配置——它会自动读取模型
 
 行为通过可选的 `acp.json` 配置文件(`~/.pi/acp.json` 为全局默认,`<项目>/.pi/acp.json` 为项目级覆盖)以及若干环境变量来调优。完整参考——每个 key、类型、默认值与优先级顺序——请查阅 **[CONFIGURATION.zh-CN.md](./CONFIGURATION.zh-CN.md)** ([English](./CONFIGURATION.md))。
 
+`PI_CODING_AGENT_DIR` 非空时，全局配置改从 `$PI_CODING_AGENT_DIR/acp.json` 读取，不回退到旧的全局文件。项目覆盖的位置保持不变。
+
 ### 日志
 
 billion-context-pi 会向 `~/.pi/acp.log`(可用 `ACP_LOG_FILE` 覆盖)写入结构化的**始终开启**日志,覆盖模型工作的整个会话,便于排查问题:

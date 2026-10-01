@@ -19,6 +19,8 @@
 
 > **优先级：** 环境变量 &gt; 项目文件 &gt; 全局文件 &gt; 内置默认值。
 
+当 `PI_CODING_AGENT_DIR` 非空时，全局文件改为 **`$PI_CODING_AGENT_DIR/acp.json`**。`~` 和 `~/` 按 Pi 的方式展开。各 profile 相互隔离：即使 profile 文件不存在，也不会读取旧的全局文件。项目文件的位置保持不变，并逐字段覆盖 profile 配置。变量未设置或为空时，旧的全局查找方式保持不变。
+
 在 Pi 的 fork 上，`.pi` 指该 fork 自己的配置目录——Prime 上为 `~/.prime/acp.json` 和 `<项目>/.prime/acp.json`。在该文件存在之前，仍会读取上表的 `.pi` 路径。见 [docs/host-adapter.md §4](./docs/host-adapter.md#4-config-directory-config_dir_name)。
 
 文件在会话启动时加载。缺失文件、格式错误的 JSON、未知键都会被静默忽略——扩展绝不会因为配置问题而无法启动。只有文档中列出的键会被读取，其余一律丢弃。

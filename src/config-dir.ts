@@ -67,7 +67,18 @@ export function userConfigPath(root: string, ...segments: string[]): string {
   return userConfigPathIn(CONFIG_DIR_NAME, root, ...segments);
 }
 
-/** Global then project acp.json; later entries override earlier ones. */
-export function acpJsonFiles(cwd: string): string[] {
-  return [userConfigPath(homedir(), "acp.json"), userConfigPath(cwd, "acp.json")];
+/** Agent-dir override (or legacy global) then project; later entries win. */
+export function acpJsonFiles(
+  cwd: string,
+  env: NodeJS.ProcessEnv = process.env,
+): string[] {
+  const agentDir = env.PI_CODING_AGENT_DIR;
+  let globalFile = userConfigPath(homedir(), "acp.json");
+  if (agentDir) {
+    const expanded = agentDir === "~" ? homedir()
+      : agentDir.startsWith("~/") ? path.join(homedir(), agentDir.slice(2))
+      : agentDir;
+    globalFile = path.join(expanded, "acp.json");
+  }
+  return [globalFile, userConfigPath(cwd, "acp.json")];
 }

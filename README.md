@@ -234,6 +234,8 @@ billion-context-pi works out of the box with no configuration — it reads your 
 
 Behavior is tuned via an optional `acp.json` config file (`~/.pi/acp.json` for global defaults, `<project>/.pi/acp.json` for per-project overrides) plus a few environment variables. For the complete reference — every key, type, default, and the precedence order — see **[CONFIGURATION.md](./CONFIGURATION.md)** ([中文](./CONFIGURATION.zh-CN.md)).
 
+With a non-empty `PI_CODING_AGENT_DIR`, global settings come from `$PI_CODING_AGENT_DIR/acp.json` instead, with no legacy-global fallback. Project overrides keep their existing location.
+
 ### Logging
 
 billion-context-pi writes a structured, always-on log to `~/.pi/acp.log` (override with `ACP_LOG_FILE`). It covers the model's whole working session and is useful for diagnosing problems:
