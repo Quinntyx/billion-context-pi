@@ -10,6 +10,7 @@ export default defineConfig({
   format: ["esm"],
   target: "es2022",
   dts: false,
+  splitting: false,
   sourcemap: true,
   clean: true,
   define: {

@@ -22,7 +22,7 @@ import { makeDelegateTool, makeDelegateWaitTool, makeDelegateCancelTool, running
 import { makeCommands } from "./commands.js";
 import { mergeSurface, readToolSurfaceWithPacks, resolveActivePack, resolvePackName, surfaceMetaOf } from "./prompt-pack.js";
 import type { NudgeSectionsConfig } from "./surface.js";
-import { coreOutToAgentMessages, extractText, ACP_NUDGE_CUSTOM_TYPE, type AcpNudgeRecord } from "./messages.js";
+import { coreOutToAgentMessages, entriesToCoreMessages, extractText, ACP_NUDGE_CUSTOM_TYPE, type AcpNudgeRecord } from "./messages.js";
 import { liveOnlyTailCached, dropLiveOnlyTailCache } from "./live-only-tail.js";
 import { carryHostSystemMessages } from "./system-passthrough.js";
 import { sanitizeToolPairing } from "./tool-pair-sanitizer.js";
@@ -34,7 +34,7 @@ import { openFleetInspector } from "./fleet-inspector.js";
 import { applyStripImages } from "./strip-images.js";
 import { wireToolGuardrails } from "./tool-guardrails.js";
 import { debug, logError, logInfo, logWarn, logThrow, closeLogStream } from "./log.js";
-import { collectCoveredMessageIds, estimateTokens, collectImageTokens, modelSupportsImages, sentViewTokenCount, sentViewMeterMatches } from "./tokens.js";
+import { collectCoveredMessageIds, estimateTokens, collectImageTokens, modelSupportsImages, sentViewTokenCount } from "./tokens.js";
 import { lastTurnBoundaryId, lastTurnBoundaryIndex } from "./turn-boundary.js";
 import { compressionAnchorStaleness } from "./floor-stale.js";
 import { checkForUpdate } from "./update.js";
@@ -54,6 +54,8 @@ import { FORK_HOST_WARNING_MESSAGE, UNSUPPORTED_HOST_MESSAGE } from "./omp.js";
 import { isDeclaredForkHost, isUnsupportedHost } from "./host.js";
 import { isBiliProxyBaseUrl, PROXY_STAND_DOWN_MESSAGE, nativeStandDownMessage } from "./proxy-detect.js";
 import { findPiSubagentsInstalls, resolveAgentDir, DELEGATE_STAND_DOWN_MESSAGE } from "./setup-subagent-tools.js";
+import { clearLiveContextUsage, liveContextUsageRevision, publishLiveContextUsage } from "./contract.js";
+import { activeToolDefinitions, estimateOutboundTokens, toolDefinitionTokens } from "./outbound-usage.js";
 
 // Host-facing API for multi-session hosts (docs/host-adapter.md, #367): the
 // extension keeps its own runtime instance private; hosts build their own via
@@ -107,6 +109,7 @@ export function createAcpExtension(adapter: AdapterConfig = {}): ExtensionFactor
       ) return false;
       const message = nativeHost !== undefined ? nativeStandDownMessage(nativeHost) : PROXY_STAND_DOWN_MESSAGE;
       runtime.refused = true;
+      clearLiveContextUsage(ctx.sessionManager.getSessionId());
       runtime.refusalMessage = message;
       if (!standDownWarned) {
         standDownWarned = true;
@@ -116,7 +119,7 @@ export function createAcpExtension(adapter: AdapterConfig = {}): ExtensionFactor
       }
       return true;
     };
-    wireCompactionDisable(pi, runtime);
+    wireCompactionGuard(pi, runtime, standDownIfProxied);
     wireDelegateReadTracking(pi);
     wireSessionLifecycle(pi, runtime, standDownIfProxied);
     wireContextTransform(pi, runtime, standDownIfProxied);
@@ -181,12 +184,15 @@ function userConfigDisabled(cwd: string): boolean {
   return disabled === false;
 }
 
-// ACP owns compression; cancel Pi's built-in auto-compaction entirely (mirrors
-// opencode-acp requiring opencode's compaction.auto = false). On a refused host
-// (OMP) we stand down and let the host compact normally instead.
-function wireCompactionDisable(pi: ExtensionAPI, runtime: AcpRuntime): void {
-  pi.on("session_before_compact", () => {
-    if (runtime.refused) return;
+// ACP owns proactive/manual compression without aborting the workflow.
+// Actual provider overflows retain native recovery. Refused/proxied hosts
+// continue using native compaction unchanged.
+function wireCompactionGuard(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean): void {
+  pi.on("session_before_compact", (event, ctx) => {
+    if (runtime.refused || standDownIfProxied(ctx)) return;
+    // Keep genuine provider-overflow recovery; never abort a quota-pending
+    // agent to cancel compaction. Pi 1.1.0 already suppresses canceled retries.
+    if (event?.reason === "overflow") return;
     return { cancel: true };
   });
 }
@@ -217,7 +223,11 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
   let ompWarned = false;
   let forkWarned = false;
   let subagentStandDownWarned = false;
+  pi.on("model_select", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
+  pi.on("session_tree", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
+  pi.on("session_before_switch", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
   pi.on("session_start", async (_event, ctx) => {
+    clearLiveContextUsage(ctx.sessionManager.getSessionId());
     // Unsupported hosts stand down (#234 / #364): any host without Pi's
     // buildContextEntries() API is refused unless it declared itself a
     // Pi-compatible fork via PI_ACP_FORK_HOST=1. OMP (oh-my-pi) stays blocked
@@ -351,6 +361,7 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
   });
   pi.on("session_shutdown", (_event, ctx) => {
     const sid = ctx.sessionManager.getSessionId();
+    clearLiveContextUsage(sid);
     runtime.clearDeadCompress(sid);
     runtime.dropTokenScale(sid);
     runtime.clearNudgeTracking(sid);
@@ -405,15 +416,44 @@ function wireBeforeProviderRequest(pi: ExtensionAPI, runtime: AcpRuntime, standD
 // messages about to be sent. We run acp-kernel's processTurn (prune + ref-tag +
 // nudge decision) and return the transformed AgentMessage[].
 function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean): void {
+  const scopedFloors = new Map<string, number>();
+  const withSystem = pi as unknown as { on(name: "context_with_system", handler: (event: { messages: AgentMessage[] }, ctx: ExtensionContext) => void): void };
+  withSystem.on("context_with_system", (event, ctx) => {
+    const sid = ctx.sessionManager.getSessionId();
+    if (runtime.refused || standDownIfProxied(ctx)) {
+      clearLiveContextUsage(sid);
+      return;
+    }
+    const model = ctx.model;
+    if (!model?.id || !(model.contextWindow > 0)) { clearLiveContextUsage(sid); return; }
+    const tokens = Math.max(estimateOutboundTokens(event.messages, getSystemPromptText(ctx), model, activeToolDefinitions(pi)), scopedFloors.get(sid) ?? 0);
+    publishLiveContextUsage({ sessionId: sid, provider: model.provider, modelId: model.id, tokens, contextWindow: model.contextWindow, percent: tokens / model.contextWindow * 100, source: "sent-view-estimate", updatedAt: Date.now() });
+  });
+  const clearFloor = (_event: unknown, ctx: ExtensionContext): void => {
+    const sid = ctx.sessionManager.getSessionId();
+    scopedFloors.delete(sid);
+    clearLiveContextUsage(sid);
+  };
+  pi.on("session_start", clearFloor);
+  pi.on("session_shutdown", clearFloor);
+  pi.on("model_select", clearFloor);
+  pi.on("session_tree", clearFloor);
   pi.on("context", async (event, ctx) => {
     // Refused host (OMP / proxied baseUrl): leave the context completely
     // untouched — no ref tags, no compression, no nudge. Returning undefined
     // makes pi send the original messages verbatim.
-    if (runtime.refused) return;
+    if (runtime.refused) {
+      clearLiveContextUsage(ctx.sessionManager.getSessionId());
+      return;
+    }
     // Fallback for hosts where session_start did not fire before the first LLM
     // call: detect the proxied baseUrl here instead.
     if (standDownIfProxied(ctx)) return;
     const sid = ctx.sessionManager.getSessionId();
+    clearLiveContextUsage(sid);
+    scopedFloors.delete(sid);
+    const revision = liveContextUsageRevision(sid);
+    const requestedModel = ctx.model;
     const release = await runtime.acquireLock(sid);
     try {
       await runtime.reloadConfig(ctx.cwd);
@@ -456,7 +496,7 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       // for diagnostics.
       const realUsage = ctx.getContextUsage?.();
       const systemPromptText = getSystemPromptText(ctx);
-      const systemPromptTokens = systemPromptText ? defaultCountTokens(systemPromptText) : 0;
+      const systemPromptTokens = defaultCountTokens(systemPromptText) + toolDefinitionTokens(activeToolDefinitions(pi));
       const imageTokens = collectImageTokens(entries, modelSupportsImages(ctx.model));
       const sentTokens = estimateTokens(coreMessages, coveredIds, imageTokens) + systemPromptTokens;
       // Self-heal (armed): after an overflow, force this turn's usage to >=95%
@@ -475,8 +515,13 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       // it (issue #325, floor-stale.ts) instead of skipping the floor entirely —
       // the skip dropped the meter onto the undercounting estimate (~70-80K low)
       // and the next fresh reading snapped it back into the emergency band.
-      const { predates, netReclaimed } = compressionAnchorStaleness(entries, state.blocks, defaultCountTokens);
-      const realPromptTokens = realUsage?.tokens ?? 0;
+      const anchorEntries = ctx.sessionManager.getBranch?.() ?? entries;
+      const { predates, netReclaimed, fresh, lastRealTokens, lastUsageIdx } = compressionAnchorStaleness(anchorEntries, state.blocks, defaultCountTokens, ctx.model);
+      const reportedHost = realUsage?.tokens ?? 0;
+      const realPromptTokens = lastRealTokens;
+      if (reportedHost > 0 && reportedHost !== lastRealTokens) {
+        logInfo("turn", { sid, event: "host-tree-sum-rejected", reported: reportedHost, providerAnchor: lastRealTokens });
+      }
       const hostFloor = realPromptTokens > 0 ? Math.max(0, realPromptTokens - (predates ? netReclaimed : 0)) : 0;
       // Calibration anchor (issue #455): the estimate carries systematic phantom
       // mass (content counted locally that never goes on the wire) which the
@@ -488,9 +533,11 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       // pre-send prediction for growth beyond the lagged-by-one-response
       // measurement. Stale or jittering measurements fall back to the raw
       // estimate; the divergence watch below keeps that fallback visible.
-      const hostUsageStable = !predates && realPromptTokens > 0 ? runtime.noteHostUsage(sid, realPromptTokens) : false;
+      if (!fresh || predates) runtime.dropHostUsageSamples(sid);
+      const hostUsageStable = fresh && !predates && realPromptTokens > 0 ? runtime.noteHostUsage(sid, realPromptTokens) : false;
+      const pendingGrowth = lastUsageIdx >= 0 ? estimateTokens(entriesToCoreMessages(anchorEntries.slice(lastUsageIdx + 1)), coveredIds, imageTokens) : 0;
       const calibrate = (base: number): number =>
-        hostUsageStable ? Math.min(base, Math.ceil(realPromptTokens * 1.2)) : base;
+        hostUsageStable ? Math.min(base, Math.ceil(realPromptTokens * 1.2) + pendingGrowth) : base;
       const applyFloors = (base: number): number => Math.max(calibrate(base), hostFloor, armedFloor);
       // Basis for the no-body-4xx overflow guard (wireOverflowSelfHeal): the
       // sent-view estimate of the request about to be sent, on the same scale
@@ -513,21 +560,9 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       // first turn, structural change (compress/decompress/window), or after a
       // truncation-band turn whose output under-reports.
       if (state.blocks.some((b) => b.active && b.effectiveMessageIds.length > 0)) {
-        const meter = runtime.peekSentViewCount(sid);
-        if (meter && sentViewMeterMatches(meter, state, config)) {
-          if (Math.abs(meter.viewTokens - sentTokens) > Math.max(1000, 0.1 * sentTokens)) {
-            tokenCount = applyFloors(meter.viewTokens);
-            guardTokens = guardBasis(meter.viewTokens);
-            logInfo("turn", { sid, event: "view-recount", source: "prev-turn", prelim: sentTokens, viewTokens: meter.viewTokens, tokenCount });
-          }
-        } else {
-          const view = sentViewTokenCount(runtime.core, coreMessages, state, config, tokenCount, imageTokens, systemPromptTokens);
-          if (view.drifted) {
-            tokenCount = applyFloors(view.viewTokens);
-            guardTokens = guardBasis(view.viewTokens);
-            logInfo("turn", { sid, event: "view-recount", source: "probe", prelim: sentTokens, viewTokens: view.viewTokens, tokenCount });
-          }
-        }
+        const view = sentViewTokenCount(runtime.core, coreMessages, state, config, sentTokens, imageTokens, systemPromptTokens);
+        tokenCount = applyFloors(view.viewTokens);
+        guardTokens = guardBasis(view.viewTokens);
       }
       ov.noteSentView(guardTokens, config.modelContextLimit);
       // Divergence watch (issue #455): persistent >2x disagreement between the
@@ -536,7 +571,7 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       // episode instead of silently driving every threshold off the wrong ruler.
       // With calibration engaged the capped tokenCount stays within 20% of the
       // measurement, so this only fires in the fallback states it diagnoses.
-      const sizeDivergent = !predates && realPromptTokens > 0 && Math.abs(tokenCount - realPromptTokens) / realPromptTokens > 0.5;
+      const sizeDivergent = fresh && !predates && realPromptTokens > 0 && Math.abs(tokenCount - realPromptTokens) / realPromptTokens > 0.5;
       if (runtime.noteSizeDivergence(sid, sizeDivergent)) {
         logWarn("turn", { sid, event: "size-divergence", est: tokenCount, host: realPromptTokens, ratio: Number((tokenCount / realPromptTokens).toFixed(2)), stable: hostUsageStable });
       }
@@ -888,8 +923,24 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       if (ctx.hasUI) ctx.ui.notify(msg);
     });
     if (!ctx.hasUI) await updateCheck;
+    const model = requestedModel;
+    if (model?.id && fullWindow > 0 && revision === liveContextUsageRevision(sid) && ctx.sessionManager.getSessionId() === sid && ctx.model?.id === model.id && ctx.model?.provider === model.provider) {
+      scopedFloors.set(sid, fresh && !predates && tokenCount < truncateBand ? hostFloor : 0);
+      const outboundTokens = Math.max(estimateOutboundTokens(rebuilt, systemPromptText, ctx.model, activeToolDefinitions(pi)), fresh && !predates && tokenCount < truncateBand ? hostFloor : 0);
+      publishLiveContextUsage({
+        sessionId: sid,
+        modelId: model.id,
+        ...(model.provider ? { provider: model.provider } : {}),
+        tokens: outboundTokens,
+        contextWindow: fullWindow,
+        percent: (outboundTokens / fullWindow) * 100,
+        source: "sent-view-estimate",
+        updatedAt: Date.now(),
+      }, revision);
+    }
     return { messages: rebuilt };
     } catch (e) {
+      if (revision === liveContextUsageRevision(sid)) clearLiveContextUsage(sid);
       logThrow("context", e, { sid, phase: "transform" });
       throw e;
     } finally {

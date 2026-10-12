@@ -6,9 +6,9 @@ var __export = (target, all) => {
 
 // src/config-dir.ts
 import * as piModule from "@earendil-works/pi-coding-agent";
-import { existsSync } from "node:fs";
-import { homedir } from "node:os";
-import * as path from "node:path";
+import { existsSync } from "fs";
+import { homedir } from "os";
+import * as path from "path";
 var PI_CONFIG_DIR_NAME = ".pi";
 function isDirName(value) {
   return typeof value === "string" && value.length > 0 && value !== "." && value !== ".." && !/[\\/]/.test(value);
@@ -54,12 +54,12 @@ function acpJsonFiles(cwd, env = process.env) {
 }
 
 // src/user-config.ts
-import { promises as fs } from "node:fs";
+import { promises as fs } from "fs";
 
 // src/log.ts
-import { appendFileSync, mkdirSync, statSync, renameSync, existsSync as existsSync2 } from "node:fs";
-import * as path2 from "node:path";
-import { homedir as homedir2 } from "node:os";
+import { appendFileSync, mkdirSync, statSync, renameSync, existsSync as existsSync2 } from "fs";
+import * as path2 from "path";
+import { homedir as homedir2 } from "os";
 var MAX_BYTES = 10 * 1024 * 1024;
 var ENV_DEBUG = process.env.ACP_DEBUG === "1" || process.env.ACP_DEBUG === "true";
 function resolveLogFile() {
@@ -75,13 +75,13 @@ function debugOn() {
 function escapeLine(s) {
   return s.replace(/\r/g, "\\r").replace(/\n/g, "\\n");
 }
-function fmt(v) {
-  if (typeof v === "string") return escapeLine(v);
-  if (v instanceof Error) return escapeLine(v.stack || String(v));
+function fmt(v2) {
+  if (typeof v2 === "string") return escapeLine(v2);
+  if (v2 instanceof Error) return escapeLine(v2.stack || String(v2));
   try {
-    return JSON.stringify(v);
+    return JSON.stringify(v2);
   } catch {
-    return escapeLine(String(v));
+    return escapeLine(String(v2));
   }
 }
 function ts() {
@@ -180,8 +180,8 @@ function parseAcpJson(file, raw) {
 }
 function tryJson(text) {
   try {
-    const v = JSON.parse(text);
-    return v && typeof v === "object" ? { ok: true, value: v } : { ok: false, error: new Error("top-level value is not an object") };
+    const v2 = JSON.parse(text);
+    return v2 && typeof v2 === "object" ? { ok: true, value: v2 } : { ok: false, error: new Error("top-level value is not an object") };
   } catch (e) {
     return { ok: false, error: e };
   }
@@ -234,8 +234,8 @@ var KNOWN = /* @__PURE__ */ new Set([
 ]);
 function pickKnown(parsed) {
   const out = {};
-  for (const [k, v] of Object.entries(parsed)) {
-    if (KNOWN.has(k)) out[k] = v;
+  for (const [k, v2] of Object.entries(parsed)) {
+    if (KNOWN.has(k)) out[k] = v2;
   }
   return out;
 }
@@ -268,34 +268,3666 @@ function applyUserConfig(adapter, user) {
   return result;
 }
 function cleanPreserveRecentList(value) {
-  if (!Array.isArray(value) || value.length === 0 || !value.every((v) => typeof v === "string" && v.trim() !== "")) {
+  if (!Array.isArray(value) || value.length === 0 || !value.every((v2) => typeof v2 === "string" && v2.trim() !== "")) {
     console.warn(`[bcp] acp.json "preserveRecentTools" must be a non-empty array of non-empty strings (an empty array is a no-op \u2014 for protect-everything use neverPreserveRecentTools: []) \u2014 ignoring the value`);
     return void 0;
   }
-  return value.map((v) => v.trim());
+  return value.map((v2) => v2.trim());
 }
 function cleanNeverPreserveList(value) {
-  if (!Array.isArray(value) || !value.every((v) => typeof v === "string" && v.trim() !== "")) {
+  if (!Array.isArray(value) || !value.every((v2) => typeof v2 === "string" && v2.trim() !== "")) {
     console.warn(`[bcp] acp.json "neverPreserveRecentTools" must be an array of non-empty strings (empty array allowed \u2014 protects everything) \u2014 ignoring the value`);
     return void 0;
   }
-  return value.map((v) => v.trim());
+  return value.map((v2) => v2.trim());
 }
 function cleanProtectionList(key, value) {
-  if (!Array.isArray(value) || value.length === 0 || !value.every((v) => typeof v === "string" && v.trim() !== "")) {
+  if (!Array.isArray(value) || value.length === 0 || !value.every((v2) => typeof v2 === "string" && v2.trim() !== "")) {
     console.warn(`[bcp] acp.json "${key}" must be a non-empty array of non-empty strings \u2014 ignoring the value`);
     return void 0;
   }
-  return value.map((v) => v.trim());
+  return value.map((v2) => v2.trim());
 }
 
-// src/index.ts
-import { Box, Text } from "@earendil-works/pi-tui";
-import { readFileSync as readFileSync5 } from "node:fs";
+// ../main/node_modules/get-east-asian-width/lookup-data.js
+var ambiguousMinimalCodePoint = 161;
+var ambiguousMaximumCodePoint = 1114109;
+var ambiguousRanges = [161, 161, 164, 164, 167, 168, 170, 170, 173, 174, 176, 180, 182, 186, 188, 191, 198, 198, 208, 208, 215, 216, 222, 225, 230, 230, 232, 234, 236, 237, 240, 240, 242, 243, 247, 250, 252, 252, 254, 254, 257, 257, 273, 273, 275, 275, 283, 283, 294, 295, 299, 299, 305, 307, 312, 312, 319, 322, 324, 324, 328, 331, 333, 333, 338, 339, 358, 359, 363, 363, 462, 462, 464, 464, 466, 466, 468, 468, 470, 470, 472, 472, 474, 474, 476, 476, 593, 593, 609, 609, 708, 708, 711, 711, 713, 715, 717, 717, 720, 720, 728, 731, 733, 733, 735, 735, 768, 879, 913, 929, 931, 937, 945, 961, 963, 969, 1025, 1025, 1040, 1103, 1105, 1105, 8208, 8208, 8211, 8214, 8216, 8217, 8220, 8221, 8224, 8226, 8228, 8231, 8240, 8240, 8242, 8243, 8245, 8245, 8251, 8251, 8254, 8254, 8308, 8308, 8319, 8319, 8321, 8324, 8364, 8364, 8451, 8451, 8453, 8453, 8457, 8457, 8467, 8467, 8470, 8470, 8481, 8482, 8486, 8486, 8491, 8491, 8531, 8532, 8539, 8542, 8544, 8555, 8560, 8569, 8585, 8585, 8592, 8601, 8632, 8633, 8658, 8658, 8660, 8660, 8679, 8679, 8704, 8704, 8706, 8707, 8711, 8712, 8715, 8715, 8719, 8719, 8721, 8721, 8725, 8725, 8730, 8730, 8733, 8736, 8739, 8739, 8741, 8741, 8743, 8748, 8750, 8750, 8756, 8759, 8764, 8765, 8776, 8776, 8780, 8780, 8786, 8786, 8800, 8801, 8804, 8807, 8810, 8811, 8814, 8815, 8834, 8835, 8838, 8839, 8853, 8853, 8857, 8857, 8869, 8869, 8895, 8895, 8978, 8978, 9312, 9449, 9451, 9547, 9552, 9587, 9600, 9615, 9618, 9621, 9632, 9633, 9635, 9641, 9650, 9651, 9654, 9655, 9660, 9661, 9664, 9665, 9670, 9672, 9675, 9675, 9678, 9681, 9698, 9701, 9711, 9711, 9733, 9734, 9737, 9737, 9742, 9743, 9756, 9756, 9758, 9758, 9792, 9792, 9794, 9794, 9824, 9825, 9827, 9829, 9831, 9834, 9836, 9837, 9839, 9839, 9886, 9887, 9919, 9919, 9926, 9933, 9935, 9939, 9941, 9953, 9955, 9955, 9960, 9961, 9963, 9969, 9972, 9972, 9974, 9977, 9979, 9980, 9982, 9983, 10045, 10045, 10102, 10111, 11094, 11097, 12872, 12879, 57344, 63743, 65024, 65039, 65533, 65533, 127232, 127242, 127248, 127277, 127280, 127337, 127344, 127373, 127375, 127376, 127387, 127404, 917760, 917999, 983040, 1048573, 1048576, 1114109];
+var fullwidthMinimalCodePoint = 12288;
+var fullwidthMaximumCodePoint = 65510;
+var fullwidthRanges = [12288, 12288, 65281, 65376, 65504, 65510];
+var wideMinimalCodePoint = 4352;
+var wideMaximumCodePoint = 262141;
+var wideRanges = [4352, 4447, 8986, 8987, 9001, 9002, 9193, 9196, 9200, 9200, 9203, 9203, 9725, 9726, 9748, 9749, 9776, 9783, 9800, 9811, 9855, 9855, 9866, 9871, 9875, 9875, 9889, 9889, 9898, 9899, 9917, 9918, 9924, 9925, 9934, 9934, 9940, 9940, 9962, 9962, 9970, 9971, 9973, 9973, 9978, 9978, 9981, 9981, 9989, 9989, 9994, 9995, 10024, 10024, 10060, 10060, 10062, 10062, 10067, 10069, 10071, 10071, 10133, 10135, 10160, 10160, 10175, 10175, 11035, 11036, 11088, 11088, 11093, 11093, 11904, 11929, 11931, 12019, 12032, 12245, 12272, 12287, 12289, 12350, 12353, 12438, 12441, 12543, 12549, 12591, 12593, 12686, 12688, 12773, 12783, 12830, 12832, 12871, 12880, 42124, 42128, 42182, 43360, 43388, 44032, 55203, 63744, 64255, 65040, 65049, 65072, 65106, 65108, 65126, 65128, 65131, 94176, 94180, 94192, 94198, 94208, 101589, 101631, 101662, 101760, 101874, 110576, 110579, 110581, 110587, 110589, 110590, 110592, 110882, 110898, 110898, 110928, 110930, 110933, 110933, 110948, 110951, 110960, 111355, 119552, 119638, 119648, 119670, 126980, 126980, 127183, 127183, 127374, 127374, 127377, 127386, 127488, 127490, 127504, 127547, 127552, 127560, 127568, 127569, 127584, 127589, 127744, 127776, 127789, 127797, 127799, 127868, 127870, 127891, 127904, 127946, 127951, 127955, 127968, 127984, 127988, 127988, 127992, 128062, 128064, 128064, 128066, 128252, 128255, 128317, 128331, 128334, 128336, 128359, 128378, 128378, 128405, 128406, 128420, 128420, 128507, 128591, 128640, 128709, 128716, 128716, 128720, 128722, 128725, 128728, 128732, 128735, 128747, 128748, 128756, 128764, 128992, 129003, 129008, 129008, 129292, 129338, 129340, 129349, 129351, 129535, 129648, 129660, 129664, 129674, 129678, 129734, 129736, 129736, 129741, 129756, 129759, 129770, 129775, 129784, 131072, 196605, 196608, 262141];
 
-// ../../../../../../tmp/billion-context-profile-validation/acp-kernel/dist/chunk-HNWTM2K4.js
+// ../main/node_modules/get-east-asian-width/utilities.js
+var isInRange = (ranges, codePoint) => {
+  let low = 0;
+  let high = Math.floor(ranges.length / 2) - 1;
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    const i = mid * 2;
+    if (codePoint < ranges[i]) {
+      high = mid - 1;
+    } else if (codePoint > ranges[i + 1]) {
+      low = mid + 1;
+    } else {
+      return true;
+    }
+  }
+  return false;
+};
+
+// ../main/node_modules/get-east-asian-width/lookup.js
+var commonCjkCodePoint = 19968;
+var [wideFastPathStart, wideFastPathEnd] = /* @__PURE__ */ findWideFastPathRange(wideRanges);
+function findWideFastPathRange(ranges) {
+  let fastPathStart = ranges[0];
+  let fastPathEnd = ranges[1];
+  for (let index = 0; index < ranges.length; index += 2) {
+    const start = ranges[index];
+    const end = ranges[index + 1];
+    if (commonCjkCodePoint >= start && commonCjkCodePoint <= end) {
+      return [start, end];
+    }
+    if (end - start > fastPathEnd - fastPathStart) {
+      fastPathStart = start;
+      fastPathEnd = end;
+    }
+  }
+  return [fastPathStart, fastPathEnd];
+}
+var isAmbiguous = (codePoint) => {
+  if (codePoint < ambiguousMinimalCodePoint || codePoint > ambiguousMaximumCodePoint) {
+    return false;
+  }
+  return isInRange(ambiguousRanges, codePoint);
+};
+var isFullWidth = (codePoint) => {
+  if (codePoint < fullwidthMinimalCodePoint || codePoint > fullwidthMaximumCodePoint) {
+    return false;
+  }
+  return isInRange(fullwidthRanges, codePoint);
+};
+var isWide = (codePoint) => {
+  if (codePoint >= wideFastPathStart && codePoint <= wideFastPathEnd) {
+    return true;
+  }
+  if (codePoint < wideMinimalCodePoint || codePoint > wideMaximumCodePoint) {
+    return false;
+  }
+  return isInRange(wideRanges, codePoint);
+};
+
+// ../main/node_modules/get-east-asian-width/index.js
+function validate(codePoint) {
+  if (!Number.isSafeInteger(codePoint)) {
+    throw new TypeError(`Expected a code point, got \`${typeof codePoint}\`.`);
+  }
+}
+function eastAsianWidth(codePoint, { ambiguousAsWide = false } = {}) {
+  validate(codePoint);
+  if (isFullWidth(codePoint) || isWide(codePoint) || ambiguousAsWide && isAmbiguous(codePoint)) {
+    return 2;
+  }
+  return 1;
+}
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/utils.js
+var graphemeSegmenter = new Intl.Segmenter(void 0, { granularity: "grapheme" });
+var wordSegmenter = new Intl.Segmenter(void 0, { granularity: "word" });
+function getGraphemeSegmenter() {
+  return graphemeSegmenter;
+}
+function getWordSegmenter() {
+  return wordSegmenter;
+}
+function couldBeEmoji(segment) {
+  const cp = segment.codePointAt(0);
+  return cp >= 126976 && cp <= 130047 || // Emoji and Pictograph
+  cp >= 8960 && cp <= 9215 || // Misc technical
+  cp >= 9728 && cp <= 10175 || // Misc symbols, dingbats
+  cp >= 11088 && cp <= 11093 || // Specific stars/circles
+  segment.includes("\uFE0F") || // Contains VS16 (emoji presentation selector)
+  segment.length > 2;
+}
+var zeroWidthRegex = new RegExp("^(?:\\p{Default_Ignorable_Code_Point}|\\p{Control}|\\p{Mark}|\\p{Surrogate})+$", "v");
+var leadingNonPrintingRegex = new RegExp("^[\\p{Default_Ignorable_Code_Point}\\p{Control}\\p{Format}\\p{Mark}\\p{Surrogate}]+", "v");
+var rgiEmojiRegex = new RegExp("^\\p{RGI_Emoji}$", "v");
+var WIDTH_CACHE_SIZE = 512;
+var widthCache = /* @__PURE__ */ new Map();
+var cjkBreakRegex = /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\p{Script_Extensions=Hangul}\p{Script_Extensions=Bopomofo}]/u;
+function isPrintableAscii(str) {
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    if (code < 32 || code > 126) {
+      return false;
+    }
+  }
+  return true;
+}
+function truncateFragmentToWidth(text, maxWidth) {
+  if (maxWidth <= 0 || text.length === 0) {
+    return { text: "", width: 0 };
+  }
+  if (isPrintableAscii(text)) {
+    const clipped = text.slice(0, maxWidth);
+    return { text: clipped, width: clipped.length };
+  }
+  const hasAnsi = text.includes("\x1B");
+  const hasTabs = text.includes("	");
+  if (!hasAnsi && !hasTabs) {
+    let result2 = "";
+    let width2 = 0;
+    for (const { segment } of graphemeSegmenter.segment(text)) {
+      const w2 = graphemeWidth(segment);
+      if (width2 + w2 > maxWidth) {
+        break;
+      }
+      result2 += segment;
+      width2 += w2;
+    }
+    return { text: result2, width: width2 };
+  }
+  let result = "";
+  let width = 0;
+  let i = 0;
+  let pendingAnsi = "";
+  while (i < text.length) {
+    const ansi = extractAnsiCode(text, i);
+    if (ansi) {
+      pendingAnsi += ansi.code;
+      i += ansi.length;
+      continue;
+    }
+    if (text[i] === "	") {
+      if (width + 3 > maxWidth) {
+        break;
+      }
+      if (pendingAnsi) {
+        result += pendingAnsi;
+        pendingAnsi = "";
+      }
+      result += "	";
+      width += 3;
+      i++;
+      continue;
+    }
+    let end = i;
+    while (end < text.length && text[end] !== "	") {
+      const nextAnsi = extractAnsiCode(text, end);
+      if (nextAnsi) {
+        break;
+      }
+      end++;
+    }
+    for (const { segment } of graphemeSegmenter.segment(text.slice(i, end))) {
+      const w2 = graphemeWidth(segment);
+      if (width + w2 > maxWidth) {
+        return { text: result, width };
+      }
+      if (pendingAnsi) {
+        result += pendingAnsi;
+        pendingAnsi = "";
+      }
+      result += segment;
+      width += w2;
+    }
+    i = end;
+  }
+  return { text: result, width };
+}
+function finalizeTruncatedResult(prefix, prefixWidth, ellipsis, ellipsisWidth, maxWidth, pad) {
+  const reset = "\x1B[0m";
+  const visibleWidth2 = prefixWidth + ellipsisWidth;
+  let result;
+  if (ellipsis.length > 0) {
+    result = `${prefix}${reset}${ellipsis}${reset}`;
+  } else {
+    result = `${prefix}${reset}`;
+  }
+  return pad ? result + " ".repeat(Math.max(0, maxWidth - visibleWidth2)) : result;
+}
+function graphemeWidth(segment) {
+  if (segment === "	") {
+    return 3;
+  }
+  if (zeroWidthRegex.test(segment)) {
+    return 0;
+  }
+  if (couldBeEmoji(segment) && rgiEmojiRegex.test(segment)) {
+    return 2;
+  }
+  const base = segment.replace(leadingNonPrintingRegex, "");
+  const cp = base.codePointAt(0);
+  if (cp === void 0) {
+    return 0;
+  }
+  if (cp >= 127462 && cp <= 127487) {
+    return 2;
+  }
+  let width = eastAsianWidth(cp);
+  if (segment.length > 1) {
+    for (const char of segment.slice(1)) {
+      const c = char.codePointAt(0);
+      if (c >= 65280 && c <= 65519) {
+        width += eastAsianWidth(c);
+      } else if (c === 3635 || c === 3763) {
+        width += 1;
+      }
+    }
+  }
+  return width;
+}
+function visibleWidth(str) {
+  if (str.length === 0) {
+    return 0;
+  }
+  if (isPrintableAscii(str)) {
+    return str.length;
+  }
+  const cached = widthCache.get(str);
+  if (cached !== void 0) {
+    return cached;
+  }
+  let clean = str;
+  if (str.includes("	")) {
+    clean = clean.replace(/\t/g, "   ");
+  }
+  if (clean.includes("\x1B")) {
+    let stripped = "";
+    let i = 0;
+    while (i < clean.length) {
+      const ansi = extractAnsiCode(clean, i);
+      if (ansi) {
+        i += ansi.length;
+        continue;
+      }
+      stripped += clean[i];
+      i++;
+    }
+    clean = stripped;
+  }
+  let width = 0;
+  for (const { segment } of graphemeSegmenter.segment(clean)) {
+    width += graphemeWidth(segment);
+  }
+  if (widthCache.size >= WIDTH_CACHE_SIZE) {
+    const firstKey = widthCache.keys().next().value;
+    if (firstKey !== void 0) {
+      widthCache.delete(firstKey);
+    }
+  }
+  widthCache.set(str, width);
+  return width;
+}
+function extractAnsiCode(str, pos) {
+  if (pos >= str.length || str[pos] !== "\x1B")
+    return null;
+  const next = str[pos + 1];
+  if (next === "[") {
+    let j2 = pos + 2;
+    while (j2 < str.length && !/[mGKHJ]/.test(str[j2]))
+      j2++;
+    if (j2 < str.length)
+      return { code: str.substring(pos, j2 + 1), length: j2 + 1 - pos };
+    return null;
+  }
+  if (next === "]") {
+    let j2 = pos + 2;
+    while (j2 < str.length) {
+      if (str[j2] === "\x07")
+        return { code: str.substring(pos, j2 + 1), length: j2 + 1 - pos };
+      if (str[j2] === "\x1B" && str[j2 + 1] === "\\")
+        return { code: str.substring(pos, j2 + 2), length: j2 + 2 - pos };
+      j2++;
+    }
+    return null;
+  }
+  if (next === "_") {
+    let j2 = pos + 2;
+    while (j2 < str.length) {
+      if (str[j2] === "\x07")
+        return { code: str.substring(pos, j2 + 1), length: j2 + 1 - pos };
+      if (str[j2] === "\x1B" && str[j2 + 1] === "\\")
+        return { code: str.substring(pos, j2 + 2), length: j2 + 2 - pos };
+      j2++;
+    }
+    return null;
+  }
+  return null;
+}
+function parseOsc8Hyperlink(ansiCode) {
+  if (!ansiCode.startsWith("\x1B]8;")) {
+    return void 0;
+  }
+  const terminator = ansiCode.endsWith("\x07") ? "\x07" : "\x1B\\";
+  const body = ansiCode.slice(4, terminator === "\x07" ? -1 : -2);
+  const separatorIndex = body.indexOf(";");
+  if (separatorIndex === -1) {
+    return void 0;
+  }
+  const params = body.slice(0, separatorIndex);
+  const url = body.slice(separatorIndex + 1);
+  if (!url) {
+    return null;
+  }
+  return { params, url, terminator };
+}
+function formatOsc8Hyperlink(hyperlink2) {
+  return `\x1B]8;${hyperlink2.params};${hyperlink2.url}${hyperlink2.terminator}`;
+}
+function formatOsc8Close(terminator) {
+  return `\x1B]8;;${terminator}`;
+}
+var AnsiCodeTracker = class {
+  // Track individual attributes separately so we can reset them specifically
+  bold = false;
+  dim = false;
+  italic = false;
+  underline = false;
+  blink = false;
+  inverse = false;
+  hidden = false;
+  strikethrough = false;
+  fgColor = null;
+  // Stores the full code like "31" or "38;5;240"
+  bgColor = null;
+  // Stores the full code like "41" or "48;5;240"
+  activeHyperlink = null;
+  process(ansiCode) {
+    const hyperlink2 = parseOsc8Hyperlink(ansiCode);
+    if (hyperlink2 !== void 0) {
+      this.activeHyperlink = hyperlink2;
+      return;
+    }
+    if (!ansiCode.endsWith("m")) {
+      return;
+    }
+    const match = ansiCode.match(/\x1b\[([\d;]*)m/);
+    if (!match)
+      return;
+    const params = match[1];
+    if (params === "" || params === "0") {
+      this.reset();
+      return;
+    }
+    const parts = params.split(";");
+    let i = 0;
+    while (i < parts.length) {
+      const code = Number.parseInt(parts[i], 10);
+      if (code === 38 || code === 48) {
+        if (parts[i + 1] === "5" && parts[i + 2] !== void 0) {
+          const colorCode = `${parts[i]};${parts[i + 1]};${parts[i + 2]}`;
+          if (code === 38) {
+            this.fgColor = colorCode;
+          } else {
+            this.bgColor = colorCode;
+          }
+          i += 3;
+          continue;
+        } else if (parts[i + 1] === "2" && parts[i + 4] !== void 0) {
+          const colorCode = `${parts[i]};${parts[i + 1]};${parts[i + 2]};${parts[i + 3]};${parts[i + 4]}`;
+          if (code === 38) {
+            this.fgColor = colorCode;
+          } else {
+            this.bgColor = colorCode;
+          }
+          i += 5;
+          continue;
+        }
+      }
+      switch (code) {
+        case 0:
+          this.reset();
+          break;
+        case 1:
+          this.bold = true;
+          break;
+        case 2:
+          this.dim = true;
+          break;
+        case 3:
+          this.italic = true;
+          break;
+        case 4:
+          this.underline = true;
+          break;
+        case 5:
+          this.blink = true;
+          break;
+        case 7:
+          this.inverse = true;
+          break;
+        case 8:
+          this.hidden = true;
+          break;
+        case 9:
+          this.strikethrough = true;
+          break;
+        case 21:
+          this.bold = false;
+          break;
+        // Some terminals
+        case 22:
+          this.bold = false;
+          this.dim = false;
+          break;
+        case 23:
+          this.italic = false;
+          break;
+        case 24:
+          this.underline = false;
+          break;
+        case 25:
+          this.blink = false;
+          break;
+        case 27:
+          this.inverse = false;
+          break;
+        case 28:
+          this.hidden = false;
+          break;
+        case 29:
+          this.strikethrough = false;
+          break;
+        case 39:
+          this.fgColor = null;
+          break;
+        // Default fg
+        case 49:
+          this.bgColor = null;
+          break;
+        // Default bg
+        default:
+          if (code >= 30 && code <= 37 || code >= 90 && code <= 97) {
+            this.fgColor = String(code);
+          } else if (code >= 40 && code <= 47 || code >= 100 && code <= 107) {
+            this.bgColor = String(code);
+          }
+          break;
+      }
+      i++;
+    }
+  }
+  reset() {
+    this.bold = false;
+    this.dim = false;
+    this.italic = false;
+    this.underline = false;
+    this.blink = false;
+    this.inverse = false;
+    this.hidden = false;
+    this.strikethrough = false;
+    this.fgColor = null;
+    this.bgColor = null;
+  }
+  /** Clear all state for reuse. */
+  clear() {
+    this.reset();
+    this.activeHyperlink = null;
+  }
+  getActiveCodes() {
+    const codes = [];
+    if (this.bold)
+      codes.push("1");
+    if (this.dim)
+      codes.push("2");
+    if (this.italic)
+      codes.push("3");
+    if (this.underline)
+      codes.push("4");
+    if (this.blink)
+      codes.push("5");
+    if (this.inverse)
+      codes.push("7");
+    if (this.hidden)
+      codes.push("8");
+    if (this.strikethrough)
+      codes.push("9");
+    if (this.fgColor)
+      codes.push(this.fgColor);
+    if (this.bgColor)
+      codes.push(this.bgColor);
+    let result = codes.length > 0 ? `\x1B[${codes.join(";")}m` : "";
+    if (this.activeHyperlink) {
+      result += formatOsc8Hyperlink(this.activeHyperlink);
+    }
+    return result;
+  }
+  hasActiveCodes() {
+    return this.bold || this.dim || this.italic || this.underline || this.blink || this.inverse || this.hidden || this.strikethrough || this.fgColor !== null || this.bgColor !== null || this.activeHyperlink !== null;
+  }
+  /**
+   * Get reset codes for attributes that need to be turned off at line end.
+   * Underline must be closed to prevent bleeding into padding.
+   * Active OSC 8 hyperlinks must be closed and re-opened on the next line.
+   * Returns empty string if no attributes need closing.
+   */
+  getLineEndReset() {
+    let result = "";
+    if (this.underline) {
+      result += "\x1B[24m";
+    }
+    if (this.activeHyperlink) {
+      result += formatOsc8Close(this.activeHyperlink.terminator);
+    }
+    return result;
+  }
+};
+function updateTrackerFromText(text, tracker) {
+  let i = 0;
+  while (i < text.length) {
+    const ansiResult = extractAnsiCode(text, i);
+    if (ansiResult) {
+      tracker.process(ansiResult.code);
+      i += ansiResult.length;
+    } else {
+      i++;
+    }
+  }
+}
+function splitIntoTokensWithAnsi(text) {
+  const tokens = [];
+  let current = "";
+  let pendingAnsi = "";
+  let currentKind = null;
+  let i = 0;
+  const flushCurrent = () => {
+    if (!current) {
+      return;
+    }
+    tokens.push(current);
+    current = "";
+    currentKind = null;
+  };
+  while (i < text.length) {
+    const ansiResult = extractAnsiCode(text, i);
+    if (ansiResult) {
+      pendingAnsi += ansiResult.code;
+      i += ansiResult.length;
+      continue;
+    }
+    let end = i;
+    while (end < text.length && !extractAnsiCode(text, end)) {
+      end++;
+    }
+    for (const { segment } of graphemeSegmenter.segment(text.slice(i, end))) {
+      const segmentIsSpace = segment === " ";
+      if (!segmentIsSpace && cjkBreakRegex.test(segment)) {
+        flushCurrent();
+        const token = pendingAnsi + segment;
+        pendingAnsi = "";
+        tokens.push(token);
+        continue;
+      }
+      const segmentKind = segmentIsSpace ? "space" : "word";
+      if (current && currentKind !== segmentKind) {
+        flushCurrent();
+      }
+      if (pendingAnsi) {
+        current += pendingAnsi;
+        pendingAnsi = "";
+      }
+      currentKind = segmentKind;
+      current += segment;
+    }
+    i = end;
+  }
+  if (pendingAnsi) {
+    if (current) {
+      current += pendingAnsi;
+    } else if (tokens.length > 0) {
+      tokens[tokens.length - 1] += pendingAnsi;
+    } else {
+      current = pendingAnsi;
+    }
+  }
+  if (current) {
+    tokens.push(current);
+  }
+  return tokens;
+}
+function wrapTextWithAnsi(text, width) {
+  if (!text) {
+    return [""];
+  }
+  const inputLines = text.split(/\r\n|\r|\n/);
+  const result = [];
+  const tracker = new AnsiCodeTracker();
+  for (const inputLine of inputLines) {
+    const prefix = result.length > 0 ? tracker.getActiveCodes() : "";
+    const wrappedLines = wrapSingleLine(prefix + inputLine, width);
+    for (const wrappedLine of wrappedLines) {
+      result.push(wrappedLine);
+    }
+    updateTrackerFromText(inputLine, tracker);
+  }
+  return result.length > 0 ? result : [""];
+}
+function wrapSingleLine(line, width) {
+  if (!line) {
+    return [""];
+  }
+  const visibleLength = visibleWidth(line);
+  if (visibleLength <= width) {
+    return [line];
+  }
+  const wrapped = [];
+  const tracker = new AnsiCodeTracker();
+  const tokens = splitIntoTokensWithAnsi(line);
+  let currentLine = "";
+  let currentVisibleLength = 0;
+  for (const token of tokens) {
+    const tokenVisibleLength = visibleWidth(token);
+    const isWhitespace = token.trim() === "";
+    if (tokenVisibleLength > width && !isWhitespace) {
+      if (currentLine) {
+        const lineEndReset = tracker.getLineEndReset();
+        if (lineEndReset) {
+          currentLine += lineEndReset;
+        }
+        wrapped.push(currentLine);
+        currentLine = "";
+        currentVisibleLength = 0;
+      }
+      const broken = breakLongWord(token, width, tracker);
+      for (let i = 0; i < broken.length - 1; i++) {
+        wrapped.push(broken[i]);
+      }
+      currentLine = broken[broken.length - 1];
+      currentVisibleLength = visibleWidth(currentLine);
+      continue;
+    }
+    const totalNeeded = currentVisibleLength + tokenVisibleLength;
+    if (totalNeeded > width && currentVisibleLength > 0) {
+      let lineToWrap = currentLine.trimEnd();
+      const lineEndReset = tracker.getLineEndReset();
+      if (lineEndReset) {
+        lineToWrap += lineEndReset;
+      }
+      wrapped.push(lineToWrap);
+      if (isWhitespace) {
+        currentLine = tracker.getActiveCodes();
+        currentVisibleLength = 0;
+      } else {
+        currentLine = tracker.getActiveCodes() + token;
+        currentVisibleLength = tokenVisibleLength;
+      }
+    } else {
+      currentLine += token;
+      currentVisibleLength += tokenVisibleLength;
+    }
+    updateTrackerFromText(token, tracker);
+  }
+  if (currentLine) {
+    wrapped.push(currentLine);
+  }
+  return wrapped.length > 0 ? wrapped.map((line2) => line2.trimEnd()) : [""];
+}
+function breakLongWord(word, width, tracker) {
+  const lines = [];
+  let currentLine = tracker.getActiveCodes();
+  let currentWidth = 0;
+  let i = 0;
+  const segments = [];
+  while (i < word.length) {
+    const ansiResult = extractAnsiCode(word, i);
+    if (ansiResult) {
+      segments.push({ type: "ansi", value: ansiResult.code });
+      i += ansiResult.length;
+    } else {
+      let end = i;
+      while (end < word.length) {
+        const nextAnsi = extractAnsiCode(word, end);
+        if (nextAnsi)
+          break;
+        end++;
+      }
+      const textPortion = word.slice(i, end);
+      for (const seg of graphemeSegmenter.segment(textPortion)) {
+        segments.push({ type: "grapheme", value: seg.segment });
+      }
+      i = end;
+    }
+  }
+  for (const seg of segments) {
+    if (seg.type === "ansi") {
+      currentLine += seg.value;
+      tracker.process(seg.value);
+      continue;
+    }
+    const grapheme = seg.value;
+    if (!grapheme)
+      continue;
+    const graphemeWidth2 = visibleWidth(grapheme);
+    if (currentWidth + graphemeWidth2 > width) {
+      const lineEndReset = tracker.getLineEndReset();
+      if (lineEndReset) {
+        currentLine += lineEndReset;
+      }
+      lines.push(currentLine);
+      currentLine = tracker.getActiveCodes();
+      currentWidth = 0;
+    }
+    currentLine += grapheme;
+    currentWidth += graphemeWidth2;
+  }
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  return lines.length > 0 ? lines : [""];
+}
+function applyBackgroundToLine(line, width, bgFn) {
+  const visibleLen = visibleWidth(line);
+  const paddingNeeded = Math.max(0, width - visibleLen);
+  const padding = " ".repeat(paddingNeeded);
+  const withPadding = line + padding;
+  return bgFn(withPadding);
+}
+function truncateToWidth(text, maxWidth, ellipsis = "...", pad = false) {
+  if (maxWidth <= 0) {
+    return "";
+  }
+  if (text.length === 0) {
+    return pad ? " ".repeat(maxWidth) : "";
+  }
+  const ellipsisWidth = visibleWidth(ellipsis);
+  if (ellipsisWidth >= maxWidth) {
+    const textWidth = visibleWidth(text);
+    if (textWidth <= maxWidth) {
+      return pad ? text + " ".repeat(maxWidth - textWidth) : text;
+    }
+    const clippedEllipsis = truncateFragmentToWidth(ellipsis, maxWidth);
+    if (clippedEllipsis.width === 0) {
+      return pad ? " ".repeat(maxWidth) : "";
+    }
+    return finalizeTruncatedResult("", 0, clippedEllipsis.text, clippedEllipsis.width, maxWidth, pad);
+  }
+  if (isPrintableAscii(text)) {
+    if (text.length <= maxWidth) {
+      return pad ? text + " ".repeat(maxWidth - text.length) : text;
+    }
+    const targetWidth2 = maxWidth - ellipsisWidth;
+    return finalizeTruncatedResult(text.slice(0, targetWidth2), targetWidth2, ellipsis, ellipsisWidth, maxWidth, pad);
+  }
+  const targetWidth = maxWidth - ellipsisWidth;
+  let result = "";
+  let pendingAnsi = "";
+  let visibleSoFar = 0;
+  let keptWidth = 0;
+  let keepContiguousPrefix = true;
+  let overflowed = false;
+  let exhaustedInput = false;
+  const hasAnsi = text.includes("\x1B");
+  const hasTabs = text.includes("	");
+  if (!hasAnsi && !hasTabs) {
+    for (const { segment } of graphemeSegmenter.segment(text)) {
+      const width = graphemeWidth(segment);
+      if (keepContiguousPrefix && keptWidth + width <= targetWidth) {
+        result += segment;
+        keptWidth += width;
+      } else {
+        keepContiguousPrefix = false;
+      }
+      visibleSoFar += width;
+      if (visibleSoFar > maxWidth) {
+        overflowed = true;
+        break;
+      }
+    }
+    exhaustedInput = !overflowed;
+  } else {
+    let i = 0;
+    while (i < text.length) {
+      const ansi = extractAnsiCode(text, i);
+      if (ansi) {
+        pendingAnsi += ansi.code;
+        i += ansi.length;
+        continue;
+      }
+      if (text[i] === "	") {
+        if (keepContiguousPrefix && keptWidth + 3 <= targetWidth) {
+          if (pendingAnsi) {
+            result += pendingAnsi;
+            pendingAnsi = "";
+          }
+          result += "	";
+          keptWidth += 3;
+        } else {
+          keepContiguousPrefix = false;
+          pendingAnsi = "";
+        }
+        visibleSoFar += 3;
+        if (visibleSoFar > maxWidth) {
+          overflowed = true;
+          break;
+        }
+        i++;
+        continue;
+      }
+      let end = i;
+      while (end < text.length && text[end] !== "	") {
+        const nextAnsi = extractAnsiCode(text, end);
+        if (nextAnsi) {
+          break;
+        }
+        end++;
+      }
+      for (const { segment } of graphemeSegmenter.segment(text.slice(i, end))) {
+        const width = graphemeWidth(segment);
+        if (keepContiguousPrefix && keptWidth + width <= targetWidth) {
+          if (pendingAnsi) {
+            result += pendingAnsi;
+            pendingAnsi = "";
+          }
+          result += segment;
+          keptWidth += width;
+        } else {
+          keepContiguousPrefix = false;
+          pendingAnsi = "";
+        }
+        visibleSoFar += width;
+        if (visibleSoFar > maxWidth) {
+          overflowed = true;
+          break;
+        }
+      }
+      if (overflowed) {
+        break;
+      }
+      i = end;
+    }
+    exhaustedInput = i >= text.length;
+  }
+  if (!overflowed && exhaustedInput) {
+    return pad ? text + " ".repeat(Math.max(0, maxWidth - visibleSoFar)) : text;
+  }
+  return finalizeTruncatedResult(result, keptWidth, ellipsis, ellipsisWidth, maxWidth, pad);
+}
+var pooledStyleTracker = new AnsiCodeTracker();
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/components/box.js
+var Box = class {
+  children = [];
+  paddingX;
+  paddingY;
+  bgFn;
+  // Cache for rendered output
+  cache;
+  constructor(paddingX = 1, paddingY = 1, bgFn) {
+    this.paddingX = paddingX;
+    this.paddingY = paddingY;
+    this.bgFn = bgFn;
+  }
+  addChild(component) {
+    this.children.push(component);
+    this.invalidateCache();
+  }
+  removeChild(component) {
+    const index = this.children.indexOf(component);
+    if (index !== -1) {
+      this.children.splice(index, 1);
+      this.invalidateCache();
+    }
+  }
+  clear() {
+    this.children = [];
+    this.invalidateCache();
+  }
+  setBgFn(bgFn) {
+    this.bgFn = bgFn;
+  }
+  invalidateCache() {
+    this.cache = void 0;
+  }
+  matchCache(width, childLines, bgSample) {
+    const cache2 = this.cache;
+    return !!cache2 && cache2.width === width && cache2.bgSample === bgSample && cache2.childLines.length === childLines.length && cache2.childLines.every((line, i) => line === childLines[i]);
+  }
+  invalidate() {
+    this.invalidateCache();
+    for (const child of this.children) {
+      child.invalidate?.();
+    }
+  }
+  render(width) {
+    if (this.children.length === 0) {
+      return [];
+    }
+    const contentWidth = Math.max(1, width - this.paddingX * 2);
+    const leftPad = " ".repeat(this.paddingX);
+    const childLines = [];
+    for (const child of this.children) {
+      const lines = child.render(contentWidth);
+      for (const line of lines) {
+        childLines.push(leftPad + line);
+      }
+    }
+    if (childLines.length === 0) {
+      return [];
+    }
+    const bgSample = this.bgFn ? this.bgFn("test") : void 0;
+    if (this.matchCache(width, childLines, bgSample)) {
+      return this.cache.lines;
+    }
+    const result = [];
+    for (let i = 0; i < this.paddingY; i++) {
+      result.push(this.applyBg("", width));
+    }
+    for (const line of childLines) {
+      result.push(this.applyBg(line, width));
+    }
+    for (let i = 0; i < this.paddingY; i++) {
+      result.push(this.applyBg("", width));
+    }
+    this.cache = { childLines, width, bgSample, lines: result };
+    return result;
+  }
+  applyBg(line, width) {
+    const visLen = visibleWidth(line);
+    const padNeeded = Math.max(0, width - visLen);
+    const padded = line + " ".repeat(padNeeded);
+    if (this.bgFn) {
+      return applyBackgroundToLine(padded, width, this.bgFn);
+    }
+    return padded;
+  }
+};
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/keys.js
+var _kittyProtocolActive = false;
+var Key = {
+  // Special keys
+  escape: "escape",
+  esc: "esc",
+  enter: "enter",
+  return: "return",
+  tab: "tab",
+  space: "space",
+  backspace: "backspace",
+  delete: "delete",
+  insert: "insert",
+  clear: "clear",
+  home: "home",
+  end: "end",
+  pageUp: "pageUp",
+  pageDown: "pageDown",
+  up: "up",
+  down: "down",
+  left: "left",
+  right: "right",
+  f1: "f1",
+  f2: "f2",
+  f3: "f3",
+  f4: "f4",
+  f5: "f5",
+  f6: "f6",
+  f7: "f7",
+  f8: "f8",
+  f9: "f9",
+  f10: "f10",
+  f11: "f11",
+  f12: "f12",
+  // Symbol keys
+  backtick: "`",
+  hyphen: "-",
+  equals: "=",
+  leftbracket: "[",
+  rightbracket: "]",
+  backslash: "\\",
+  semicolon: ";",
+  quote: "'",
+  comma: ",",
+  period: ".",
+  slash: "/",
+  exclamation: "!",
+  at: "@",
+  hash: "#",
+  dollar: "$",
+  percent: "%",
+  caret: "^",
+  ampersand: "&",
+  asterisk: "*",
+  leftparen: "(",
+  rightparen: ")",
+  underscore: "_",
+  plus: "+",
+  pipe: "|",
+  tilde: "~",
+  leftbrace: "{",
+  rightbrace: "}",
+  colon: ":",
+  lessthan: "<",
+  greaterthan: ">",
+  question: "?",
+  // Single modifiers
+  ctrl: (key) => `ctrl+${key}`,
+  shift: (key) => `shift+${key}`,
+  alt: (key) => `alt+${key}`,
+  super: (key) => `super+${key}`,
+  // Combined modifiers
+  ctrlShift: (key) => `ctrl+shift+${key}`,
+  shiftCtrl: (key) => `shift+ctrl+${key}`,
+  ctrlAlt: (key) => `ctrl+alt+${key}`,
+  altCtrl: (key) => `alt+ctrl+${key}`,
+  shiftAlt: (key) => `shift+alt+${key}`,
+  altShift: (key) => `alt+shift+${key}`,
+  ctrlSuper: (key) => `ctrl+super+${key}`,
+  superCtrl: (key) => `super+ctrl+${key}`,
+  shiftSuper: (key) => `shift+super+${key}`,
+  superShift: (key) => `super+shift+${key}`,
+  altSuper: (key) => `alt+super+${key}`,
+  superAlt: (key) => `super+alt+${key}`,
+  // Triple modifiers
+  ctrlShiftAlt: (key) => `ctrl+shift+alt+${key}`,
+  ctrlShiftSuper: (key) => `ctrl+shift+super+${key}`
+};
+var SYMBOL_KEYS = /* @__PURE__ */ new Set([
+  "`",
+  "-",
+  "=",
+  "[",
+  "]",
+  "\\",
+  ";",
+  "'",
+  ",",
+  ".",
+  "/",
+  "!",
+  "@",
+  "#",
+  "$",
+  "%",
+  "^",
+  "&",
+  "*",
+  "(",
+  ")",
+  "_",
+  "+",
+  "|",
+  "~",
+  "{",
+  "}",
+  ":",
+  "<",
+  ">",
+  "?"
+]);
+var MODIFIERS = {
+  shift: 1,
+  alt: 2,
+  ctrl: 4,
+  super: 8
+};
+var LOCK_MASK = 64 + 128;
+var CODEPOINTS = {
+  escape: 27,
+  tab: 9,
+  enter: 13,
+  space: 32,
+  backspace: 127,
+  kpEnter: 57414
+  // Numpad Enter (Kitty protocol)
+};
+var ARROW_CODEPOINTS = {
+  up: -1,
+  down: -2,
+  right: -3,
+  left: -4
+};
+var FUNCTIONAL_CODEPOINTS = {
+  delete: -10,
+  insert: -11,
+  pageUp: -12,
+  pageDown: -13,
+  home: -14,
+  end: -15
+};
+var KITTY_FUNCTIONAL_KEY_EQUIVALENTS = /* @__PURE__ */ new Map([
+  [57399, 48],
+  // KP_0 -> 0
+  [57400, 49],
+  // KP_1 -> 1
+  [57401, 50],
+  // KP_2 -> 2
+  [57402, 51],
+  // KP_3 -> 3
+  [57403, 52],
+  // KP_4 -> 4
+  [57404, 53],
+  // KP_5 -> 5
+  [57405, 54],
+  // KP_6 -> 6
+  [57406, 55],
+  // KP_7 -> 7
+  [57407, 56],
+  // KP_8 -> 8
+  [57408, 57],
+  // KP_9 -> 9
+  [57409, 46],
+  // KP_DECIMAL -> .
+  [57410, 47],
+  // KP_DIVIDE -> /
+  [57411, 42],
+  // KP_MULTIPLY -> *
+  [57412, 45],
+  // KP_SUBTRACT -> -
+  [57413, 43],
+  // KP_ADD -> +
+  [57415, 61],
+  // KP_EQUAL -> =
+  [57416, 44],
+  // KP_SEPARATOR -> ,
+  [57417, ARROW_CODEPOINTS.left],
+  [57418, ARROW_CODEPOINTS.right],
+  [57419, ARROW_CODEPOINTS.up],
+  [57420, ARROW_CODEPOINTS.down],
+  [57421, FUNCTIONAL_CODEPOINTS.pageUp],
+  [57422, FUNCTIONAL_CODEPOINTS.pageDown],
+  [57423, FUNCTIONAL_CODEPOINTS.home],
+  [57424, FUNCTIONAL_CODEPOINTS.end],
+  [57425, FUNCTIONAL_CODEPOINTS.insert],
+  [57426, FUNCTIONAL_CODEPOINTS.delete]
+]);
+function normalizeKittyFunctionalCodepoint(codepoint) {
+  return KITTY_FUNCTIONAL_KEY_EQUIVALENTS.get(codepoint) ?? codepoint;
+}
+function normalizeShiftedLetterIdentityCodepoint(codepoint, modifier) {
+  const effectiveModifier = modifier & ~LOCK_MASK;
+  if ((effectiveModifier & MODIFIERS.shift) !== 0 && codepoint >= 65 && codepoint <= 90) {
+    return codepoint + 32;
+  }
+  return codepoint;
+}
+var LEGACY_KEY_SEQUENCES = {
+  up: ["\x1B[A", "\x1BOA"],
+  down: ["\x1B[B", "\x1BOB"],
+  right: ["\x1B[C", "\x1BOC"],
+  left: ["\x1B[D", "\x1BOD"],
+  home: ["\x1B[H", "\x1BOH", "\x1B[1~", "\x1B[7~"],
+  end: ["\x1B[F", "\x1BOF", "\x1B[4~", "\x1B[8~"],
+  insert: ["\x1B[2~"],
+  delete: ["\x1B[3~"],
+  pageUp: ["\x1B[5~", "\x1B[[5~"],
+  pageDown: ["\x1B[6~", "\x1B[[6~"],
+  clear: ["\x1B[E", "\x1BOE"],
+  f1: ["\x1BOP", "\x1B[11~", "\x1B[[A"],
+  f2: ["\x1BOQ", "\x1B[12~", "\x1B[[B"],
+  f3: ["\x1BOR", "\x1B[13~", "\x1B[[C"],
+  f4: ["\x1BOS", "\x1B[14~", "\x1B[[D"],
+  f5: ["\x1B[15~", "\x1B[[E"],
+  f6: ["\x1B[17~"],
+  f7: ["\x1B[18~"],
+  f8: ["\x1B[19~"],
+  f9: ["\x1B[20~"],
+  f10: ["\x1B[21~"],
+  f11: ["\x1B[23~"],
+  f12: ["\x1B[24~"]
+};
+var LEGACY_SHIFT_SEQUENCES = {
+  up: ["\x1B[a"],
+  down: ["\x1B[b"],
+  right: ["\x1B[c"],
+  left: ["\x1B[d"],
+  clear: ["\x1B[e"],
+  insert: ["\x1B[2$"],
+  delete: ["\x1B[3$"],
+  pageUp: ["\x1B[5$"],
+  pageDown: ["\x1B[6$"],
+  home: ["\x1B[7$"],
+  end: ["\x1B[8$"]
+};
+var LEGACY_CTRL_SEQUENCES = {
+  up: ["\x1BOa"],
+  down: ["\x1BOb"],
+  right: ["\x1BOc"],
+  left: ["\x1BOd"],
+  clear: ["\x1BOe"],
+  insert: ["\x1B[2^"],
+  delete: ["\x1B[3^"],
+  pageUp: ["\x1B[5^"],
+  pageDown: ["\x1B[6^"],
+  home: ["\x1B[7^"],
+  end: ["\x1B[8^"]
+};
+var matchesLegacySequence = (data, sequences) => sequences.includes(data);
+var matchesLegacyModifierSequence = (data, key, modifier) => {
+  if (modifier === MODIFIERS.shift) {
+    return matchesLegacySequence(data, LEGACY_SHIFT_SEQUENCES[key]);
+  }
+  if (modifier === MODIFIERS.ctrl) {
+    return matchesLegacySequence(data, LEGACY_CTRL_SEQUENCES[key]);
+  }
+  return false;
+};
+var _lastEventType = "press";
+function parseEventType(eventTypeStr) {
+  if (!eventTypeStr)
+    return "press";
+  const eventType = parseInt(eventTypeStr, 10);
+  if (eventType === 2)
+    return "repeat";
+  if (eventType === 3)
+    return "release";
+  return "press";
+}
+function parseKittySequence(data) {
+  const csiUMatch = data.match(/^\x1b\[(\d+)(?::(\d*))?(?::(\d+))?(?:;(\d+))?(?::(\d+))?u$/);
+  if (csiUMatch) {
+    const codepoint = parseInt(csiUMatch[1], 10);
+    const shiftedKey = csiUMatch[2] && csiUMatch[2].length > 0 ? parseInt(csiUMatch[2], 10) : void 0;
+    const baseLayoutKey = csiUMatch[3] ? parseInt(csiUMatch[3], 10) : void 0;
+    const modValue = csiUMatch[4] ? parseInt(csiUMatch[4], 10) : 1;
+    const eventType = parseEventType(csiUMatch[5]);
+    _lastEventType = eventType;
+    return { codepoint, shiftedKey, baseLayoutKey, modifier: modValue - 1, eventType };
+  }
+  const arrowMatch = data.match(/^\x1b\[1;(\d+)(?::(\d+))?([ABCD])$/);
+  if (arrowMatch) {
+    const modValue = parseInt(arrowMatch[1], 10);
+    const eventType = parseEventType(arrowMatch[2]);
+    const arrowCodes = { A: -1, B: -2, C: -3, D: -4 };
+    _lastEventType = eventType;
+    return { codepoint: arrowCodes[arrowMatch[3]], modifier: modValue - 1, eventType };
+  }
+  const funcMatch = data.match(/^\x1b\[(\d+)(?:;(\d+))?(?::(\d+))?~$/);
+  if (funcMatch) {
+    const keyNum = parseInt(funcMatch[1], 10);
+    const modValue = funcMatch[2] ? parseInt(funcMatch[2], 10) : 1;
+    const eventType = parseEventType(funcMatch[3]);
+    const funcCodes = {
+      2: FUNCTIONAL_CODEPOINTS.insert,
+      3: FUNCTIONAL_CODEPOINTS.delete,
+      5: FUNCTIONAL_CODEPOINTS.pageUp,
+      6: FUNCTIONAL_CODEPOINTS.pageDown,
+      7: FUNCTIONAL_CODEPOINTS.home,
+      8: FUNCTIONAL_CODEPOINTS.end
+    };
+    const codepoint = funcCodes[keyNum];
+    if (codepoint !== void 0) {
+      _lastEventType = eventType;
+      return { codepoint, modifier: modValue - 1, eventType };
+    }
+  }
+  const homeEndMatch = data.match(/^\x1b\[1;(\d+)(?::(\d+))?([HF])$/);
+  if (homeEndMatch) {
+    const modValue = parseInt(homeEndMatch[1], 10);
+    const eventType = parseEventType(homeEndMatch[2]);
+    const codepoint = homeEndMatch[3] === "H" ? FUNCTIONAL_CODEPOINTS.home : FUNCTIONAL_CODEPOINTS.end;
+    _lastEventType = eventType;
+    return { codepoint, modifier: modValue - 1, eventType };
+  }
+  return null;
+}
+function matchesKittySequence(data, expectedCodepoint, expectedModifier) {
+  const parsed = parseKittySequence(data);
+  if (!parsed)
+    return false;
+  const actualMod = parsed.modifier & ~LOCK_MASK;
+  const expectedMod = expectedModifier & ~LOCK_MASK;
+  if (actualMod !== expectedMod)
+    return false;
+  const normalizedCodepoint = normalizeShiftedLetterIdentityCodepoint(normalizeKittyFunctionalCodepoint(parsed.codepoint), parsed.modifier);
+  const normalizedExpectedCodepoint = normalizeShiftedLetterIdentityCodepoint(normalizeKittyFunctionalCodepoint(expectedCodepoint), expectedModifier);
+  if (normalizedCodepoint === normalizedExpectedCodepoint)
+    return true;
+  if (parsed.baseLayoutKey !== void 0 && parsed.baseLayoutKey === expectedCodepoint) {
+    const cp = normalizedCodepoint;
+    const isLatinLetter = cp >= 97 && cp <= 122;
+    const isKnownSymbol = SYMBOL_KEYS.has(String.fromCharCode(cp));
+    if (!isLatinLetter && !isKnownSymbol)
+      return true;
+  }
+  return false;
+}
+function parseModifyOtherKeysSequence(data) {
+  const match = data.match(/^\x1b\[27;(\d+);(\d+)~$/);
+  if (!match)
+    return null;
+  const modValue = parseInt(match[1], 10);
+  const codepoint = parseInt(match[2], 10);
+  return { codepoint, modifier: modValue - 1 };
+}
+function matchesModifyOtherKeys(data, expectedKeycode, expectedModifier) {
+  const parsed = parseModifyOtherKeysSequence(data);
+  if (!parsed)
+    return false;
+  return parsed.codepoint === expectedKeycode && parsed.modifier === expectedModifier;
+}
+function isWindowsTerminalSession() {
+  return Boolean(process.env.WT_SESSION) && !process.env.SSH_CONNECTION && !process.env.SSH_CLIENT && !process.env.SSH_TTY;
+}
+function matchesRawBackspace(data, expectedModifier) {
+  if (data === "\x7F")
+    return expectedModifier === 0;
+  if (data !== "\b")
+    return false;
+  return isWindowsTerminalSession() ? expectedModifier === MODIFIERS.ctrl : expectedModifier === 0;
+}
+function rawCtrlChar(key) {
+  const char = key.toLowerCase();
+  const code = char.charCodeAt(0);
+  if (code >= 97 && code <= 122 || char === "[" || char === "\\" || char === "]" || char === "_") {
+    return String.fromCharCode(code & 31);
+  }
+  if (char === "-") {
+    return String.fromCharCode(31);
+  }
+  return null;
+}
+function isDigitKey(key) {
+  return key >= "0" && key <= "9";
+}
+function matchesPrintableModifyOtherKeys(data, expectedKeycode, expectedModifier) {
+  if (expectedModifier === 0)
+    return false;
+  const parsed = parseModifyOtherKeysSequence(data);
+  if (!parsed || parsed.modifier !== expectedModifier)
+    return false;
+  return normalizeShiftedLetterIdentityCodepoint(parsed.codepoint, parsed.modifier) === normalizeShiftedLetterIdentityCodepoint(expectedKeycode, expectedModifier);
+}
+function parseKeyId(keyId) {
+  const parts = keyId.toLowerCase().split("+");
+  const key = parts[parts.length - 1];
+  if (!key)
+    return null;
+  return {
+    key,
+    ctrl: parts.includes("ctrl"),
+    shift: parts.includes("shift"),
+    alt: parts.includes("alt"),
+    super: parts.includes("super")
+  };
+}
+function matchesKey(data, keyId) {
+  const parsed = parseKeyId(keyId);
+  if (!parsed)
+    return false;
+  const { key, ctrl, shift, alt, super: superModifier } = parsed;
+  let modifier = 0;
+  if (shift)
+    modifier |= MODIFIERS.shift;
+  if (alt)
+    modifier |= MODIFIERS.alt;
+  if (ctrl)
+    modifier |= MODIFIERS.ctrl;
+  if (superModifier)
+    modifier |= MODIFIERS.super;
+  switch (key) {
+    case "escape":
+    case "esc":
+      if (modifier !== 0)
+        return false;
+      return data === "\x1B" || matchesKittySequence(data, CODEPOINTS.escape, 0) || matchesModifyOtherKeys(data, CODEPOINTS.escape, 0);
+    case "space":
+      if (!_kittyProtocolActive) {
+        if (modifier === MODIFIERS.ctrl && data === "\0") {
+          return true;
+        }
+        if (modifier === MODIFIERS.alt && data === "\x1B ") {
+          return true;
+        }
+      }
+      if (modifier === 0) {
+        return data === " " || matchesKittySequence(data, CODEPOINTS.space, 0) || matchesModifyOtherKeys(data, CODEPOINTS.space, 0);
+      }
+      return matchesKittySequence(data, CODEPOINTS.space, modifier) || matchesModifyOtherKeys(data, CODEPOINTS.space, modifier);
+    case "tab":
+      if (modifier === MODIFIERS.shift) {
+        return data === "\x1B[Z" || matchesKittySequence(data, CODEPOINTS.tab, MODIFIERS.shift) || matchesModifyOtherKeys(data, CODEPOINTS.tab, MODIFIERS.shift);
+      }
+      if (modifier === 0) {
+        return data === "	" || matchesKittySequence(data, CODEPOINTS.tab, 0);
+      }
+      return matchesKittySequence(data, CODEPOINTS.tab, modifier) || matchesModifyOtherKeys(data, CODEPOINTS.tab, modifier);
+    case "enter":
+    case "return":
+      if (modifier === MODIFIERS.shift) {
+        if (matchesKittySequence(data, CODEPOINTS.enter, MODIFIERS.shift) || matchesKittySequence(data, CODEPOINTS.kpEnter, MODIFIERS.shift)) {
+          return true;
+        }
+        if (matchesModifyOtherKeys(data, CODEPOINTS.enter, MODIFIERS.shift)) {
+          return true;
+        }
+        if (_kittyProtocolActive) {
+          return data === "\x1B\r" || data === "\n";
+        }
+        return false;
+      }
+      if (modifier === MODIFIERS.alt) {
+        if (matchesKittySequence(data, CODEPOINTS.enter, MODIFIERS.alt) || matchesKittySequence(data, CODEPOINTS.kpEnter, MODIFIERS.alt)) {
+          return true;
+        }
+        if (matchesModifyOtherKeys(data, CODEPOINTS.enter, MODIFIERS.alt)) {
+          return true;
+        }
+        if (!_kittyProtocolActive) {
+          return data === "\x1B\r";
+        }
+        return false;
+      }
+      if (modifier === 0) {
+        return data === "\r" || !_kittyProtocolActive && data === "\n" || data === "\x1BOM" || // SS3 M (numpad enter in some terminals)
+        matchesKittySequence(data, CODEPOINTS.enter, 0) || matchesKittySequence(data, CODEPOINTS.kpEnter, 0);
+      }
+      return matchesKittySequence(data, CODEPOINTS.enter, modifier) || matchesKittySequence(data, CODEPOINTS.kpEnter, modifier) || matchesModifyOtherKeys(data, CODEPOINTS.enter, modifier);
+    case "backspace":
+      if (modifier === MODIFIERS.alt) {
+        if (data === "\x1B\x7F" || data === "\x1B\b") {
+          return true;
+        }
+        return matchesKittySequence(data, CODEPOINTS.backspace, MODIFIERS.alt) || matchesModifyOtherKeys(data, CODEPOINTS.backspace, MODIFIERS.alt);
+      }
+      if (modifier === MODIFIERS.ctrl) {
+        if (matchesRawBackspace(data, MODIFIERS.ctrl))
+          return true;
+        return matchesKittySequence(data, CODEPOINTS.backspace, MODIFIERS.ctrl) || matchesModifyOtherKeys(data, CODEPOINTS.backspace, MODIFIERS.ctrl);
+      }
+      if (modifier === 0) {
+        return matchesRawBackspace(data, 0) || matchesKittySequence(data, CODEPOINTS.backspace, 0) || matchesModifyOtherKeys(data, CODEPOINTS.backspace, 0);
+      }
+      return matchesKittySequence(data, CODEPOINTS.backspace, modifier) || matchesModifyOtherKeys(data, CODEPOINTS.backspace, modifier);
+    case "insert":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.insert) || matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.insert, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "insert", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.insert, modifier);
+    case "delete":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.delete) || matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.delete, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "delete", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.delete, modifier);
+    case "clear":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.clear);
+      }
+      return matchesLegacyModifierSequence(data, "clear", modifier);
+    case "home":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.home) || matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.home, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "home", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.home, modifier);
+    case "end":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.end) || matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.end, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "end", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.end, modifier);
+    case "pageup":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.pageUp) || matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.pageUp, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "pageUp", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.pageUp, modifier);
+    case "pagedown":
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.pageDown) || matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.pageDown, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "pageDown", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, FUNCTIONAL_CODEPOINTS.pageDown, modifier);
+    case "up":
+      if (modifier === MODIFIERS.alt) {
+        return data === "\x1Bp" || matchesKittySequence(data, ARROW_CODEPOINTS.up, MODIFIERS.alt);
+      }
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.up) || matchesKittySequence(data, ARROW_CODEPOINTS.up, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "up", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, ARROW_CODEPOINTS.up, modifier);
+    case "down":
+      if (modifier === MODIFIERS.alt) {
+        return data === "\x1Bn" || matchesKittySequence(data, ARROW_CODEPOINTS.down, MODIFIERS.alt);
+      }
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.down) || matchesKittySequence(data, ARROW_CODEPOINTS.down, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "down", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, ARROW_CODEPOINTS.down, modifier);
+    case "left":
+      if (modifier === MODIFIERS.alt) {
+        return data === "\x1B[1;3D" || !_kittyProtocolActive && data === "\x1BB" || data === "\x1Bb" || matchesKittySequence(data, ARROW_CODEPOINTS.left, MODIFIERS.alt);
+      }
+      if (modifier === MODIFIERS.ctrl) {
+        return data === "\x1B[1;5D" || matchesLegacyModifierSequence(data, "left", MODIFIERS.ctrl) || matchesKittySequence(data, ARROW_CODEPOINTS.left, MODIFIERS.ctrl);
+      }
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.left) || matchesKittySequence(data, ARROW_CODEPOINTS.left, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "left", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, ARROW_CODEPOINTS.left, modifier);
+    case "right":
+      if (modifier === MODIFIERS.alt) {
+        return data === "\x1B[1;3C" || !_kittyProtocolActive && data === "\x1BF" || data === "\x1Bf" || matchesKittySequence(data, ARROW_CODEPOINTS.right, MODIFIERS.alt);
+      }
+      if (modifier === MODIFIERS.ctrl) {
+        return data === "\x1B[1;5C" || matchesLegacyModifierSequence(data, "right", MODIFIERS.ctrl) || matchesKittySequence(data, ARROW_CODEPOINTS.right, MODIFIERS.ctrl);
+      }
+      if (modifier === 0) {
+        return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES.right) || matchesKittySequence(data, ARROW_CODEPOINTS.right, 0);
+      }
+      if (matchesLegacyModifierSequence(data, "right", modifier)) {
+        return true;
+      }
+      return matchesKittySequence(data, ARROW_CODEPOINTS.right, modifier);
+    case "f1":
+    case "f2":
+    case "f3":
+    case "f4":
+    case "f5":
+    case "f6":
+    case "f7":
+    case "f8":
+    case "f9":
+    case "f10":
+    case "f11":
+    case "f12": {
+      if (modifier !== 0) {
+        return false;
+      }
+      const functionKey = key;
+      return matchesLegacySequence(data, LEGACY_KEY_SEQUENCES[functionKey]);
+    }
+  }
+  if (key.length === 1 && (key >= "a" && key <= "z" || isDigitKey(key) || SYMBOL_KEYS.has(key))) {
+    const codepoint = key.charCodeAt(0);
+    const rawCtrl = rawCtrlChar(key);
+    const isLetter = key >= "a" && key <= "z";
+    const isDigit = isDigitKey(key);
+    if (modifier === MODIFIERS.ctrl + MODIFIERS.alt && !_kittyProtocolActive && rawCtrl) {
+      if (data === `\x1B${rawCtrl}`)
+        return true;
+    }
+    if (modifier === MODIFIERS.alt && !_kittyProtocolActive && (isLetter || isDigit || SYMBOL_KEYS.has(key))) {
+      if (data === `\x1B${key}`)
+        return true;
+    }
+    if (modifier === MODIFIERS.ctrl) {
+      if (rawCtrl && data === rawCtrl)
+        return true;
+      return matchesKittySequence(data, codepoint, MODIFIERS.ctrl) || matchesPrintableModifyOtherKeys(data, codepoint, MODIFIERS.ctrl);
+    }
+    if (modifier === MODIFIERS.shift + MODIFIERS.ctrl) {
+      return matchesKittySequence(data, codepoint, MODIFIERS.shift + MODIFIERS.ctrl) || matchesPrintableModifyOtherKeys(data, codepoint, MODIFIERS.shift + MODIFIERS.ctrl);
+    }
+    if (modifier === MODIFIERS.shift) {
+      if (isLetter && data === key.toUpperCase())
+        return true;
+      return matchesKittySequence(data, codepoint, MODIFIERS.shift) || matchesPrintableModifyOtherKeys(data, codepoint, MODIFIERS.shift);
+    }
+    if (modifier !== 0) {
+      return matchesKittySequence(data, codepoint, modifier) || matchesPrintableModifyOtherKeys(data, codepoint, modifier);
+    }
+    return data === key || matchesKittySequence(data, codepoint, 0);
+  }
+  return false;
+}
+var KITTY_PRINTABLE_ALLOWED_MODIFIERS = MODIFIERS.shift | LOCK_MASK;
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/components/text.js
+var Text = class {
+  text;
+  paddingX;
+  // Left/right padding
+  paddingY;
+  // Top/bottom padding
+  customBgFn;
+  // Cache for rendered output
+  cachedText;
+  cachedWidth;
+  cachedLines;
+  constructor(text = "", paddingX = 1, paddingY = 1, customBgFn) {
+    this.text = text;
+    this.paddingX = paddingX;
+    this.paddingY = paddingY;
+    this.customBgFn = customBgFn;
+  }
+  setText(text) {
+    this.text = text;
+    this.cachedText = void 0;
+    this.cachedWidth = void 0;
+    this.cachedLines = void 0;
+  }
+  setCustomBgFn(customBgFn) {
+    this.customBgFn = customBgFn;
+    this.cachedText = void 0;
+    this.cachedWidth = void 0;
+    this.cachedLines = void 0;
+  }
+  invalidate() {
+    this.cachedText = void 0;
+    this.cachedWidth = void 0;
+    this.cachedLines = void 0;
+  }
+  render(width) {
+    if (this.cachedLines && this.cachedText === this.text && this.cachedWidth === width) {
+      return this.cachedLines;
+    }
+    if (!this.text || this.text.trim() === "") {
+      const result2 = [];
+      this.cachedText = this.text;
+      this.cachedWidth = width;
+      this.cachedLines = result2;
+      return result2;
+    }
+    const normalizedText = this.text.replace(/\t/g, "   ");
+    const contentWidth = Math.max(1, width - this.paddingX * 2);
+    const wrappedLines = wrapTextWithAnsi(normalizedText, contentWidth);
+    const leftMargin = " ".repeat(this.paddingX);
+    const rightMargin = " ".repeat(this.paddingX);
+    const contentLines = [];
+    for (const line of wrappedLines) {
+      const lineWithMargins = leftMargin + line + rightMargin;
+      if (this.customBgFn) {
+        contentLines.push(applyBackgroundToLine(lineWithMargins, width, this.customBgFn));
+      } else {
+        const visibleLen = visibleWidth(lineWithMargins);
+        const paddingNeeded = Math.max(0, width - visibleLen);
+        contentLines.push(lineWithMargins + " ".repeat(paddingNeeded));
+      }
+    }
+    const emptyLine = " ".repeat(width);
+    const emptyLines = [];
+    for (let i = 0; i < this.paddingY; i++) {
+      const line = this.customBgFn ? applyBackgroundToLine(emptyLine, width, this.customBgFn) : emptyLine;
+      emptyLines.push(line);
+    }
+    const result = [...emptyLines, ...contentLines, ...emptyLines];
+    this.cachedText = this.text;
+    this.cachedWidth = width;
+    this.cachedLines = result;
+    return result.length > 0 ? result : [""];
+  }
+};
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/tui.js
+import * as fs2 from "fs";
+import * as os from "os";
+import * as path3 from "path";
+import { performance } from "perf_hooks";
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/terminal-image.js
+import { execSync } from "child_process";
+import { homedir as homedir3 } from "os";
+import { isAbsolute } from "path";
+import { pathToFileURL } from "url";
+var cachedCapabilities = null;
+function probeTmuxHyperlinks() {
+  try {
+    const termfeatures = execSync("tmux display-message -p '#{client_termfeatures}'", {
+      encoding: "utf8",
+      timeout: 250,
+      stdio: ["ignore", "pipe", "ignore"]
+    });
+    return termfeatures.split(",").map((feature) => feature.trim()).includes("hyperlinks");
+  } catch {
+    return false;
+  }
+}
+function detectCapabilities(tmuxForwardsHyperlink = probeTmuxHyperlinks) {
+  const termProgram = process.env.TERM_PROGRAM?.toLowerCase() || "";
+  const terminalEmulator = process.env.TERMINAL_EMULATOR?.toLowerCase() || "";
+  const term = process.env.TERM?.toLowerCase() || "";
+  const colorTerm = process.env.COLORTERM?.toLowerCase() || "";
+  const hasTrueColorHint = colorTerm === "truecolor" || colorTerm === "24bit";
+  if (process.env.TMUX || term.startsWith("tmux")) {
+    return { images: null, trueColor: hasTrueColorHint, hyperlinks: tmuxForwardsHyperlink() };
+  }
+  if (term.startsWith("screen")) {
+    return { images: null, trueColor: hasTrueColorHint, hyperlinks: false };
+  }
+  if (process.env.KITTY_WINDOW_ID || termProgram === "kitty") {
+    return { images: "kitty", trueColor: true, hyperlinks: true };
+  }
+  if (termProgram === "ghostty" || term.includes("ghostty") || process.env.GHOSTTY_RESOURCES_DIR) {
+    return { images: "kitty", trueColor: true, hyperlinks: true };
+  }
+  if (process.env.WEZTERM_PANE || termProgram === "wezterm") {
+    return { images: "kitty", trueColor: true, hyperlinks: true };
+  }
+  if (termProgram === "warpterminal" || process.env.WARP_SESSION_ID || process.env.WARP_TERMINAL_SESSION_UUID) {
+    return { images: "kitty", trueColor: true, hyperlinks: true };
+  }
+  if (process.env.ITERM_SESSION_ID || termProgram === "iterm.app") {
+    return { images: "iterm2", trueColor: true, hyperlinks: true };
+  }
+  if (process.env.WT_SESSION) {
+    return { images: null, trueColor: true, hyperlinks: true };
+  }
+  if (termProgram === "vscode") {
+    return { images: null, trueColor: true, hyperlinks: true };
+  }
+  if (termProgram === "alacritty") {
+    return { images: null, trueColor: true, hyperlinks: true };
+  }
+  if (terminalEmulator === "jetbrains-jediterm") {
+    return { images: null, trueColor: true, hyperlinks: false };
+  }
+  return { images: null, trueColor: hasTrueColorHint, hyperlinks: false };
+}
+function getCapabilities() {
+  if (!cachedCapabilities) {
+    cachedCapabilities = detectCapabilities();
+  }
+  return cachedCapabilities;
+}
+var KITTY_PREFIX = "\x1B_G";
+var ITERM2_PREFIX = "\x1B]1337;File=";
+function isImageLine(line) {
+  if (line.startsWith(KITTY_PREFIX) || line.startsWith(ITERM2_PREFIX)) {
+    return true;
+  }
+  return line.includes(KITTY_PREFIX) || line.includes(ITERM2_PREFIX);
+}
+function hyperlink(text, url) {
+  return `\x1B]8;;${url}\x1B\\${text}\x1B]8;;\x1B\\`;
+}
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/word-navigation.js
+var wordSegmenter2 = getWordSegmenter();
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/components/editor.js
+var graphemeSegmenter2 = getGraphemeSegmenter();
+var wordSegmenter3 = getWordSegmenter();
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/components/input.js
+var segmenter = getGraphemeSegmenter();
+
+// ../main/node_modules/marked/lib/marked.esm.js
+function M() {
+  return { async: false, breaks: false, extensions: null, gfm: true, hooks: null, pedantic: false, renderer: null, silent: false, tokenizer: null, walkTokens: null };
+}
+var T = M();
+function N(l3) {
+  T = l3;
+}
+var _ = { exec: () => null };
+function E(l3) {
+  let e = [];
+  return (t) => {
+    let n = Math.max(0, Math.min(3, t - 1)), s = e[n];
+    return s || (s = l3(n), e[n] = s), s;
+  };
+}
+function d(l3, e = "") {
+  let t = typeof l3 == "string" ? l3 : l3.source, n = { replace: (s, r) => {
+    let i = typeof r == "string" ? r : r.source;
+    return i = i.replace(m.caret, "$1"), t = t.replace(s, i), n;
+  }, getRegex: () => new RegExp(t, e) };
+  return n;
+}
+var Te = ((l3 = "") => {
+  try {
+    return !!new RegExp("(?<=1)(?<!1)" + l3);
+  } catch {
+    return false;
+  }
+})();
+var m = { codeRemoveIndent: /^(?: {1,4}| {0,3}\t)/gm, outputLinkReplace: /\\([\[\]])/g, indentCodeCompensation: /^(\s+)(?:```)/, beginningSpace: /^\s+/, endingHash: /#$/, startingSpaceChar: /^ /, endingSpaceChar: / $/, nonSpaceChar: /[^ ]/, newLineCharGlobal: /\n/g, tabCharGlobal: /\t/g, multipleSpaceGlobal: /\s+/g, blankLine: /^[ \t]*$/, doubleBlankLine: /\n[ \t]*\n[ \t]*$/, blockquoteStart: /^ {0,3}>/, blockquoteSetextReplace: /\n {0,3}((?:=+|-+) *)(?=\n|$)/g, blockquoteSetextReplace2: /^ {0,3}>[ \t]?/gm, listReplaceNesting: /^ {1,4}(?=( {4})*[^ ])/g, listIsTask: /^\[[ xX]\] +\S/, listReplaceTask: /^\[[ xX]\] +/, listTaskCheckbox: /\[[ xX]\]/, anyLine: /\n.*\n/, hrefBrackets: /^<(.*)>$/, tableDelimiter: /[:|]/, tableAlignChars: /^\||\| *$/g, tableRowBlankLine: /\n[ \t]*$/, tableAlignRight: /^ *-+: *$/, tableAlignCenter: /^ *:-+: *$/, tableAlignLeft: /^ *:-+ *$/, startATag: /^<a /i, endATag: /^<\/a>/i, startPreScriptTag: /^<(pre|code|kbd|script)(\s|>)/i, endPreScriptTag: /^<\/(pre|code|kbd|script)(\s|>)/i, startAngleBracket: /^</, endAngleBracket: />$/, pedanticHrefTitle: /^([^'"]*[^\s])\s+(['"])(.*)\2/, unicodeAlphaNumeric: /[\p{L}\p{N}]/u, escapeTest: /[&<>"']/, escapeReplace: /[&<>"']/g, escapeTestNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/, escapeReplaceNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g, caret: /(^|[^\[])\^/g, percentDecode: /%25/g, findPipe: /\|/g, splitPipe: / \|/, slashPipe: /\\\|/g, carriageReturn: /\r\n|\r/g, spaceLine: /^ +$/gm, notSpaceStart: /^\S*/, endingNewline: /\n$/, listItemRegex: (l3) => new RegExp(`^( {0,3}${l3})((?:[	 ][^\\n]*)?(?:\\n|$))`), nextBulletRegex: E((l3) => new RegExp(`^ {0,${l3}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`)), hrRegex: E((l3) => new RegExp(`^ {0,${l3}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`)), fencesBeginRegex: E((l3) => new RegExp(`^ {0,${l3}}(?:\`\`\`|~~~)`)), headingBeginRegex: E((l3) => new RegExp(`^ {0,${l3}}#`)), htmlBeginRegex: E((l3) => new RegExp(`^ {0,${l3}}<(?:[a-z].*>|!--)`, "i")), blockquoteBeginRegex: E((l3) => new RegExp(`^ {0,${l3}}>`)) };
+var Oe = /^(?:[ \t]*(?:\n|$))+/;
+var we = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/;
+var ye = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/;
+var B = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/;
+var Pe = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/;
+var j = / {0,3}(?:[*+-]|\d{1,9}[.)])/;
+var oe = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/;
+var ae = d(oe).replace(/bull/g, j).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex();
+var Se = d(oe).replace(/bull/g, j).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex();
+var F = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/;
+var $e = /^[^\n]+/;
+var U = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/;
+var Le = d(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", U).replace("title", /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex();
+var _e = d(/^(bull)([ \t][^\n]*?)?(?:\n|$)/).replace(/bull/g, j).getRegex();
+var H = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul";
+var K = /<!--(?:-?>|[\s\S]*?(?:-->|$))/;
+var ze = d("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", K).replace("tag", H).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex();
+var le = d(F).replace("hr", B).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]+[^ \\t\\n]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", H).getRegex();
+var Me = d(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph", le).getRegex();
+var W = { blockquote: Me, code: we, def: Le, fences: ye, heading: Pe, hr: B, html: ze, lheading: ae, list: _e, newline: Oe, paragraph: le, table: _, text: $e };
+var se = d("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", B).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", H).getRegex();
+var Ee = { ...W, lheading: Se, table: se, paragraph: d(F).replace("hr", B).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", se).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]+[^ \\t\\n]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", H).getRegex() };
+var Ie = { ...W, html: d(`^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))`).replace("comment", K).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(), def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/, heading: /^(#{1,6})(.*)(?:\n+|$)/, fences: _, lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/, paragraph: d(F).replace("hr", B).replace("heading", ` *#{1,6} *[^
+]`).replace("lheading", ae).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex() };
+var Ae = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/;
+var Ce = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/;
+var ue = /^( {2,}|\\)\n(?!\s*$)/;
+var Be = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/;
+var I = /[\p{P}\p{S}]/u;
+var Z = /[\s\p{P}\p{S}]/u;
+var X = /[^\s\p{P}\p{S}]/u;
+var De = d(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, Z).getRegex();
+var pe = /(?!~)[\p{P}\p{S}]/u;
+var qe = /(?!~)[\s\p{P}\p{S}]/u;
+var ve = /(?:[^\s\p{P}\p{S}]|~)/u;
+var He = d(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", Te ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex();
+var ce = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/;
+var Ze = d(ce, "u").replace(/punct/g, I).getRegex();
+var Ge = d(ce, "u").replace(/punct/g, pe).getRegex();
+var he = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)";
+var Ne = d(he, "gu").replace(/notPunctSpace/g, X).replace(/punctSpace/g, Z).replace(/punct/g, I).getRegex();
+var Qe = d(he, "gu").replace(/notPunctSpace/g, ve).replace(/punctSpace/g, qe).replace(/punct/g, pe).getRegex();
+var je = d("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, X).replace(/punctSpace/g, Z).replace(/punct/g, I).getRegex();
+var Fe = d(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, I).getRegex();
+var Ue = "^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)";
+var Ke = d(Ue, "gu").replace(/notPunctSpace/g, X).replace(/punctSpace/g, Z).replace(/punct/g, I).getRegex();
+var We = d(/\\(punct)/, "gu").replace(/punct/g, I).getRegex();
+var Xe = d(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex();
+var Je = d(K).replace("(?:-->|$)", "-->").getRegex();
+var Ve = d("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", Je).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex();
+var v = /(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/;
+var Ye = d(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label", v).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]*/).replace("title", /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex();
+var ke = d(/^!?\[(label)\]\[(ref)\]/).replace("label", v).replace("ref", U).getRegex();
+var de = d(/^!?\[(ref)\](?:\[\])?/).replace("ref", U).getRegex();
+var et = d("reflink|nolink(?!\\()", "g").replace("reflink", ke).replace("nolink", de).getRegex();
+var ie = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/;
+var J = { _backpedal: _, anyPunctuation: We, autolink: Xe, blockSkip: He, br: ue, code: Ce, del: _, delLDelim: _, delRDelim: _, emStrongLDelim: Ze, emStrongRDelimAst: Ne, emStrongRDelimUnd: je, escape: Ae, link: Ye, nolink: de, punctuation: De, reflink: ke, reflinkSearch: et, tag: Ve, text: Be, url: _ };
+var tt = { ...J, link: d(/^!?\[(label)\]\((.*?)\)/).replace("label", v).getRegex(), reflink: d(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", v).getRegex() };
+var Q = { ...J, emStrongRDelimAst: Qe, emStrongLDelim: Ge, delLDelim: Fe, delRDelim: Ke, url: d(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol", ie).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(), _backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/, del: /^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/, text: d(/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol", ie).getRegex() };
+var nt = { ...Q, br: d(ue).replace("{2,}", "*").getRegex(), text: d(Q.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex() };
+var D = { normal: W, gfm: Ee, pedantic: Ie };
+var A = { normal: J, gfm: Q, breaks: nt, pedantic: tt };
+var rt = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+var ge = (l3) => rt[l3];
+function O(l3, e) {
+  if (e) {
+    if (m.escapeTest.test(l3)) return l3.replace(m.escapeReplace, ge);
+  } else if (m.escapeTestNoEncode.test(l3)) return l3.replace(m.escapeReplaceNoEncode, ge);
+  return l3;
+}
+function V(l3) {
+  try {
+    l3 = encodeURI(l3).replace(m.percentDecode, "%");
+  } catch {
+    return null;
+  }
+  return l3;
+}
+function Y(l3, e) {
+  let t = l3.replace(m.findPipe, (r, i, o) => {
+    let u = false, a = i;
+    for (; --a >= 0 && o[a] === "\\"; ) u = !u;
+    return u ? "|" : " |";
+  }), n = t.split(m.splitPipe), s = 0;
+  if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), e) if (n.length > e) n.splice(e);
+  else for (; n.length < e; ) n.push("");
+  for (; s < n.length; s++) n[s] = n[s].trim().replace(m.slashPipe, "|");
+  return n;
+}
+function $(l3, e, t) {
+  let n = l3.length;
+  if (n === 0) return "";
+  let s = 0;
+  for (; s < n; ) {
+    let r = l3.charAt(n - s - 1);
+    if (r === e && !t) s++;
+    else if (r !== e && t) s++;
+    else break;
+  }
+  return l3.slice(0, n - s);
+}
+function ee(l3) {
+  let e = l3.split(`
+`), t = e.length - 1;
+  for (; t >= 0 && m.blankLine.test(e[t]); ) t--;
+  return e.length - t <= 2 ? l3 : e.slice(0, t + 1).join(`
+`);
+}
+function fe(l3, e) {
+  if (l3.indexOf(e[1]) === -1) return -1;
+  let t = 0;
+  for (let n = 0; n < l3.length; n++) if (l3[n] === "\\") n++;
+  else if (l3[n] === e[0]) t++;
+  else if (l3[n] === e[1] && (t--, t < 0)) return n;
+  return t > 0 ? -2 : -1;
+}
+function me(l3, e = 0) {
+  let t = e, n = "";
+  for (let s of l3) if (s === "	") {
+    let r = 4 - t % 4;
+    n += " ".repeat(r), t += r;
+  } else n += s, t++;
+  return n;
+}
+function xe(l3, e, t, n, s) {
+  let r = e.href, i = e.title || null, o = l3[1].replace(s.other.outputLinkReplace, "$1");
+  n.state.inLink = true;
+  let u = { type: l3[0].charAt(0) === "!" ? "image" : "link", raw: t, href: r, title: i, text: o, tokens: n.inlineTokens(o) };
+  return n.state.inLink = false, u;
+}
+function st(l3, e, t) {
+  let n = l3.match(t.other.indentCodeCompensation);
+  if (n === null) return e;
+  let s = n[1];
+  return e.split(`
+`).map((r) => {
+    let i = r.match(t.other.beginningSpace);
+    if (i === null) return r;
+    let [o] = i;
+    return o.length >= s.length ? r.slice(s.length) : r;
+  }).join(`
+`);
+}
+var w = class {
+  options;
+  rules;
+  lexer;
+  constructor(e) {
+    this.options = e || T;
+  }
+  space(e) {
+    let t = this.rules.block.newline.exec(e);
+    if (t && t[0].length > 0) return { type: "space", raw: t[0] };
+  }
+  code(e) {
+    let t = this.rules.block.code.exec(e);
+    if (t) {
+      let n = this.options.pedantic ? t[0] : ee(t[0]), s = n.replace(this.rules.other.codeRemoveIndent, "");
+      return { type: "code", raw: n, codeBlockStyle: "indented", text: s };
+    }
+  }
+  fences(e) {
+    let t = this.rules.block.fences.exec(e);
+    if (t) {
+      let n = t[0], s = st(n, t[3] || "", this.rules);
+      return { type: "code", raw: n, lang: t[2] ? t[2].trim().replace(this.rules.inline.anyPunctuation, "$1") : t[2], text: s };
+    }
+  }
+  heading(e) {
+    let t = this.rules.block.heading.exec(e);
+    if (t) {
+      let n = t[2].trim();
+      if (this.rules.other.endingHash.test(n)) {
+        let s = $(n, "#");
+        (this.options.pedantic || !s || this.rules.other.endingSpaceChar.test(s)) && (n = s.trim());
+      }
+      return { type: "heading", raw: $(t[0], `
+`), depth: t[1].length, text: n, tokens: this.lexer.inline(n) };
+    }
+  }
+  hr(e) {
+    let t = this.rules.block.hr.exec(e);
+    if (t) return { type: "hr", raw: $(t[0], `
+`) };
+  }
+  blockquote(e) {
+    let t = this.rules.block.blockquote.exec(e);
+    if (t) {
+      let n = $(t[0], `
+`).split(`
+`), s = "", r = "", i = [];
+      for (; n.length > 0; ) {
+        let o = false, u = [], a;
+        for (a = 0; a < n.length; a++) if (this.rules.other.blockquoteStart.test(n[a])) u.push(n[a]), o = true;
+        else if (!o) u.push(n[a]);
+        else break;
+        n = n.slice(a);
+        let c = u.join(`
+`), p = c.replace(this.rules.other.blockquoteSetextReplace, `
+    $1`).replace(this.rules.other.blockquoteSetextReplace2, "");
+        s = s ? `${s}
+${c}` : c, r = r ? `${r}
+${p}` : p;
+        let k = this.lexer.state.top;
+        if (this.lexer.state.top = true, this.lexer.blockTokens(p, i, true), this.lexer.state.top = k, n.length === 0) break;
+        let h = i.at(-1);
+        if (h?.type === "code") break;
+        if (h?.type === "blockquote") {
+          let R = h, f = R.raw + `
+` + n.join(`
+`), S = this.blockquote(f);
+          i[i.length - 1] = S, s = s.substring(0, s.length - R.raw.length) + S.raw, r = r.substring(0, r.length - R.text.length) + S.text;
+          break;
+        } else if (h?.type === "list") {
+          let R = h, f = R.raw + `
+` + n.join(`
+`), S = this.list(f);
+          i[i.length - 1] = S, s = s.substring(0, s.length - h.raw.length) + S.raw, r = r.substring(0, r.length - R.raw.length) + S.raw, n = f.substring(i.at(-1).raw.length).split(`
+`);
+          continue;
+        }
+      }
+      return { type: "blockquote", raw: s, tokens: i, text: r };
+    }
+  }
+  list(e) {
+    let t = this.rules.block.list.exec(e);
+    if (t) {
+      let n = t[1].trim(), s = n.length > 1, r = { type: "list", raw: "", ordered: s, start: s ? +n.slice(0, -1) : "", loose: false, items: [] };
+      n = s ? `\\d{1,9}\\${n.slice(-1)}` : `\\${n}`, this.options.pedantic && (n = s ? n : "[*+-]");
+      let i = this.rules.other.listItemRegex(n), o = false;
+      for (; e; ) {
+        let a = false, c = "", p = "";
+        if (!(t = i.exec(e)) || this.rules.block.hr.test(e)) break;
+        c = t[0], e = e.substring(c.length);
+        let k = me(t[2].split(`
+`, 1)[0], t[1].length), h = e.split(`
+`, 1)[0], R = !k.trim(), f = 0;
+        if (this.options.pedantic ? (f = 2, p = k.trimStart()) : R ? f = t[1].length + 1 : (f = k.search(this.rules.other.nonSpaceChar), f = f > 4 ? 1 : f, p = k.slice(f), f += t[1].length), R && this.rules.other.blankLine.test(h) && (c += h + `
+`, e = e.substring(h.length + 1), a = true), !a) {
+          let S = this.rules.other.nextBulletRegex(f), te = this.rules.other.hrRegex(f), ne = this.rules.other.fencesBeginRegex(f), re = this.rules.other.headingBeginRegex(f), be = this.rules.other.htmlBeginRegex(f), Re = this.rules.other.blockquoteBeginRegex(f);
+          for (; e; ) {
+            let G = e.split(`
+`, 1)[0], C;
+            if (h = G, this.options.pedantic ? (h = h.replace(this.rules.other.listReplaceNesting, "  "), C = h) : C = h.replace(this.rules.other.tabCharGlobal, "    "), ne.test(h) || re.test(h) || be.test(h) || Re.test(h) || S.test(h) || te.test(h)) break;
+            if (C.search(this.rules.other.nonSpaceChar) >= f || !h.trim()) p += `
+` + C.slice(f);
+            else {
+              if (R || k.replace(this.rules.other.tabCharGlobal, "    ").search(this.rules.other.nonSpaceChar) >= 4 || ne.test(k) || re.test(k) || te.test(k)) break;
+              p += `
+` + h;
+            }
+            R = !h.trim(), c += G + `
+`, e = e.substring(G.length + 1), k = C.slice(f);
+          }
+        }
+        r.loose || (o ? r.loose = true : this.rules.other.doubleBlankLine.test(c) && (o = true)), r.items.push({ type: "list_item", raw: c, task: !!this.options.gfm && this.rules.other.listIsTask.test(p), loose: false, text: p, tokens: [] }), r.raw += c;
+      }
+      let u = r.items.at(-1);
+      if (u) u.raw = u.raw.trimEnd(), u.text = u.text.trimEnd();
+      else return;
+      r.raw = r.raw.trimEnd();
+      for (let a of r.items) {
+        this.lexer.state.top = false, a.tokens = this.lexer.blockTokens(a.text, []);
+        let c = a.tokens[0];
+        if (a.task && (c?.type === "text" || c?.type === "paragraph")) {
+          a.text = a.text.replace(this.rules.other.listReplaceTask, ""), c.raw = c.raw.replace(this.rules.other.listReplaceTask, ""), c.text = c.text.replace(this.rules.other.listReplaceTask, "");
+          for (let k = this.lexer.inlineQueue.length - 1; k >= 0; k--) if (this.rules.other.listIsTask.test(this.lexer.inlineQueue[k].src)) {
+            this.lexer.inlineQueue[k].src = this.lexer.inlineQueue[k].src.replace(this.rules.other.listReplaceTask, "");
+            break;
+          }
+          let p = this.rules.other.listTaskCheckbox.exec(a.raw);
+          if (p) {
+            let k = { type: "checkbox", raw: p[0] + " ", checked: p[0] !== "[ ]" };
+            a.checked = k.checked, r.loose ? a.tokens[0] && ["paragraph", "text"].includes(a.tokens[0].type) && "tokens" in a.tokens[0] && a.tokens[0].tokens ? (a.tokens[0].raw = k.raw + a.tokens[0].raw, a.tokens[0].text = k.raw + a.tokens[0].text, a.tokens[0].tokens.unshift(k)) : a.tokens.unshift({ type: "paragraph", raw: k.raw, text: k.raw, tokens: [k] }) : a.tokens.unshift(k);
+          }
+        } else a.task && (a.task = false);
+        if (!r.loose) {
+          let p = a.tokens.filter((h) => h.type === "space"), k = p.length > 0 && p.some((h) => this.rules.other.anyLine.test(h.raw));
+          r.loose = k;
+        }
+      }
+      if (r.loose) for (let a of r.items) {
+        a.loose = true;
+        for (let c of a.tokens) c.type === "text" && (c.type = "paragraph");
+      }
+      return r;
+    }
+  }
+  html(e) {
+    let t = this.rules.block.html.exec(e);
+    if (t) {
+      let n = ee(t[0]);
+      return { type: "html", block: true, raw: n, pre: t[1] === "pre" || t[1] === "script" || t[1] === "style", text: n };
+    }
+  }
+  def(e) {
+    let t = this.rules.block.def.exec(e);
+    if (t) {
+      let n = t[1].toLowerCase().replace(this.rules.other.multipleSpaceGlobal, " "), s = t[2] ? t[2].replace(this.rules.other.hrefBrackets, "$1").replace(this.rules.inline.anyPunctuation, "$1") : "", r = t[3] ? t[3].substring(1, t[3].length - 1).replace(this.rules.inline.anyPunctuation, "$1") : t[3];
+      return { type: "def", tag: n, raw: $(t[0], `
+`), href: s, title: r };
+    }
+  }
+  table(e) {
+    let t = this.rules.block.table.exec(e);
+    if (!t || !this.rules.other.tableDelimiter.test(t[2])) return;
+    let n = Y(t[1]), s = t[2].replace(this.rules.other.tableAlignChars, "").split("|"), r = t[3]?.trim() ? t[3].replace(this.rules.other.tableRowBlankLine, "").split(`
+`) : [], i = { type: "table", raw: $(t[0], `
+`), header: [], align: [], rows: [] };
+    if (n.length === s.length) {
+      for (let o of s) this.rules.other.tableAlignRight.test(o) ? i.align.push("right") : this.rules.other.tableAlignCenter.test(o) ? i.align.push("center") : this.rules.other.tableAlignLeft.test(o) ? i.align.push("left") : i.align.push(null);
+      for (let o = 0; o < n.length; o++) i.header.push({ text: n[o], tokens: this.lexer.inline(n[o]), header: true, align: i.align[o] });
+      for (let o of r) i.rows.push(Y(o, i.header.length).map((u, a) => ({ text: u, tokens: this.lexer.inline(u), header: false, align: i.align[a] })));
+      return i;
+    }
+  }
+  lheading(e) {
+    let t = this.rules.block.lheading.exec(e);
+    if (t) {
+      let n = t[1].trim();
+      return { type: "heading", raw: $(t[0], `
+`), depth: t[2].charAt(0) === "=" ? 1 : 2, text: n, tokens: this.lexer.inline(n) };
+    }
+  }
+  paragraph(e) {
+    let t = this.rules.block.paragraph.exec(e);
+    if (t) {
+      let n = t[1].charAt(t[1].length - 1) === `
+` ? t[1].slice(0, -1) : t[1];
+      return { type: "paragraph", raw: t[0], text: n, tokens: this.lexer.inline(n) };
+    }
+  }
+  text(e) {
+    let t = this.rules.block.text.exec(e);
+    if (t) return { type: "text", raw: t[0], text: t[0], tokens: this.lexer.inline(t[0]) };
+  }
+  escape(e) {
+    let t = this.rules.inline.escape.exec(e);
+    if (t) return { type: "escape", raw: t[0], text: t[1] };
+  }
+  tag(e) {
+    let t = this.rules.inline.tag.exec(e);
+    if (t) return !this.lexer.state.inLink && this.rules.other.startATag.test(t[0]) ? this.lexer.state.inLink = true : this.lexer.state.inLink && this.rules.other.endATag.test(t[0]) && (this.lexer.state.inLink = false), !this.lexer.state.inRawBlock && this.rules.other.startPreScriptTag.test(t[0]) ? this.lexer.state.inRawBlock = true : this.lexer.state.inRawBlock && this.rules.other.endPreScriptTag.test(t[0]) && (this.lexer.state.inRawBlock = false), { type: "html", raw: t[0], inLink: this.lexer.state.inLink, inRawBlock: this.lexer.state.inRawBlock, block: false, text: t[0] };
+  }
+  link(e) {
+    let t = this.rules.inline.link.exec(e);
+    if (t) {
+      let n = t[2].trim();
+      if (!this.options.pedantic && this.rules.other.startAngleBracket.test(n)) {
+        if (!this.rules.other.endAngleBracket.test(n)) return;
+        let i = $(n.slice(0, -1), "\\");
+        if ((n.length - i.length) % 2 === 0) return;
+      } else {
+        let i = fe(t[2], "()");
+        if (i === -2) return;
+        if (i > -1) {
+          let u = (t[0].indexOf("!") === 0 ? 5 : 4) + t[1].length + i;
+          t[2] = t[2].substring(0, i), t[0] = t[0].substring(0, u).trim(), t[3] = "";
+        }
+      }
+      let s = t[2], r = "";
+      if (this.options.pedantic) {
+        let i = this.rules.other.pedanticHrefTitle.exec(s);
+        i && (s = i[1], r = i[3]);
+      } else r = t[3] ? t[3].slice(1, -1) : "";
+      return s = s.trim(), this.rules.other.startAngleBracket.test(s) && (this.options.pedantic && !this.rules.other.endAngleBracket.test(n) ? s = s.slice(1) : s = s.slice(1, -1)), xe(t, { href: s && s.replace(this.rules.inline.anyPunctuation, "$1"), title: r && r.replace(this.rules.inline.anyPunctuation, "$1") }, t[0], this.lexer, this.rules);
+    }
+  }
+  reflink(e, t) {
+    let n;
+    if ((n = this.rules.inline.reflink.exec(e)) || (n = this.rules.inline.nolink.exec(e))) {
+      let s = (n[2] || n[1]).replace(this.rules.other.multipleSpaceGlobal, " "), r = t[s.toLowerCase()];
+      if (!r) {
+        let i = n[0].charAt(0);
+        return { type: "text", raw: i, text: i };
+      }
+      return xe(n, r, n[0], this.lexer, this.rules);
+    }
+  }
+  emStrong(e, t, n = "") {
+    let s = this.rules.inline.emStrongLDelim.exec(e);
+    if (!s || !s[1] && !s[2] && !s[3] && !s[4] || s[4] && n.match(this.rules.other.unicodeAlphaNumeric)) return;
+    if (!(s[1] || s[3] || "") || !n || this.rules.inline.punctuation.exec(n)) {
+      let i = [...s[0]].length - 1, o, u, a = i, c = 0, p = s[0][0] === "*" ? this.rules.inline.emStrongRDelimAst : this.rules.inline.emStrongRDelimUnd;
+      for (p.lastIndex = 0, t = t.slice(-1 * e.length + i); (s = p.exec(t)) !== null; ) {
+        if (o = s[1] || s[2] || s[3] || s[4] || s[5] || s[6], !o) continue;
+        if (u = [...o].length, s[3] || s[4]) {
+          a += u;
+          continue;
+        } else if ((s[5] || s[6]) && i % 3 && !((i + u) % 3)) {
+          c += u;
+          continue;
+        }
+        if (a -= u, a > 0) continue;
+        u = Math.min(u, u + a + c);
+        let k = [...s[0]][0].length, h = e.slice(0, i + s.index + k + u);
+        if (Math.min(i, u) % 2) {
+          let f = h.slice(1, -1);
+          return { type: "em", raw: h, text: f, tokens: this.lexer.inlineTokens(f) };
+        }
+        let R = h.slice(2, -2);
+        return { type: "strong", raw: h, text: R, tokens: this.lexer.inlineTokens(R) };
+      }
+    }
+  }
+  codespan(e) {
+    let t = this.rules.inline.code.exec(e);
+    if (t) {
+      let n = t[2].replace(this.rules.other.newLineCharGlobal, " "), s = this.rules.other.nonSpaceChar.test(n), r = this.rules.other.startingSpaceChar.test(n) && this.rules.other.endingSpaceChar.test(n);
+      return s && r && (n = n.substring(1, n.length - 1)), { type: "codespan", raw: t[0], text: n };
+    }
+  }
+  br(e) {
+    let t = this.rules.inline.br.exec(e);
+    if (t) return { type: "br", raw: t[0] };
+  }
+  del(e, t, n = "") {
+    let s = this.rules.inline.delLDelim.exec(e);
+    if (!s) return;
+    if (!(s[1] || "") || !n || this.rules.inline.punctuation.exec(n)) {
+      let i = [...s[0]].length - 1, o, u, a = i, c = this.rules.inline.delRDelim;
+      for (c.lastIndex = 0, t = t.slice(-1 * e.length + i); (s = c.exec(t)) !== null; ) {
+        if (o = s[1] || s[2] || s[3] || s[4] || s[5] || s[6], !o || (u = [...o].length, u !== i)) continue;
+        if (s[3] || s[4]) {
+          a += u;
+          continue;
+        }
+        if (a -= u, a > 0) continue;
+        u = Math.min(u, u + a);
+        let p = [...s[0]][0].length, k = e.slice(0, i + s.index + p + u), h = k.slice(i, -i);
+        return { type: "del", raw: k, text: h, tokens: this.lexer.inlineTokens(h) };
+      }
+    }
+  }
+  autolink(e) {
+    let t = this.rules.inline.autolink.exec(e);
+    if (t) {
+      let n, s;
+      return t[2] === "@" ? (n = t[1], s = "mailto:" + n) : (n = t[1], s = n), { type: "link", raw: t[0], text: n, href: s, tokens: [{ type: "text", raw: n, text: n }] };
+    }
+  }
+  url(e) {
+    let t;
+    if (t = this.rules.inline.url.exec(e)) {
+      let n, s;
+      if (t[2] === "@") n = t[0], s = "mailto:" + n;
+      else {
+        let r;
+        do
+          r = t[0], t[0] = this.rules.inline._backpedal.exec(t[0])?.[0] ?? "";
+        while (r !== t[0]);
+        n = t[0], t[1] === "www." ? s = "http://" + t[0] : s = t[0];
+      }
+      return { type: "link", raw: t[0], text: n, href: s, tokens: [{ type: "text", raw: n, text: n }] };
+    }
+  }
+  inlineText(e) {
+    let t = this.rules.inline.text.exec(e);
+    if (t) {
+      let n = this.lexer.state.inRawBlock;
+      return { type: "text", raw: t[0], text: t[0], escaped: n };
+    }
+  }
+};
+var x = class l {
+  tokens;
+  options;
+  state;
+  inlineQueue;
+  tokenizer;
+  constructor(e) {
+    this.tokens = [], this.tokens.links = /* @__PURE__ */ Object.create(null), this.options = e || T, this.options.tokenizer = this.options.tokenizer || new w(), this.tokenizer = this.options.tokenizer, this.tokenizer.options = this.options, this.tokenizer.lexer = this, this.inlineQueue = [], this.state = { inLink: false, inRawBlock: false, top: true };
+    let t = { other: m, block: D.normal, inline: A.normal };
+    this.options.pedantic ? (t.block = D.pedantic, t.inline = A.pedantic) : this.options.gfm && (t.block = D.gfm, this.options.breaks ? t.inline = A.breaks : t.inline = A.gfm), this.tokenizer.rules = t;
+  }
+  static get rules() {
+    return { block: D, inline: A };
+  }
+  static lex(e, t) {
+    return new l(t).lex(e);
+  }
+  static lexInline(e, t) {
+    return new l(t).inlineTokens(e);
+  }
+  lex(e) {
+    e = e.replace(m.carriageReturn, `
+`), this.blockTokens(e, this.tokens);
+    for (let t = 0; t < this.inlineQueue.length; t++) {
+      let n = this.inlineQueue[t];
+      this.inlineTokens(n.src, n.tokens);
+    }
+    return this.inlineQueue = [], this.tokens;
+  }
+  blockTokens(e, t = [], n = false) {
+    this.tokenizer.lexer = this, this.options.pedantic && (e = e.replace(m.tabCharGlobal, "    ").replace(m.spaceLine, ""));
+    let s = 1 / 0;
+    for (; e; ) {
+      if (e.length < s) s = e.length;
+      else {
+        this.infiniteLoopError(e.charCodeAt(0));
+        break;
+      }
+      let r;
+      if (this.options.extensions?.block?.some((o) => (r = o.call({ lexer: this }, e, t)) ? (e = e.substring(r.raw.length), t.push(r), true) : false)) continue;
+      if (r = this.tokenizer.space(e)) {
+        e = e.substring(r.raw.length);
+        let o = t.at(-1);
+        r.raw.length === 1 && o !== void 0 ? o.raw += `
+` : t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.code(e)) {
+        e = e.substring(r.raw.length);
+        let o = t.at(-1);
+        o?.type === "paragraph" || o?.type === "text" ? (o.raw += (o.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, o.text += `
+` + r.text, this.inlineQueue.at(-1).src = o.text) : t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.fences(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.heading(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.hr(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.blockquote(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.list(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.html(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.def(e)) {
+        e = e.substring(r.raw.length);
+        let o = t.at(-1);
+        o?.type === "paragraph" || o?.type === "text" ? (o.raw += (o.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, o.text += `
+` + r.raw, this.inlineQueue.at(-1).src = o.text) : this.tokens.links[r.tag] || (this.tokens.links[r.tag] = { href: r.href, title: r.title }, t.push(r));
+        continue;
+      }
+      if (r = this.tokenizer.table(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      if (r = this.tokenizer.lheading(e)) {
+        e = e.substring(r.raw.length), t.push(r);
+        continue;
+      }
+      let i = e;
+      if (this.options.extensions?.startBlock) {
+        let o = 1 / 0, u = e.slice(1), a;
+        this.options.extensions.startBlock.forEach((c) => {
+          a = c.call({ lexer: this }, u), typeof a == "number" && a >= 0 && (o = Math.min(o, a));
+        }), o < 1 / 0 && o >= 0 && (i = e.substring(0, o + 1));
+      }
+      if (this.state.top && (r = this.tokenizer.paragraph(i))) {
+        let o = t.at(-1);
+        n && o?.type === "paragraph" ? (o.raw += (o.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, o.text += `
+` + r.text, this.inlineQueue.pop(), this.inlineQueue.at(-1).src = o.text) : t.push(r), n = i.length !== e.length, e = e.substring(r.raw.length);
+        continue;
+      }
+      if (r = this.tokenizer.text(e)) {
+        e = e.substring(r.raw.length);
+        let o = t.at(-1);
+        o?.type === "text" ? (o.raw += (o.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, o.text += `
+` + r.text, this.inlineQueue.pop(), this.inlineQueue.at(-1).src = o.text) : t.push(r);
+        continue;
+      }
+      if (e) {
+        this.infiniteLoopError(e.charCodeAt(0));
+        break;
+      }
+    }
+    return this.state.top = true, t;
+  }
+  inline(e, t = []) {
+    return this.inlineQueue.push({ src: e, tokens: t }), t;
+  }
+  inlineTokens(e, t = []) {
+    this.tokenizer.lexer = this;
+    let n = e, s = null;
+    if (this.tokens.links) {
+      let a = Object.keys(this.tokens.links);
+      if (a.length > 0) for (; (s = this.tokenizer.rules.inline.reflinkSearch.exec(n)) !== null; ) a.includes(s[0].slice(s[0].lastIndexOf("[") + 1, -1)) && (n = n.slice(0, s.index) + "[" + "a".repeat(s[0].length - 2) + "]" + n.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex));
+    }
+    for (; (s = this.tokenizer.rules.inline.anyPunctuation.exec(n)) !== null; ) n = n.slice(0, s.index) + "++" + n.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);
+    let r;
+    for (; (s = this.tokenizer.rules.inline.blockSkip.exec(n)) !== null; ) r = s[2] ? s[2].length : 0, n = n.slice(0, s.index + r) + "[" + "a".repeat(s[0].length - r - 2) + "]" + n.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
+    n = this.options.hooks?.emStrongMask?.call({ lexer: this }, n) ?? n;
+    let i = false, o = "", u = 1 / 0;
+    for (; e; ) {
+      if (e.length < u) u = e.length;
+      else {
+        this.infiniteLoopError(e.charCodeAt(0));
+        break;
+      }
+      i || (o = ""), i = false;
+      let a;
+      if (this.options.extensions?.inline?.some((p) => (a = p.call({ lexer: this }, e, t)) ? (e = e.substring(a.raw.length), t.push(a), true) : false)) continue;
+      if (a = this.tokenizer.escape(e)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.tag(e)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.link(e)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.reflink(e, this.tokens.links)) {
+        e = e.substring(a.raw.length);
+        let p = t.at(-1);
+        a.type === "text" && p?.type === "text" ? (p.raw += a.raw, p.text += a.text) : t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.emStrong(e, n, o)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.codespan(e)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.br(e)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.del(e, n, o)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (a = this.tokenizer.autolink(e)) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      if (!this.state.inLink && (a = this.tokenizer.url(e))) {
+        e = e.substring(a.raw.length), t.push(a);
+        continue;
+      }
+      let c = e;
+      if (this.options.extensions?.startInline) {
+        let p = 1 / 0, k = e.slice(1), h;
+        this.options.extensions.startInline.forEach((R) => {
+          h = R.call({ lexer: this }, k), typeof h == "number" && h >= 0 && (p = Math.min(p, h));
+        }), p < 1 / 0 && p >= 0 && (c = e.substring(0, p + 1));
+      }
+      if (a = this.tokenizer.inlineText(c)) {
+        e = e.substring(a.raw.length), a.raw.slice(-1) !== "_" && (o = a.raw.slice(-1)), i = true;
+        let p = t.at(-1);
+        p?.type === "text" ? (p.raw += a.raw, p.text += a.text) : t.push(a);
+        continue;
+      }
+      if (e) {
+        this.infiniteLoopError(e.charCodeAt(0));
+        break;
+      }
+    }
+    return t;
+  }
+  infiniteLoopError(e) {
+    let t = "Infinite loop on byte: " + e;
+    if (this.options.silent) console.error(t);
+    else throw new Error(t);
+  }
+};
+var y = class {
+  options;
+  parser;
+  constructor(e) {
+    this.options = e || T;
+  }
+  space(e) {
+    return "";
+  }
+  code({ text: e, lang: t, escaped: n }) {
+    let s = (t || "").match(m.notSpaceStart)?.[0], r = e.replace(m.endingNewline, "") + `
+`;
+    return s ? '<pre><code class="language-' + O(s) + '">' + (n ? r : O(r, true)) + `</code></pre>
+` : "<pre><code>" + (n ? r : O(r, true)) + `</code></pre>
+`;
+  }
+  blockquote({ tokens: e }) {
+    return `<blockquote>
+${this.parser.parse(e)}</blockquote>
+`;
+  }
+  html({ text: e }) {
+    return e;
+  }
+  def(e) {
+    return "";
+  }
+  heading({ tokens: e, depth: t }) {
+    return `<h${t}>${this.parser.parseInline(e)}</h${t}>
+`;
+  }
+  hr(e) {
+    return `<hr>
+`;
+  }
+  list(e) {
+    let t = e.ordered, n = e.start, s = "";
+    for (let o = 0; o < e.items.length; o++) {
+      let u = e.items[o];
+      s += this.listitem(u);
+    }
+    let r = t ? "ol" : "ul", i = t && n !== 1 ? ' start="' + n + '"' : "";
+    return "<" + r + i + `>
+` + s + "</" + r + `>
+`;
+  }
+  listitem(e) {
+    return `<li>${this.parser.parse(e.tokens)}</li>
+`;
+  }
+  checkbox({ checked: e }) {
+    return "<input " + (e ? 'checked="" ' : "") + 'disabled="" type="checkbox"> ';
+  }
+  paragraph({ tokens: e }) {
+    return `<p>${this.parser.parseInline(e)}</p>
+`;
+  }
+  table(e) {
+    let t = "", n = "";
+    for (let r = 0; r < e.header.length; r++) n += this.tablecell(e.header[r]);
+    t += this.tablerow({ text: n });
+    let s = "";
+    for (let r = 0; r < e.rows.length; r++) {
+      let i = e.rows[r];
+      n = "";
+      for (let o = 0; o < i.length; o++) n += this.tablecell(i[o]);
+      s += this.tablerow({ text: n });
+    }
+    return s && (s = `<tbody>${s}</tbody>`), `<table>
+<thead>
+` + t + `</thead>
+` + s + `</table>
+`;
+  }
+  tablerow({ text: e }) {
+    return `<tr>
+${e}</tr>
+`;
+  }
+  tablecell(e) {
+    let t = this.parser.parseInline(e.tokens), n = e.header ? "th" : "td";
+    return (e.align ? `<${n} align="${e.align}">` : `<${n}>`) + t + `</${n}>
+`;
+  }
+  strong({ tokens: e }) {
+    return `<strong>${this.parser.parseInline(e)}</strong>`;
+  }
+  em({ tokens: e }) {
+    return `<em>${this.parser.parseInline(e)}</em>`;
+  }
+  codespan({ text: e }) {
+    return `<code>${O(e, true)}</code>`;
+  }
+  br(e) {
+    return "<br>";
+  }
+  del({ tokens: e }) {
+    return `<del>${this.parser.parseInline(e)}</del>`;
+  }
+  link({ href: e, title: t, tokens: n }) {
+    let s = this.parser.parseInline(n), r = V(e);
+    if (r === null) return s;
+    e = r;
+    let i = '<a href="' + e + '"';
+    return t && (i += ' title="' + O(t) + '"'), i += ">" + s + "</a>", i;
+  }
+  image({ href: e, title: t, text: n, tokens: s }) {
+    s && (n = this.parser.parseInline(s, this.parser.textRenderer));
+    let r = V(e);
+    if (r === null) return O(n);
+    e = r;
+    let i = `<img src="${e}" alt="${O(n)}"`;
+    return t && (i += ` title="${O(t)}"`), i += ">", i;
+  }
+  text(e) {
+    return "tokens" in e && e.tokens ? this.parser.parseInline(e.tokens) : "escaped" in e && e.escaped ? e.text : O(e.text);
+  }
+};
+var L = class {
+  strong({ text: e }) {
+    return e;
+  }
+  em({ text: e }) {
+    return e;
+  }
+  codespan({ text: e }) {
+    return e;
+  }
+  del({ text: e }) {
+    return e;
+  }
+  html({ text: e }) {
+    return e;
+  }
+  text({ text: e }) {
+    return e;
+  }
+  link({ text: e }) {
+    return "" + e;
+  }
+  image({ text: e }) {
+    return "" + e;
+  }
+  br() {
+    return "";
+  }
+  checkbox({ raw: e }) {
+    return e;
+  }
+};
+var b = class l2 {
+  options;
+  renderer;
+  textRenderer;
+  constructor(e) {
+    this.options = e || T, this.options.renderer = this.options.renderer || new y(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new L();
+  }
+  static parse(e, t) {
+    return new l2(t).parse(e);
+  }
+  static parseInline(e, t) {
+    return new l2(t).parseInline(e);
+  }
+  parse(e) {
+    this.renderer.parser = this;
+    let t = "";
+    for (let n = 0; n < e.length; n++) {
+      let s = e[n];
+      if (this.options.extensions?.renderers?.[s.type]) {
+        let i = s, o = this.options.extensions.renderers[i.type].call({ parser: this }, i);
+        if (o !== false || !["space", "hr", "heading", "code", "table", "blockquote", "list", "html", "def", "paragraph", "text"].includes(i.type)) {
+          t += o || "";
+          continue;
+        }
+      }
+      let r = s;
+      switch (r.type) {
+        case "space": {
+          t += this.renderer.space(r);
+          break;
+        }
+        case "hr": {
+          t += this.renderer.hr(r);
+          break;
+        }
+        case "heading": {
+          t += this.renderer.heading(r);
+          break;
+        }
+        case "code": {
+          t += this.renderer.code(r);
+          break;
+        }
+        case "table": {
+          t += this.renderer.table(r);
+          break;
+        }
+        case "blockquote": {
+          t += this.renderer.blockquote(r);
+          break;
+        }
+        case "list": {
+          t += this.renderer.list(r);
+          break;
+        }
+        case "checkbox": {
+          t += this.renderer.checkbox(r);
+          break;
+        }
+        case "html": {
+          t += this.renderer.html(r);
+          break;
+        }
+        case "def": {
+          t += this.renderer.def(r);
+          break;
+        }
+        case "paragraph": {
+          t += this.renderer.paragraph(r);
+          break;
+        }
+        case "text": {
+          t += this.renderer.text(r);
+          break;
+        }
+        default: {
+          let i = 'Token with "' + r.type + '" type was not found.';
+          if (this.options.silent) return console.error(i), "";
+          throw new Error(i);
+        }
+      }
+    }
+    return t;
+  }
+  parseInline(e, t = this.renderer) {
+    this.renderer.parser = this;
+    let n = "";
+    for (let s = 0; s < e.length; s++) {
+      let r = e[s];
+      if (this.options.extensions?.renderers?.[r.type]) {
+        let o = this.options.extensions.renderers[r.type].call({ parser: this }, r);
+        if (o !== false || !["escape", "html", "link", "image", "strong", "em", "codespan", "br", "del", "text"].includes(r.type)) {
+          n += o || "";
+          continue;
+        }
+      }
+      let i = r;
+      switch (i.type) {
+        case "escape": {
+          n += t.text(i);
+          break;
+        }
+        case "html": {
+          n += t.html(i);
+          break;
+        }
+        case "link": {
+          n += t.link(i);
+          break;
+        }
+        case "image": {
+          n += t.image(i);
+          break;
+        }
+        case "checkbox": {
+          n += t.checkbox(i);
+          break;
+        }
+        case "strong": {
+          n += t.strong(i);
+          break;
+        }
+        case "em": {
+          n += t.em(i);
+          break;
+        }
+        case "codespan": {
+          n += t.codespan(i);
+          break;
+        }
+        case "br": {
+          n += t.br(i);
+          break;
+        }
+        case "del": {
+          n += t.del(i);
+          break;
+        }
+        case "text": {
+          n += t.text(i);
+          break;
+        }
+        default: {
+          let o = 'Token with "' + i.type + '" type was not found.';
+          if (this.options.silent) return console.error(o), "";
+          throw new Error(o);
+        }
+      }
+    }
+    return n;
+  }
+};
+var P = class {
+  options;
+  block;
+  constructor(e) {
+    this.options = e || T;
+  }
+  static passThroughHooks = /* @__PURE__ */ new Set(["preprocess", "postprocess", "processAllTokens", "emStrongMask"]);
+  static passThroughHooksRespectAsync = /* @__PURE__ */ new Set(["preprocess", "postprocess", "processAllTokens"]);
+  preprocess(e) {
+    return e;
+  }
+  postprocess(e) {
+    return e;
+  }
+  processAllTokens(e) {
+    return e;
+  }
+  emStrongMask(e) {
+    return e;
+  }
+  provideLexer(e = this.block) {
+    return e ? x.lex : x.lexInline;
+  }
+  provideParser(e = this.block) {
+    return e ? b.parse : b.parseInline;
+  }
+};
+var q = class {
+  defaults = M();
+  options = this.setOptions;
+  parse = this.parseMarkdown(true);
+  parseInline = this.parseMarkdown(false);
+  Parser = b;
+  Renderer = y;
+  TextRenderer = L;
+  Lexer = x;
+  Tokenizer = w;
+  Hooks = P;
+  constructor(...e) {
+    this.use(...e);
+  }
+  walkTokens(e, t) {
+    let n = [];
+    for (let s of e) switch (n = n.concat(t.call(this, s)), s.type) {
+      case "table": {
+        let r = s;
+        for (let i of r.header) n = n.concat(this.walkTokens(i.tokens, t));
+        for (let i of r.rows) for (let o of i) n = n.concat(this.walkTokens(o.tokens, t));
+        break;
+      }
+      case "list": {
+        let r = s;
+        n = n.concat(this.walkTokens(r.items, t));
+        break;
+      }
+      default: {
+        let r = s;
+        this.defaults.extensions?.childTokens?.[r.type] ? this.defaults.extensions.childTokens[r.type].forEach((i) => {
+          let o = r[i].flat(1 / 0);
+          n = n.concat(this.walkTokens(o, t));
+        }) : r.tokens && (n = n.concat(this.walkTokens(r.tokens, t)));
+      }
+    }
+    return n;
+  }
+  use(...e) {
+    let t = this.defaults.extensions || { renderers: {}, childTokens: {} };
+    return e.forEach((n) => {
+      let s = { ...n };
+      if (s.async = this.defaults.async || s.async || false, n.extensions && (n.extensions.forEach((r) => {
+        if (!r.name) throw new Error("extension name required");
+        if ("renderer" in r) {
+          let i = t.renderers[r.name];
+          i ? t.renderers[r.name] = function(...o) {
+            let u = r.renderer.apply(this, o);
+            return u === false && (u = i.apply(this, o)), u;
+          } : t.renderers[r.name] = r.renderer;
+        }
+        if ("tokenizer" in r) {
+          if (!r.level || r.level !== "block" && r.level !== "inline") throw new Error("extension level must be 'block' or 'inline'");
+          let i = t[r.level];
+          i ? i.unshift(r.tokenizer) : t[r.level] = [r.tokenizer], r.start && (r.level === "block" ? t.startBlock ? t.startBlock.push(r.start) : t.startBlock = [r.start] : r.level === "inline" && (t.startInline ? t.startInline.push(r.start) : t.startInline = [r.start]));
+        }
+        "childTokens" in r && r.childTokens && (t.childTokens[r.name] = r.childTokens);
+      }), s.extensions = t), n.renderer) {
+        let r = this.defaults.renderer || new y(this.defaults);
+        for (let i in n.renderer) {
+          if (!(i in r)) throw new Error(`renderer '${i}' does not exist`);
+          if (["options", "parser"].includes(i)) continue;
+          let o = i, u = n.renderer[o], a = r[o];
+          r[o] = (...c) => {
+            let p = u.apply(r, c);
+            return p === false && (p = a.apply(r, c)), p || "";
+          };
+        }
+        s.renderer = r;
+      }
+      if (n.tokenizer) {
+        let r = this.defaults.tokenizer || new w(this.defaults);
+        for (let i in n.tokenizer) {
+          if (!(i in r)) throw new Error(`tokenizer '${i}' does not exist`);
+          if (["options", "rules", "lexer"].includes(i)) continue;
+          let o = i, u = n.tokenizer[o], a = r[o];
+          r[o] = (...c) => {
+            let p = u.apply(r, c);
+            return p === false && (p = a.apply(r, c)), p;
+          };
+        }
+        s.tokenizer = r;
+      }
+      if (n.hooks) {
+        let r = this.defaults.hooks || new P();
+        for (let i in n.hooks) {
+          if (!(i in r)) throw new Error(`hook '${i}' does not exist`);
+          if (["options", "block"].includes(i)) continue;
+          let o = i, u = n.hooks[o], a = r[o];
+          P.passThroughHooks.has(i) ? r[o] = (c) => {
+            if (this.defaults.async && P.passThroughHooksRespectAsync.has(i)) return (async () => {
+              let k = await u.call(r, c);
+              return a.call(r, k);
+            })();
+            let p = u.call(r, c);
+            return a.call(r, p);
+          } : r[o] = (...c) => {
+            if (this.defaults.async) return (async () => {
+              let k = await u.apply(r, c);
+              return k === false && (k = await a.apply(r, c)), k;
+            })();
+            let p = u.apply(r, c);
+            return p === false && (p = a.apply(r, c)), p;
+          };
+        }
+        s.hooks = r;
+      }
+      if (n.walkTokens) {
+        let r = this.defaults.walkTokens, i = n.walkTokens;
+        s.walkTokens = function(o) {
+          let u = [];
+          return u.push(i.call(this, o)), r && (u = u.concat(r.call(this, o))), u;
+        };
+      }
+      this.defaults = { ...this.defaults, ...s };
+    }), this;
+  }
+  setOptions(e) {
+    return this.defaults = { ...this.defaults, ...e }, this;
+  }
+  lexer(e, t) {
+    return x.lex(e, t ?? this.defaults);
+  }
+  parser(e, t) {
+    return b.parse(e, t ?? this.defaults);
+  }
+  parseMarkdown(e) {
+    return (n, s) => {
+      let r = { ...s }, i = { ...this.defaults, ...r }, o = this.onError(!!i.silent, !!i.async);
+      if (this.defaults.async === true && r.async === false) return o(new Error("marked(): The async option was set to true by an extension. Remove async: false from the parse options object to return a Promise."));
+      if (typeof n > "u" || n === null) return o(new Error("marked(): input parameter is undefined or null"));
+      if (typeof n != "string") return o(new Error("marked(): input parameter is of type " + Object.prototype.toString.call(n) + ", string expected"));
+      if (i.hooks && (i.hooks.options = i, i.hooks.block = e), i.async) return (async () => {
+        let u = i.hooks ? await i.hooks.preprocess(n) : n, c = await (i.hooks ? await i.hooks.provideLexer(e) : e ? x.lex : x.lexInline)(u, i), p = i.hooks ? await i.hooks.processAllTokens(c) : c;
+        i.walkTokens && await Promise.all(this.walkTokens(p, i.walkTokens));
+        let h = await (i.hooks ? await i.hooks.provideParser(e) : e ? b.parse : b.parseInline)(p, i);
+        return i.hooks ? await i.hooks.postprocess(h) : h;
+      })().catch(o);
+      try {
+        i.hooks && (n = i.hooks.preprocess(n));
+        let a = (i.hooks ? i.hooks.provideLexer(e) : e ? x.lex : x.lexInline)(n, i);
+        i.hooks && (a = i.hooks.processAllTokens(a)), i.walkTokens && this.walkTokens(a, i.walkTokens);
+        let p = (i.hooks ? i.hooks.provideParser(e) : e ? b.parse : b.parseInline)(a, i);
+        return i.hooks && (p = i.hooks.postprocess(p)), p;
+      } catch (u) {
+        return o(u);
+      }
+    };
+  }
+  onError(e, t) {
+    return (n) => {
+      if (n.message += `
+Please report this to https://github.com/markedjs/marked.`, e) {
+        let s = "<p>An error occurred:</p><pre>" + O(n.message + "", true) + "</pre>";
+        return t ? Promise.resolve(s) : s;
+      }
+      if (t) return Promise.reject(n);
+      throw n;
+    };
+  }
+};
+var z = new q();
+function g(l3, e) {
+  return z.parse(l3, e);
+}
+g.options = g.setOptions = function(l3) {
+  return z.setOptions(l3), g.defaults = z.defaults, N(g.defaults), g;
+};
+g.getDefaults = M;
+g.defaults = T;
+g.use = function(...l3) {
+  return z.use(...l3), g.defaults = z.defaults, N(g.defaults), g;
+};
+g.walkTokens = function(l3, e) {
+  return z.walkTokens(l3, e);
+};
+g.parseInline = z.parseInline;
+g.Parser = b;
+g.parser = b.parse;
+g.Renderer = y;
+g.TextRenderer = L;
+g.Lexer = x;
+g.lexer = x.lex;
+g.Tokenizer = w;
+g.Hooks = P;
+g.parse = g;
+var Ft = g.options;
+var Ut = g.setOptions;
+var Kt = g.use;
+var Wt = g.walkTokens;
+var Xt = g.parseInline;
+var Vt = b.parse;
+var Yt = x.lex;
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/components/markdown.js
+var STRICT_STRIKETHROUGH_REGEX = /^(~~)(?=[^\s~])((?:\\.|[^\\])*?(?:\\.|[^\s~\\]))\1(?=[^~]|$)/;
+var StrictStrikethroughTokenizer = class extends w {
+  del(src) {
+    const match = STRICT_STRIKETHROUGH_REGEX.exec(src);
+    if (!match) {
+      return void 0;
+    }
+    const text = match[2];
+    return {
+      type: "del",
+      raw: match[0],
+      text,
+      tokens: this.lexer.inlineTokens(text)
+    };
+  }
+};
+function trimPartialClosingFences(tokens) {
+  const token = tokens[tokens.length - 1];
+  if (token?.type === "list") {
+    trimPartialClosingFences(token.items[token.items.length - 1]?.tokens ?? []);
+    return;
+  }
+  if (token?.type === "blockquote") {
+    trimPartialClosingFences(token.tokens ?? []);
+    return;
+  }
+  if (token?.type !== "code") {
+    return;
+  }
+  const marker = /^(`{3,}|~{3,})/.exec(token.raw)?.[1];
+  const lastLine = token.raw.split("\n").pop();
+  if (!marker || !lastLine || lastLine.length >= marker.length || lastLine !== marker[0]?.repeat(lastLine.length)) {
+    return;
+  }
+  token.text = token.text.slice(0, -lastLine.length).replace(/\n$/, "");
+}
+var markdownParser = new q();
+markdownParser.setOptions({
+  tokenizer: new StrictStrikethroughTokenizer()
+});
+var Markdown = class {
+  text;
+  paddingX;
+  // Left/right padding
+  paddingY;
+  // Top/bottom padding
+  defaultTextStyle;
+  theme;
+  options;
+  defaultStylePrefix;
+  // Cache for rendered output
+  cachedText;
+  cachedWidth;
+  cachedLines;
+  constructor(text, paddingX, paddingY, theme, defaultTextStyle, options) {
+    this.text = text;
+    this.paddingX = paddingX;
+    this.paddingY = paddingY;
+    this.theme = theme;
+    this.defaultTextStyle = defaultTextStyle;
+    this.options = options ? { ...options } : {};
+  }
+  setText(text) {
+    this.text = text;
+    this.invalidate();
+  }
+  invalidate() {
+    this.cachedText = void 0;
+    this.cachedWidth = void 0;
+    this.cachedLines = void 0;
+  }
+  render(width) {
+    if (this.cachedLines && this.cachedText === this.text && this.cachedWidth === width) {
+      return this.cachedLines;
+    }
+    const contentWidth = Math.max(1, width - this.paddingX * 2);
+    if (!this.text || this.text.trim() === "") {
+      const result2 = [];
+      this.cachedText = this.text;
+      this.cachedWidth = width;
+      this.cachedLines = result2;
+      return result2;
+    }
+    const normalizedText = this.text.replace(/\t/g, "   ");
+    const tokens = markdownParser.lexer(normalizedText);
+    trimPartialClosingFences(tokens);
+    const renderedLines = [];
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      const nextToken = tokens[i + 1];
+      const tokenLines = this.renderToken(token, contentWidth, nextToken?.type);
+      for (const tokenLine of tokenLines) {
+        renderedLines.push(tokenLine);
+      }
+    }
+    const wrappedLines = [];
+    for (const line of renderedLines) {
+      if (isImageLine(line)) {
+        wrappedLines.push(line);
+      } else {
+        for (const wrappedLine of wrapTextWithAnsi(line, contentWidth)) {
+          wrappedLines.push(wrappedLine);
+        }
+      }
+    }
+    const leftMargin = " ".repeat(this.paddingX);
+    const rightMargin = " ".repeat(this.paddingX);
+    const bgFn = this.defaultTextStyle?.bgColor;
+    const contentLines = [];
+    for (const line of wrappedLines) {
+      if (isImageLine(line)) {
+        contentLines.push(line);
+        continue;
+      }
+      const lineWithMargins = leftMargin + line + rightMargin;
+      if (bgFn) {
+        contentLines.push(applyBackgroundToLine(lineWithMargins, width, bgFn));
+      } else {
+        const visibleLen = visibleWidth(lineWithMargins);
+        const paddingNeeded = Math.max(0, width - visibleLen);
+        contentLines.push(lineWithMargins + " ".repeat(paddingNeeded));
+      }
+    }
+    const emptyLine = " ".repeat(width);
+    const emptyLines = [];
+    for (let i = 0; i < this.paddingY; i++) {
+      const line = bgFn ? applyBackgroundToLine(emptyLine, width, bgFn) : emptyLine;
+      emptyLines.push(line);
+    }
+    const result = emptyLines.concat(contentLines, emptyLines);
+    this.cachedText = this.text;
+    this.cachedWidth = width;
+    this.cachedLines = result;
+    return result.length > 0 ? result : [""];
+  }
+  /**
+   * Apply default text style to a string.
+   * This is the base styling applied to all text content.
+   * NOTE: Background color is NOT applied here - it's applied at the padding stage
+   * to ensure it extends to the full line width.
+   */
+  applyDefaultStyle(text) {
+    if (!this.defaultTextStyle) {
+      return text;
+    }
+    let styled = text;
+    if (this.defaultTextStyle.color) {
+      styled = this.defaultTextStyle.color(styled);
+    }
+    if (this.defaultTextStyle.bold) {
+      styled = this.theme.bold(styled);
+    }
+    if (this.defaultTextStyle.italic) {
+      styled = this.theme.italic(styled);
+    }
+    if (this.defaultTextStyle.strikethrough) {
+      styled = this.theme.strikethrough(styled);
+    }
+    if (this.defaultTextStyle.underline) {
+      styled = this.theme.underline(styled);
+    }
+    return styled;
+  }
+  getDefaultStylePrefix() {
+    if (!this.defaultTextStyle) {
+      return "";
+    }
+    if (this.defaultStylePrefix !== void 0) {
+      return this.defaultStylePrefix;
+    }
+    const sentinel = "\0";
+    let styled = sentinel;
+    if (this.defaultTextStyle.color) {
+      styled = this.defaultTextStyle.color(styled);
+    }
+    if (this.defaultTextStyle.bold) {
+      styled = this.theme.bold(styled);
+    }
+    if (this.defaultTextStyle.italic) {
+      styled = this.theme.italic(styled);
+    }
+    if (this.defaultTextStyle.strikethrough) {
+      styled = this.theme.strikethrough(styled);
+    }
+    if (this.defaultTextStyle.underline) {
+      styled = this.theme.underline(styled);
+    }
+    const sentinelIndex = styled.indexOf(sentinel);
+    this.defaultStylePrefix = sentinelIndex >= 0 ? styled.slice(0, sentinelIndex) : "";
+    return this.defaultStylePrefix;
+  }
+  getStylePrefix(styleFn) {
+    const sentinel = "\0";
+    const styled = styleFn(sentinel);
+    const sentinelIndex = styled.indexOf(sentinel);
+    return sentinelIndex >= 0 ? styled.slice(0, sentinelIndex) : "";
+  }
+  getDefaultInlineStyleContext() {
+    return {
+      applyText: (text) => this.applyDefaultStyle(text),
+      stylePrefix: this.getDefaultStylePrefix()
+    };
+  }
+  renderToken(token, width, nextTokenType, styleContext) {
+    const lines = [];
+    switch (token.type) {
+      case "heading": {
+        const headingLevel = token.depth;
+        const headingPrefix = `${"#".repeat(headingLevel)} `;
+        let headingStyleFn;
+        if (headingLevel === 1) {
+          headingStyleFn = (text) => this.theme.heading(this.theme.bold(this.theme.underline(text)));
+        } else {
+          headingStyleFn = (text) => this.theme.heading(this.theme.bold(text));
+        }
+        const headingStyleContext = {
+          applyText: headingStyleFn,
+          stylePrefix: this.getStylePrefix(headingStyleFn)
+        };
+        const headingText = this.renderInlineTokens(token.tokens || [], headingStyleContext);
+        const styledHeading = headingLevel >= 3 ? headingStyleFn(headingPrefix) + headingText : headingText;
+        lines.push(styledHeading);
+        if (nextTokenType && nextTokenType !== "space") {
+          lines.push("");
+        }
+        break;
+      }
+      case "paragraph": {
+        const paragraphText = this.renderInlineTokens(token.tokens || [], styleContext);
+        lines.push(paragraphText);
+        if (nextTokenType && nextTokenType !== "list" && nextTokenType !== "space") {
+          lines.push("");
+        }
+        break;
+      }
+      case "text":
+        lines.push(this.renderInlineTokens([token], styleContext));
+        break;
+      case "code": {
+        const indent = this.theme.codeBlockIndent ?? "  ";
+        lines.push(this.theme.codeBlockBorder(`\`\`\`${token.lang || ""}`));
+        if (this.theme.highlightCode) {
+          const highlightedLines = this.theme.highlightCode(token.text, token.lang);
+          for (const hlLine of highlightedLines) {
+            lines.push(`${indent}${hlLine}`);
+          }
+        } else {
+          const codeLines = token.text.split("\n");
+          for (const codeLine of codeLines) {
+            lines.push(`${indent}${this.theme.codeBlock(codeLine)}`);
+          }
+        }
+        lines.push(this.theme.codeBlockBorder("```"));
+        if (nextTokenType && nextTokenType !== "space") {
+          lines.push("");
+        }
+        break;
+      }
+      case "list": {
+        const listLines = this.renderList(token, 0, width, styleContext);
+        lines.push(...listLines);
+        break;
+      }
+      case "table": {
+        const tableLines = this.renderTable(token, width, nextTokenType, styleContext);
+        lines.push(...tableLines);
+        break;
+      }
+      case "blockquote": {
+        const quoteStyle = (text) => this.theme.quote(this.theme.italic(text));
+        const quoteStylePrefix = this.getStylePrefix(quoteStyle);
+        const applyQuoteStyle = (line) => {
+          if (!quoteStylePrefix) {
+            return quoteStyle(line);
+          }
+          const lineWithReappliedStyle = line.replace(/\x1b\[0m/g, `\x1B[0m${quoteStylePrefix}`);
+          return quoteStyle(lineWithReappliedStyle);
+        };
+        const quoteContentWidth = Math.max(1, width - 2);
+        const quoteInlineStyleContext = {
+          applyText: (text) => text,
+          stylePrefix: quoteStylePrefix
+        };
+        const quoteTokens = token.tokens || [];
+        const renderedQuoteLines = [];
+        for (let i = 0; i < quoteTokens.length; i++) {
+          const quoteToken = quoteTokens[i];
+          const nextQuoteToken = quoteTokens[i + 1];
+          renderedQuoteLines.push(...this.renderToken(quoteToken, quoteContentWidth, nextQuoteToken?.type, quoteInlineStyleContext));
+        }
+        while (renderedQuoteLines.length > 0 && renderedQuoteLines[renderedQuoteLines.length - 1] === "") {
+          renderedQuoteLines.pop();
+        }
+        for (const quoteLine of renderedQuoteLines) {
+          const styledLine = applyQuoteStyle(quoteLine);
+          const wrappedLines = wrapTextWithAnsi(styledLine, quoteContentWidth);
+          for (const wrappedLine of wrappedLines) {
+            lines.push(this.theme.quoteBorder("\u2502 ") + wrappedLine);
+          }
+        }
+        if (nextTokenType && nextTokenType !== "space") {
+          lines.push("");
+        }
+        break;
+      }
+      case "hr":
+        lines.push(this.theme.hr("\u2500".repeat(Math.min(width, 80))));
+        if (nextTokenType && nextTokenType !== "space") {
+          lines.push("");
+        }
+        break;
+      case "html":
+        if ("raw" in token && typeof token.raw === "string") {
+          lines.push(this.applyDefaultStyle(token.raw.trim()));
+        }
+        break;
+      case "space":
+        lines.push("");
+        break;
+      default:
+        if ("text" in token && typeof token.text === "string") {
+          lines.push(token.text);
+        }
+    }
+    return lines;
+  }
+  renderInlineTokens(tokens, styleContext) {
+    let result = "";
+    const resolvedStyleContext = styleContext ?? this.getDefaultInlineStyleContext();
+    const { applyText, stylePrefix } = resolvedStyleContext;
+    const applyTextWithNewlines = (text) => {
+      const segments = text.split("\n");
+      return segments.map((segment) => applyText(segment)).join("\n");
+    };
+    for (const token of tokens) {
+      switch (token.type) {
+        case "escape":
+          result += applyTextWithNewlines(this.options.preserveBackslashEscapes ? token.raw : token.text);
+          break;
+        case "text":
+          if (token.tokens && token.tokens.length > 0) {
+            result += this.renderInlineTokens(token.tokens, resolvedStyleContext);
+          } else {
+            result += applyTextWithNewlines(token.text);
+          }
+          break;
+        case "paragraph":
+          result += this.renderInlineTokens(token.tokens || [], resolvedStyleContext);
+          break;
+        case "strong": {
+          const boldContent = this.renderInlineTokens(token.tokens || [], resolvedStyleContext);
+          result += this.theme.bold(boldContent) + stylePrefix;
+          break;
+        }
+        case "em": {
+          const italicContent = this.renderInlineTokens(token.tokens || [], resolvedStyleContext);
+          result += this.theme.italic(italicContent) + stylePrefix;
+          break;
+        }
+        case "codespan":
+          result += this.theme.code(token.text) + stylePrefix;
+          break;
+        case "link": {
+          const linkText = this.renderInlineTokens(token.tokens || [], resolvedStyleContext);
+          const styledLink = this.theme.link(this.theme.underline(linkText));
+          if (getCapabilities().hyperlinks) {
+            result += hyperlink(styledLink, token.href) + stylePrefix;
+          } else {
+            const hrefForComparison = token.href.startsWith("mailto:") ? token.href.slice(7) : token.href;
+            if (token.text === token.href || token.text === hrefForComparison) {
+              result += styledLink + stylePrefix;
+            } else {
+              result += styledLink + this.theme.linkUrl(` (${token.href})`) + stylePrefix;
+            }
+          }
+          break;
+        }
+        case "br":
+          result += "\n";
+          break;
+        case "del": {
+          const delContent = this.renderInlineTokens(token.tokens || [], resolvedStyleContext);
+          result += this.theme.strikethrough(delContent) + stylePrefix;
+          break;
+        }
+        case "html":
+          if ("raw" in token && typeof token.raw === "string") {
+            result += applyTextWithNewlines(token.raw);
+          }
+          break;
+        default:
+          if ("text" in token && typeof token.text === "string") {
+            result += applyTextWithNewlines(token.text);
+          }
+      }
+    }
+    while (stylePrefix && result.endsWith(stylePrefix)) {
+      result = result.slice(0, -stylePrefix.length);
+    }
+    return result;
+  }
+  getOrderedListMarker(item) {
+    const match = /^(?: {0,3})(\d{1,9}[.)])[ \t]+/.exec(item.raw);
+    return match ? `${match[1]} ` : void 0;
+  }
+  getUnorderedListMarker(item) {
+    const match = /^(?: {0,3})([-+*])(?:[ \t]+|(?=\r?\n|$))/.exec(item.raw);
+    return match ? `${match[1]} ` : void 0;
+  }
+  /**
+   * Render a list with proper nesting support
+   */
+  renderList(token, depth, width, styleContext) {
+    const lines = [];
+    const indent = "    ".repeat(depth);
+    const startNumber = typeof token.start === "number" ? token.start : 1;
+    for (let i = 0; i < token.items.length; i++) {
+      const item = token.items[i];
+      const isLastItem = i === token.items.length - 1;
+      const bullet = token.ordered ? this.options.preserveOrderedListMarkers ? this.getOrderedListMarker(item) ?? `${startNumber + i}. ` : `${startNumber + i}. ` : this.options.preserveOrderedListMarkers ? this.getUnorderedListMarker(item) ?? "- " : "- ";
+      const taskMarker = item.task ? `[${item.checked ? "x" : " "}] ` : "";
+      const marker = bullet + taskMarker;
+      const firstPrefix = indent + this.theme.listBullet(marker);
+      const continuationPrefix = indent + " ".repeat(visibleWidth(marker));
+      const itemWidth = Math.max(1, width - visibleWidth(firstPrefix));
+      let renderedAnyLine = false;
+      for (const itemToken of item.tokens) {
+        if (itemToken.type === "list") {
+          lines.push(...this.renderList(itemToken, depth + 1, width, styleContext));
+          renderedAnyLine = true;
+          continue;
+        }
+        const itemLines = this.renderToken(itemToken, itemWidth, void 0, styleContext);
+        for (const line of itemLines) {
+          for (const wrappedLine of wrapTextWithAnsi(line, itemWidth)) {
+            const linePrefix = renderedAnyLine ? continuationPrefix : firstPrefix;
+            lines.push(linePrefix + wrappedLine);
+            renderedAnyLine = true;
+          }
+        }
+      }
+      if (!renderedAnyLine) {
+        lines.push(firstPrefix);
+      }
+      if (token.loose && !isLastItem) {
+        lines.push("");
+      }
+    }
+    return lines;
+  }
+  /**
+   * Get the visible width of the longest word in a string.
+   */
+  getLongestWordWidth(text, maxWidth) {
+    const words = text.split(/\s+/).filter((word) => word.length > 0);
+    let longest = 0;
+    for (const word of words) {
+      longest = Math.max(longest, visibleWidth(word));
+    }
+    if (maxWidth === void 0) {
+      return longest;
+    }
+    return Math.min(longest, maxWidth);
+  }
+  /**
+   * Wrap a table cell to fit into a column.
+   *
+   * Delegates to wrapTextWithAnsi() so ANSI codes + long tokens are handled
+   * consistently with the rest of the renderer.
+   */
+  wrapCellText(text, maxWidth) {
+    return wrapTextWithAnsi(text, Math.max(1, maxWidth));
+  }
+  /**
+   * Render a table with width-aware cell wrapping.
+   * Cells that don't fit are wrapped to multiple lines.
+   */
+  renderTable(token, availableWidth, nextTokenType, styleContext) {
+    const lines = [];
+    const numCols = token.header.length;
+    if (numCols === 0) {
+      return lines;
+    }
+    const borderOverhead = 3 * numCols + 1;
+    const availableForCells = availableWidth - borderOverhead;
+    if (availableForCells < numCols) {
+      const fallbackLines = token.raw ? wrapTextWithAnsi(token.raw, availableWidth) : [];
+      if (nextTokenType && nextTokenType !== "space") {
+        fallbackLines.push("");
+      }
+      return fallbackLines;
+    }
+    const maxUnbrokenWordWidth = 30;
+    const naturalWidths = [];
+    const minWordWidths = [];
+    for (let i = 0; i < numCols; i++) {
+      const headerText = this.renderInlineTokens(token.header[i].tokens || [], styleContext);
+      naturalWidths[i] = visibleWidth(headerText);
+      minWordWidths[i] = Math.max(1, this.getLongestWordWidth(headerText, maxUnbrokenWordWidth));
+    }
+    for (const row of token.rows) {
+      for (let i = 0; i < row.length; i++) {
+        const cellText = this.renderInlineTokens(row[i].tokens || [], styleContext);
+        naturalWidths[i] = Math.max(naturalWidths[i] || 0, visibleWidth(cellText));
+        minWordWidths[i] = Math.max(minWordWidths[i] || 1, this.getLongestWordWidth(cellText, maxUnbrokenWordWidth));
+      }
+    }
+    let minColumnWidths = minWordWidths;
+    let minCellsWidth = minColumnWidths.reduce((a, b2) => a + b2, 0);
+    if (minCellsWidth > availableForCells) {
+      minColumnWidths = new Array(numCols).fill(1);
+      const remaining = availableForCells - numCols;
+      if (remaining > 0) {
+        const totalWeight = minWordWidths.reduce((total, width) => total + Math.max(0, width - 1), 0);
+        const growth = minWordWidths.map((width) => {
+          const weight = Math.max(0, width - 1);
+          return totalWeight > 0 ? Math.floor(weight / totalWeight * remaining) : 0;
+        });
+        for (let i = 0; i < numCols; i++) {
+          minColumnWidths[i] += growth[i] ?? 0;
+        }
+        const allocated = growth.reduce((total, width) => total + width, 0);
+        let leftover = remaining - allocated;
+        for (let i = 0; leftover > 0 && i < numCols; i++) {
+          minColumnWidths[i]++;
+          leftover--;
+        }
+      }
+      minCellsWidth = minColumnWidths.reduce((a, b2) => a + b2, 0);
+    }
+    const totalNaturalWidth = naturalWidths.reduce((a, b2) => a + b2, 0) + borderOverhead;
+    let columnWidths;
+    if (totalNaturalWidth <= availableWidth) {
+      columnWidths = naturalWidths.map((width, index) => Math.max(width, minColumnWidths[index]));
+    } else {
+      const totalGrowPotential = naturalWidths.reduce((total, width, index) => {
+        return total + Math.max(0, width - minColumnWidths[index]);
+      }, 0);
+      const extraWidth = Math.max(0, availableForCells - minCellsWidth);
+      columnWidths = minColumnWidths.map((minWidth, index) => {
+        const naturalWidth = naturalWidths[index];
+        const minWidthDelta = Math.max(0, naturalWidth - minWidth);
+        let grow = 0;
+        if (totalGrowPotential > 0) {
+          grow = Math.floor(minWidthDelta / totalGrowPotential * extraWidth);
+        }
+        return minWidth + grow;
+      });
+      const allocated = columnWidths.reduce((a, b2) => a + b2, 0);
+      let remaining = availableForCells - allocated;
+      while (remaining > 0) {
+        let grew = false;
+        for (let i = 0; i < numCols && remaining > 0; i++) {
+          if (columnWidths[i] < naturalWidths[i]) {
+            columnWidths[i]++;
+            remaining--;
+            grew = true;
+          }
+        }
+        if (!grew) {
+          break;
+        }
+      }
+    }
+    const topBorderCells = columnWidths.map((w2) => "\u2500".repeat(w2));
+    lines.push(`\u250C\u2500${topBorderCells.join("\u2500\u252C\u2500")}\u2500\u2510`);
+    const headerCellLines = token.header.map((cell, i) => {
+      const text = this.renderInlineTokens(cell.tokens || [], styleContext);
+      return this.wrapCellText(text, columnWidths[i]);
+    });
+    const headerLineCount = Math.max(...headerCellLines.map((c) => c.length));
+    for (let lineIdx = 0; lineIdx < headerLineCount; lineIdx++) {
+      const rowParts = headerCellLines.map((cellLines, colIdx) => {
+        const text = cellLines[lineIdx] || "";
+        const padded = text + " ".repeat(Math.max(0, columnWidths[colIdx] - visibleWidth(text)));
+        return this.theme.bold(padded);
+      });
+      lines.push(`\u2502 ${rowParts.join(" \u2502 ")} \u2502`);
+    }
+    const separatorCells = columnWidths.map((w2) => "\u2500".repeat(w2));
+    const separatorLine = `\u251C\u2500${separatorCells.join("\u2500\u253C\u2500")}\u2500\u2524`;
+    lines.push(separatorLine);
+    for (let rowIndex = 0; rowIndex < token.rows.length; rowIndex++) {
+      const row = token.rows[rowIndex];
+      const rowCellLines = row.map((cell, i) => {
+        const text = this.renderInlineTokens(cell.tokens || [], styleContext);
+        return this.wrapCellText(text, columnWidths[i]);
+      });
+      const rowLineCount = Math.max(...rowCellLines.map((c) => c.length));
+      for (let lineIdx = 0; lineIdx < rowLineCount; lineIdx++) {
+        const rowParts = rowCellLines.map((cellLines, colIdx) => {
+          const text = cellLines[lineIdx] || "";
+          return text + " ".repeat(Math.max(0, columnWidths[colIdx] - visibleWidth(text)));
+        });
+        lines.push(`\u2502 ${rowParts.join(" \u2502 ")} \u2502`);
+      }
+      if (rowIndex < token.rows.length - 1) {
+        lines.push(separatorLine);
+      }
+    }
+    const bottomBorderCells = columnWidths.map((w2) => "\u2500".repeat(w2));
+    lines.push(`\u2514\u2500${bottomBorderCells.join("\u2500\u2534\u2500")}\u2500\u2518`);
+    if (nextTokenType && nextTokenType !== "space") {
+      lines.push("");
+    }
+    return lines;
+  }
+};
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/terminal.js
+import * as fs3 from "fs";
+import { createRequire as createRequire2 } from "module";
+import * as path5 from "path";
+import { fileURLToPath as fileURLToPath2 } from "url";
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/native-modifiers.js
 import { createRequire } from "module";
-var require2 = createRequire(import.meta.url);
+import * as path4 from "path";
+import { fileURLToPath } from "url";
+var cjsRequire = createRequire(import.meta.url);
+
+// ../main/node_modules/@earendil-works/pi-tui/dist/terminal.js
+var cjsRequire2 = createRequire2(import.meta.url);
+var DESIRED_KITTY_KEYBOARD_PROTOCOL_FLAGS = 7;
+var KITTY_KEYBOARD_PROTOCOL_QUERY = `\x1B[>${DESIRED_KITTY_KEYBOARD_PROTOCOL_FLAGS}u\x1B[?u\x1B[c`;
+
+// src/index.ts
+import { readFileSync as readFileSync6 } from "fs";
+
+// ../main/node_modules/acp-kernel/dist/chunk-HNWTM2K4.js
+import { createRequire as createRequire3 } from "module";
+var require2 = createRequire3(import.meta.url);
 function defaultCountTokens(text) {
   if (!text) return 0;
   const cjk = text.match(/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/g);
@@ -475,10 +4107,10 @@ function formatTierTargetBlocks(blocks) {
   if (blocks.length === 0) {
     return "Target blocks: (none \u2014 no tier blocks found)";
   }
-  const lines = blocks.map((b) => {
-    const summaryTokens = Math.ceil((b.summary ?? "").length / 4);
-    const topic = b.topic ? `  "${b.topic}"` : "";
-    return `  ${b.blockId}  ${b.effectiveMessageIds.length} msgs  ${formatK(b.compressedTokens)}\u2192${formatK(summaryTokens)}${topic}`;
+  const lines = blocks.map((b2) => {
+    const summaryTokens = Math.ceil((b2.summary ?? "").length / 4);
+    const topic = b2.topic ? `  "${b2.topic}"` : "";
+    return `  ${b2.blockId}  ${b2.effectiveMessageIds.length} msgs  ${formatK(b2.compressedTokens)}\u2192${formatK(summaryTokens)}${topic}`;
   });
   return `Target ${blocks[0].tier === 1 ? "tier-1" : "tier-2"} blocks to distill (${blocks.length}):
 ${lines.join("\n")}`;
@@ -499,8 +4131,8 @@ function formatRanges(compressible, protectedRanges) {
     return "[No specific ranges detected \u2014 compress any consumed content.]";
   }
   const refNum3 = (ref) => {
-    const m = ref.match(/\d+/);
-    return m ? parseInt(m[0], 10) : 0;
+    const m2 = ref.match(/\d+/);
+    return m2 ? parseInt(m2[0], 10) : 0;
   };
   const entries = [];
   for (const r of compressible) {
@@ -545,7 +4177,7 @@ function formatRanges(compressible, protectedRanges) {
       dangerous: false
     });
   }
-  entries.sort((a, b) => a.startPos - b.startPos || a.startNum - b.startNum);
+  entries.sort((a, b2) => a.startPos - b2.startPos || a.startNum - b2.startNum);
   const merged = [];
   for (const e of entries) {
     const last = merged[merged.length - 1];
@@ -689,7 +4321,7 @@ function clampWindow(text, start, end) {
   return text.slice(s, Math.max(s, e));
 }
 
-// ../../../../../../tmp/billion-context-profile-validation/acp-kernel/dist/chunk-MXL3G3BN.js
+// ../main/node_modules/acp-kernel/dist/chunk-MXL3G3BN.js
 function createInitialState() {
   return {
     blocks: [],
@@ -755,10 +4387,10 @@ function advanceSurvival(state, promotionThreshold) {
   }
 }
 
-// ../../../../../../tmp/billion-context-profile-validation/acp-kernel/dist/index.js
+// ../main/node_modules/acp-kernel/dist/index.js
 import { createHash } from "crypto";
 import { readFileSync, readdirSync } from "fs";
-import * as path3 from "path";
+import * as path6 from "path";
 var REF_WIDTH = 5;
 var MIN_INDEX = 1;
 var MAX_INDEX = 99999;
@@ -973,24 +4605,24 @@ ${body}`;
 }
 function stripOrphanedToolResults(messages) {
   const knownCallIds = /* @__PURE__ */ new Set();
-  for (const m of messages) {
-    if (m.contentType === "tool-call" && m.toolCallId) {
-      knownCallIds.add(m.toolCallId);
+  for (const m2 of messages) {
+    if (m2.contentType === "tool-call" && m2.toolCallId) {
+      knownCallIds.add(m2.toolCallId);
     }
   }
   return messages.filter(
-    (m) => m.contentType !== "tool-result" || !m.toolCallId || knownCallIds.has(m.toolCallId)
+    (m2) => m2.contentType !== "tool-result" || !m2.toolCallId || knownCallIds.has(m2.toolCallId)
   );
 }
 function stripOrphanedToolCalls(messages) {
   const knownResultIds = /* @__PURE__ */ new Set();
-  for (const m of messages) {
-    if (m.contentType === "tool-result" && m.toolCallId) {
-      knownResultIds.add(m.toolCallId);
+  for (const m2 of messages) {
+    if (m2.contentType === "tool-result" && m2.toolCallId) {
+      knownResultIds.add(m2.toolCallId);
     }
   }
   return messages.filter(
-    (m) => m.contentType !== "tool-call" || !m.toolCallId || m.toolName === "compress" || knownResultIds.has(m.toolCallId)
+    (m2) => m2.contentType !== "tool-call" || !m2.toolCallId || m2.toolName === "compress" || knownResultIds.has(m2.toolCallId)
   );
 }
 function stripOrphanedReasoning(messages) {
@@ -998,23 +4630,23 @@ function stripOrphanedReasoning(messages) {
   for (let i = 0; i < messages.length; i++) {
     if (drop.has(i)) continue;
     if (messages[i].contentType !== "reasoning") continue;
-    let j = i;
-    while (j + 1 < messages.length && messages[j + 1].contentType === "reasoning") {
-      j++;
+    let j2 = i;
+    while (j2 + 1 < messages.length && messages[j2 + 1].contentType === "reasoning") {
+      j2++;
     }
-    const companion = messages[j + 1];
+    const companion = messages[j2 + 1];
     const hasCompanion = companion !== void 0 && companion.role === "assistant" && (companion.contentType === "text" || companion.contentType === "tool-call");
     if (!hasCompanion) {
-      for (let k = i; k <= j; k++) drop.add(k);
+      for (let k = i; k <= j2; k++) drop.add(k);
     }
   }
   if (drop.size === 0) return messages;
-  return messages.filter((_, i) => !drop.has(i));
+  return messages.filter((_2, i) => !drop.has(i));
 }
 var CONTENT_HASH_ROOT = /^h_([0-9a-f]{16})(?:_\d+)?(?:#.*)?$/;
 function clusterRoot(id) {
-  const m = CONTENT_HASH_ROOT.exec(id);
-  return m ? `h_${m[1]}` : null;
+  const m2 = CONTENT_HASH_ROOT.exec(id);
+  return m2 ? `h_${m2[1]}` : null;
 }
 function remintCoveredLiveIds(messages, state) {
   const coveredBases = /* @__PURE__ */ new Set();
@@ -1086,7 +4718,7 @@ function syncBlocks(messages, state) {
     nextRunId: state.nextRunId
   };
   const liveRefs = new Set(
-    messages.map((m) => result.messageRefs.byRaw[m.id]).filter((r) => typeof r === "string")
+    messages.map((m2) => result.messageRefs.byRaw[m2.id]).filter((r) => typeof r === "string")
   );
   if (Object.keys(result.tokenSnapshot).length !== liveRefs.size) {
     const pruned = {};
@@ -1744,9 +5376,9 @@ function isMessageProtected(msg, config) {
 }
 function collectProtectedToolCallIds(messages, config) {
   const ids = /* @__PURE__ */ new Set();
-  for (const m of messages) {
-    if (m.contentType === "tool-call" && m.toolCallId && isMessageProtected(m, config)) {
-      ids.add(m.toolCallId);
+  for (const m2 of messages) {
+    if (m2.contentType === "tool-call" && m2.toolCallId && isMessageProtected(m2, config)) {
+      ids.add(m2.toolCallId);
     }
   }
   return ids;
@@ -1765,9 +5397,9 @@ function collectLatestProtected(messages, config) {
   if (patterns.length === 0) return { callIds, msgIds };
   for (const pattern of patterns) {
     let last;
-    for (const m of messages) {
-      if (m.contentType === "tool-call" && m.toolName && matchToolPattern(m.toolName, pattern)) {
-        last = m;
+    for (const m2 of messages) {
+      if (m2.contentType === "tool-call" && m2.toolName && matchToolPattern(m2.toolName, pattern)) {
+        last = m2;
       }
     }
     if (!last) continue;
@@ -1784,20 +5416,20 @@ function isMessageLatestProtected(msg, latest) {
   return false;
 }
 function hasMediaPayload(msg) {
-  const m = msg;
-  if (typeof m.imageBase64 === "string" && m.imageBase64.length > 0)
+  const m2 = msg;
+  if (typeof m2.imageBase64 === "string" && m2.imageBase64.length > 0)
     return true;
-  if (m.rawOpenaiContent != null) return true;
-  if (Array.isArray(m.rawOpenaiContentParts) && m.rawOpenaiContentParts.length > 0)
+  if (m2.rawOpenaiContent != null) return true;
+  if (Array.isArray(m2.rawOpenaiContentParts) && m2.rawOpenaiContentParts.length > 0)
     return true;
-  const ab = m.rawAnthropicBlock;
+  const ab = m2.rawAnthropicBlock;
   if (isObjWith(ab, "type", "image")) return true;
   if (isObjWith(ab, "type", "tool_result")) {
     const content = ab.content;
     if (Array.isArray(content))
       return content.some((p) => !isObjWith(p, "type", "text"));
   }
-  const item = m.rawResponsesItem;
+  const item = m2.rawResponsesItem;
   if (isObjWith(item, "type", "input_image")) return true;
   if (item && typeof item === "object") {
     const content = item.content;
@@ -1807,8 +5439,8 @@ function hasMediaPayload(msg) {
   }
   return false;
 }
-function isObjWith(v, key, value) {
-  return typeof v === "object" && v !== null && v[key] === value;
+function isObjWith(v2, key, value) {
+  return typeof v2 === "object" && v2 !== null && v2[key] === value;
 }
 function createContentStore() {
   return { version: 1, byHash: {}, byRef: {} };
@@ -2367,8 +5999,8 @@ function earliestIndexOfIds(ids, indexByMessageId) {
   return earliest;
 }
 function refNum(ref) {
-  const m = ref.match(/\d+/);
-  return m ? parseInt(m[0], 10) : 0;
+  const m2 = ref.match(/\d+/);
+  return m2 ? parseInt(m2[0], 10) : 0;
 }
 var M_REF = /^m\d+$/;
 function resolveBlockSpan(block, byRaw) {
@@ -2377,7 +6009,7 @@ function resolveBlockSpan(block, byRaw) {
   }
   const refs = block.effectiveMessageIds.map((id) => byRaw[id]).filter((r) => typeof r === "string" && r !== "BLOCKED");
   if (refs.length === 0) return null;
-  const sorted = [...refs].sort((a, b) => refNum(a) - refNum(b));
+  const sorted = [...refs].sort((a, b2) => refNum(a) - refNum(b2));
   return { startRef: sorted[0], endRef: sorted[sorted.length - 1] };
 }
 function activeBlockSpans(state) {
@@ -2402,14 +6034,14 @@ function collectBlockContent(state, block, messages, options = {}) {
   const full = options.full ?? false;
   const targetIds = new Set(block.effectiveMessageIds);
   if (full) {
-    const msgs = messages.filter((m) => targetIds.has(m.id));
+    const msgs = messages.filter((m2) => targetIds.has(m2.id));
     if (msgs.length === 0) return { text: "", count: 0 };
     return { text: msgs.map(formatMessage).join("\n\n"), count: msgs.length };
   }
   const nestedChildren = [];
   const nestedCovered = /* @__PURE__ */ new Set();
   for (const childId of block.directBlockIds) {
-    const child = state.blocks.find((b) => b.blockId === childId);
+    const child = state.blocks.find((b2) => b2.blockId === childId);
     if (!child?.active) continue;
     nestedChildren.push(child);
     for (const id of child.effectiveMessageIds) nestedCovered.add(id);
@@ -2421,9 +6053,9 @@ function collectBlockContent(state, block, messages, options = {}) {
 ${child.summary}`);
   }
   let directCount = 0;
-  for (const m of messages) {
-    if (targetIds.has(m.id) && !nestedCovered.has(m.id)) {
-      parts.push(formatMessage(m));
+  for (const m2 of messages) {
+    if (targetIds.has(m2.id) && !nestedCovered.has(m2.id)) {
+      parts.push(formatMessage(m2));
       directCount++;
     }
   }
@@ -2441,7 +6073,7 @@ ${text}`;
 ${text}`;
 }
 function markBlockRestoredInline(state, blockId) {
-  const existing = state.blocks.find((b) => b.blockId === blockId);
+  const existing = state.blocks.find((b2) => b2.blockId === blockId);
   if (!existing) return { state, result: null };
   const blocks = state.blocks.map(
     (block) => block.blockId === blockId ? { ...block, restoredInline: true } : block
@@ -2496,12 +6128,12 @@ function truncateLargeToolOutputs(messages, tokenCount, config, countTokens, opt
       found.push(message);
     }
     return found.sort(
-      (a, b) => countTokens(b.text ?? "") - countTokens(a.text ?? "")
+      (a, b2) => countTokens(b2.text ?? "") - countTokens(a.text ?? "")
     );
   };
-  const toolResults = findCandidates((m) => m.contentType === "tool-result");
+  const toolResults = findCandidates((m2) => m2.contentType === "tool-result");
   const textMessages = options.includeTextMessages ? findCandidates(
-    (m) => m.contentType === "text" && (m.role === "user" || m.role === "assistant") && !isRenderedSummaryMessage(m) && !m.text?.startsWith(SUMMARY_HEADER)
+    (m2) => m2.contentType === "text" && (m2.role === "user" || m2.role === "assistant") && !isRenderedSummaryMessage(m2) && !m2.text?.startsWith(SUMMARY_HEADER)
   ) : [];
   const candidatesFound = toolResults.length + textMessages.length;
   let truncatedCount = 0;
@@ -2541,7 +6173,7 @@ ${suffix}`;
   }
   return {
     messages: messages.map(
-      (m) => replacements.has(m.id) ? { ...m, text: replacements.get(m.id) } : m
+      (m2) => replacements.has(m2.id) ? { ...m2, text: replacements.get(m2.id) } : m2
     ),
     truncatedCount,
     savedTokens,
@@ -2795,9 +6427,9 @@ var RUN_MIN = 4;
 var HOIST_MIN = 4;
 var CODE_KEEP_RATIO = 0.97;
 var CRUSH_KEY = "__acp_crush";
-function isPlainObject(v) {
-  if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
-  const p = Object.getPrototypeOf(v);
+function isPlainObject(v2) {
+  if (typeof v2 !== "object" || v2 === null || Array.isArray(v2)) return false;
+  const p = Object.getPrototypeOf(v2);
   return p === null || p === Object.prototype;
 }
 function classifyCrushText(text) {
@@ -2842,39 +6474,39 @@ function crushText(text, options = {}) {
   }
   return null;
 }
-function canonOf(v, cache2) {
-  if (!isPlainObject(v) && !Array.isArray(v))
-    return JSON.stringify(v) ?? "null";
-  const key = v;
+function canonOf(v2, cache2) {
+  if (!isPlainObject(v2) && !Array.isArray(v2))
+    return JSON.stringify(v2) ?? "null";
+  const key = v2;
   const hit = cache2.get(key);
   if (hit !== void 0) return hit;
   let s;
-  if (Array.isArray(v)) {
-    s = `[${v.map((e) => canonOf(e, cache2)).join(",")}]`;
+  if (Array.isArray(v2)) {
+    s = `[${v2.map((e) => canonOf(e, cache2)).join(",")}]`;
   } else {
-    const entries = Object.entries(v).map(([k, val]) => `${JSON.stringify(k)}:${canonOf(val, cache2)}`).sort();
+    const entries = Object.entries(v2).map(([k, val]) => `${JSON.stringify(k)}:${canonOf(val, cache2)}`).sort();
     s = `{${entries.join(",")}}`;
   }
   cache2.set(key, s);
   return s;
 }
-function strLen(v) {
-  return JSON.stringify(v).length;
+function strLen(v2) {
+  return JSON.stringify(v2).length;
 }
-function compactValue(v, depth, stats, cache2) {
-  if (depth > MAX_DEPTH || stats.folds >= MAX_FOLDS) return v;
-  if (Array.isArray(v)) return compactArray(v, depth, stats, cache2);
-  if (isPlainObject(v)) {
+function compactValue(v2, depth, stats, cache2) {
+  if (depth > MAX_DEPTH || stats.folds >= MAX_FOLDS) return v2;
+  if (Array.isArray(v2)) return compactArray(v2, depth, stats, cache2);
+  if (isPlainObject(v2)) {
     let changed = false;
     const out = {};
-    for (const [k, val] of Object.entries(v)) {
+    for (const [k, val] of Object.entries(v2)) {
       const nv = compactValue(val, depth + 1, stats, cache2);
       out[k] = nv;
       if (nv !== val) changed = true;
     }
-    return changed ? out : v;
+    return changed ? out : v2;
   }
-  return v;
+  return v2;
 }
 function compactArray(arr, depth, stats, cache2) {
   const n = arr.length;
@@ -2905,8 +6537,8 @@ function compactArray(arr, depth, stats, cache2) {
   stats.folds += winnerFolds;
   return winner;
 }
-function isRunMarker(v) {
-  return isPlainObject(v) && v[CRUSH_KEY] === "identical-run";
+function isRunMarker(v2) {
+  return isPlainObject(v2) && v2[CRUSH_KEY] === "identical-run";
 }
 function buildRunFold(arr, depth, cache2) {
   const n = arr.length;
@@ -2915,16 +6547,16 @@ function buildRunFold(arr, depth, cache2) {
   let runs2 = 0;
   let i = 0;
   while (i < n) {
-    let j = i;
-    while (j + 1 < n && canon[j + 1] === canon[i]) j++;
-    const runLen = j - i + 1;
+    let j2 = i;
+    while (j2 + 1 < n && canon[j2 + 1] === canon[i]) j2++;
+    const runLen = j2 - i + 1;
     if (runLen >= RUN_MIN) {
       segs.push({ [CRUSH_KEY]: "identical-run", count: runLen, item: arr[i] });
       runs2++;
     } else {
-      for (let k = i; k <= j; k++) segs.push(arr[k]);
+      for (let k = i; k <= j2; k++) segs.push(arr[k]);
     }
-    i = j + 1;
+    i = j2 + 1;
   }
   if (runs2 === 0) return null;
   const inner = { folds: 0 };
@@ -2967,8 +6599,8 @@ function buildConstHoist(arr, depth, cache2) {
   for (const k of constKeys) constObj[k] = first[k];
   const items = arr.map((e) => {
     const o = {};
-    for (const [k, v] of Object.entries(e)) {
-      if (!constSet.has(k)) o[k] = v;
+    for (const [k, v2] of Object.entries(e)) {
+      if (!constSet.has(k)) o[k] = v2;
     }
     return o;
   });
@@ -3095,12 +6727,12 @@ function trimPython(text) {
       blankRun = 0;
       continue;
     }
-    const m = line.match(/^\s*("""|''')/);
-    if (m) {
+    const m2 = line.match(/^\s*("""|''')/);
+    if (m2) {
       flush();
-      const q = m[1];
-      const opensHere = line.indexOf(q);
-      const closeOnSameLine = findTripleClose(line.slice(opensHere + 3), q);
+      const q2 = m2[1];
+      const opensHere = line.indexOf(q2);
+      const closeOnSameLine = findTripleClose(line.slice(opensHere + 3), q2);
       if (closeOnSameLine !== -1) {
         const restAfter = line.slice(opensHere + 3 + closeOnSameLine + 3).trim();
         if (restAfter.length > 0) {
@@ -3118,7 +6750,7 @@ function trimPython(text) {
         continue;
       }
       state = "triple";
-      quote = q;
+      quote = q2;
       isDocstring = atModuleStart || docstringSlot;
       atModuleStart = false;
       docstringSlot = false;
@@ -3192,39 +6824,39 @@ function findCommentOrTriple(line) {
   }
   return { kind: "none", idx: -1, quote: "" };
 }
-function scanTemplateRest(line, from, st) {
-  let m = st.mode;
-  let q = st.quote;
-  let d = st.depth;
+function scanTemplateRest(line, from, st2) {
+  let m2 = st2.mode;
+  let q2 = st2.quote;
+  let d2 = st2.depth;
   let i = from;
   while (i < line.length) {
     const c = line[i];
-    if (m === "str") {
+    if (m2 === "str") {
       if (c === "\\") i += 2;
-      else if (c === q) m = "expr";
+      else if (c === q2) m2 = "expr";
       else i++;
       continue;
     }
-    if (m === "expr") {
+    if (m2 === "expr") {
       if (c === "'" || c === '"') {
-        q = c;
-        m = "str";
+        q2 = c;
+        m2 = "str";
         i++;
         continue;
       }
       if (c === "`")
         return {
-          mode: m,
-          quote: q,
-          depth: d,
+          mode: m2,
+          quote: q2,
+          depth: d2,
           closed: false,
           bail: true,
           consumed: 0
         };
-      if (c === "{") d++;
+      if (c === "{") d2++;
       else if (c === "}") {
-        d--;
-        if (d === 0) m = "tpl";
+        d2--;
+        if (d2 === 0) m2 = "tpl";
       }
       i++;
       continue;
@@ -3243,17 +6875,17 @@ function scanTemplateRest(line, from, st) {
         consumed: i - from + 1
       };
     if (c === "$" && line[i + 1] === "{") {
-      m = "expr";
-      d = 1;
+      m2 = "expr";
+      d2 = 1;
       i += 2;
       continue;
     }
     i++;
   }
   return {
-    mode: m,
-    quote: q,
-    depth: d,
+    mode: m2,
+    quote: q2,
+    depth: d2,
     closed: false,
     bail: false,
     consumed: 0
@@ -3265,20 +6897,20 @@ function regexAllowedAfter(prev) {
   return !".'\"`) ]".includes(prev);
 }
 function prevSigChar(line, i) {
-  for (let j = i - 1; j >= 0; j--) {
-    const c = line[j];
+  for (let j2 = i - 1; j2 >= 0; j2--) {
+    const c = line[j2];
     if (c === " " || c === "	") continue;
     return c;
   }
   return null;
 }
 function scanRegexLiteral(line, i) {
-  let j = i + 1;
+  let j2 = i + 1;
   let inClass = false;
-  while (j < line.length) {
-    const c = line[j];
+  while (j2 < line.length) {
+    const c = line[j2];
     if (c === "\\") {
-      j += 2;
+      j2 += 2;
       continue;
     }
     if (inClass) {
@@ -3286,11 +6918,11 @@ function scanRegexLiteral(line, i) {
     } else if (c === "[") {
       inClass = true;
     } else if (c === "/") {
-      let f = j + 1;
+      let f = j2 + 1;
       while (f < line.length && /[a-z]/i.test(line[f])) f++;
       return f;
     }
-    j++;
+    j2++;
   }
   return null;
 }
@@ -3468,11 +7100,11 @@ function classifyLevel(line) {
 }
 function isLogSummaryLine(line) {
   if (line.startsWith("===") || line.startsWith("---")) return true;
-  let d = 0;
-  while (d < line.length && line.charCodeAt(d) >= 48 && line.charCodeAt(d) <= 57)
-    d++;
-  if (d > 0 && line[d] === " ") {
-    const rest = line.slice(d + 1);
+  let d2 = 0;
+  while (d2 < line.length && line.charCodeAt(d2) >= 48 && line.charCodeAt(d2) <= 57)
+    d2++;
+  if (d2 > 0 && line[d2] === " ") {
+    const rest = line.slice(d2 + 1);
     if (rest.startsWith("passed") || rest.startsWith("failed") || rest.startsWith("skipped") || rest.startsWith("error") || rest.startsWith("warning"))
       return true;
   }
@@ -3487,8 +7119,8 @@ function isLogSummaryLine(line) {
     "Suite:"
   ]) {
     if (line.startsWith(prefix)) {
-      const m = line.slice(prefix.length).match(/\S/);
-      if (m !== null && m[0].charCodeAt(0) >= 48 && m[0].charCodeAt(0) <= 57)
+      const m2 = line.slice(prefix.length).match(/\S/);
+      if (m2 !== null && m2[0].charCodeAt(0) >= 48 && m2[0].charCodeAt(0) <= 57)
         return true;
     }
   }
@@ -3510,9 +7142,9 @@ function isAsciiAlnum(c) {
 function hasLineColSuffix(s) {
   for (let i = 0; i + 1 < s.length; i++) {
     if (s[i] === ":" && isDigitChar(s[i + 1])) {
-      let j = i + 1;
-      while (j < s.length && isDigitChar(s[j])) j++;
-      if (j + 1 < s.length && s[j] === ":" && isDigitChar(s[j + 1]))
+      let j2 = i + 1;
+      while (j2 < s.length && isDigitChar(s[j2])) j2++;
+      if (j2 + 1 < s.length && s[j2] === ":" && isDigitChar(s[j2 + 1]))
         return true;
     }
   }
@@ -3541,9 +7173,9 @@ function isRustPanicOpener(s) {
 function isGoroutineHeader(line) {
   if (!line.startsWith("goroutine ")) return false;
   const rest = line.slice(10);
-  let d = 0;
-  while (d < rest.length && isDigitChar(rest[d])) d++;
-  return d > 0 && rest.slice(d).startsWith(" [");
+  let d2 = 0;
+  while (d2 < rest.length && isDigitChar(rest[d2])) d2++;
+  return d2 > 0 && rest.slice(d2).startsWith(" [");
 }
 function isGoPanicOpener(line) {
   return line.startsWith("panic: ") || line.startsWith("fatal error: ") || isGoroutineHeader(line);
@@ -3599,9 +7231,9 @@ function isRustBacktraceFrame(s) {
 function isJavaMoreSummary(trimmed) {
   if (!trimmed.startsWith("... ")) return false;
   const rest = trimmed.slice(4);
-  let d = 0;
-  while (d < rest.length && isDigitChar(rest[d])) d++;
-  return d > 0 && rest.slice(d).trim() === "more";
+  let d2 = 0;
+  while (d2 < rest.length && isDigitChar(rest[d2])) d2++;
+  return d2 > 0 && rest.slice(d2).trim() === "more";
 }
 function traceFlavorFor(line) {
   const t = line.trimStart();
@@ -3651,9 +7283,9 @@ function traceTerminates(flavor, line, linesSoFar) {
     }
   }
 }
-function scoreLogLine(l) {
-  const base = l.level === "error" || l.level === "fail" ? 1 : l.level === "warn" ? 0.5 : l.level === "info" || l.level === "unknown" ? 0.1 : l.level === "debug" ? 0.05 : 0.02;
-  return Math.min(base + (l.isStack ? 0.3 : 0) + (l.isSummary ? 0.4 : 0), 1);
+function scoreLogLine(l3) {
+  const base = l3.level === "error" || l3.level === "fail" ? 1 : l3.level === "warn" ? 0.5 : l3.level === "info" || l3.level === "unknown" ? 0.1 : l3.level === "debug" ? 0.05 : 0.02;
+  return Math.min(base + (l3.isStack ? 0.3 : 0) + (l3.isSummary ? 0.4 : 0), 1);
 }
 function parseLogLines(lines) {
   const out = new Array(lines.length);
@@ -3706,16 +7338,16 @@ function selectWithFirstLast(arr, maxCount) {
   if (arr.length <= maxCount) return arr.slice();
   const out = [];
   const seen = /* @__PURE__ */ new Set();
-  const push = (l) => {
-    if (seen.add(l.i)) out.push(l);
+  const push = (l3) => {
+    if (seen.add(l3.i)) out.push(l3);
   };
   push(arr[0]);
   push(arr[arr.length - 1]);
   if (out.length < maxCount) {
-    const byScore = arr.slice().sort((a, b) => b.score - a.score || a.i - b.i);
-    for (const l of byScore) {
-      if (!seen.has(l.i)) {
-        push(l);
+    const byScore = arr.slice().sort((a, b2) => b2.score - a.score || a.i - b2.i);
+    for (const l3 of byScore) {
+      if (!seen.has(l3.i)) {
+        push(l3);
         if (out.length >= maxCount) break;
       }
     }
@@ -3770,7 +7402,7 @@ function isChainHeadLine(content) {
 }
 function isRuntimeFrame(content) {
   const t = content.trimStart();
-  return RUNTIME_FRAME_PREFIXES.some((p) => t.startsWith(p)) || RUNTIME_FRAME_MARKERS.some((m) => content.includes(m));
+  return RUNTIME_FRAME_PREFIXES.some((p) => t.startsWith(p)) || RUNTIME_FRAME_MARKERS.some((m2) => content.includes(m2));
 }
 function collapseTraceFrames(stack, headFrames, appFrames) {
   const kept = [];
@@ -3829,34 +7461,34 @@ function selectLogLines(all) {
   const summaries = [];
   const stacks = [];
   let current = [];
-  for (const l of all) {
-    if (l.level === "error") errors.push(l);
-    else if (l.level === "fail") fails.push(l);
-    else if (l.level === "warn") warnings.push(l);
-    if (l.isStack) current.push(l);
+  for (const l3 of all) {
+    if (l3.level === "error") errors.push(l3);
+    else if (l3.level === "fail") fails.push(l3);
+    else if (l3.level === "warn") warnings.push(l3);
+    if (l3.isStack) current.push(l3);
     else if (current.length > 0) {
       stacks.push(current);
       current = [];
     }
-    if (l.isSummary) summaries.push(l);
+    if (l3.isSummary) summaries.push(l3);
   }
   if (current.length > 0) stacks.push(current);
   const selected = /* @__PURE__ */ new Map();
-  for (const l of selectWithFirstLast(errors, LOG_MAX_ERRORS))
-    selected.set(l.i, l);
-  for (const l of selectWithFirstLast(fails, LOG_MAX_ERRORS))
-    selected.set(l.i, l);
+  for (const l3 of selectWithFirstLast(errors, LOG_MAX_ERRORS))
+    selected.set(l3.i, l3);
+  for (const l3 of selectWithFirstLast(fails, LOG_MAX_ERRORS))
+    selected.set(l3.i, l3);
   const seenWarn = /* @__PURE__ */ new Set();
   const dedupedWarnings = [];
-  for (const w of warnings) {
-    const key = normalizeForDedupe(w.content);
+  for (const w2 of warnings) {
+    const key = normalizeForDedupe(w2.content);
     if (!seenWarn.has(key)) {
       seenWarn.add(key);
-      dedupedWarnings.push(w);
+      dedupedWarnings.push(w2);
     }
   }
-  for (const w of dedupedWarnings.slice(0, LOG_MAX_WARNINGS))
-    selected.set(w.i, w);
+  for (const w2 of dedupedWarnings.slice(0, LOG_MAX_WARNINGS))
+    selected.set(w2.i, w2);
   for (const stack of stacks.slice(0, LOG_MAX_STACK_TRACES)) {
     if (stack.length > LOG_STACK_MAX_LINES) {
       const collapsed = collapseTraceFrames(
@@ -3865,10 +7497,10 @@ function selectLogLines(all) {
         LOG_TRACE_APP_FRAMES
       );
       for (const i of collapsed.dropped) selected.delete(i);
-      for (const l of collapsed.kept.slice(0, LOG_STACK_MAX_LINES))
-        selected.set(l.i, l);
+      for (const l3 of collapsed.kept.slice(0, LOG_STACK_MAX_LINES))
+        selected.set(l3.i, l3);
     } else {
-      for (const l of stack) selected.set(l.i, l);
+      for (const l3 of stack) selected.set(l3.i, l3);
     }
   }
   for (const s of summaries) selected.set(s.i, s);
@@ -3881,25 +7513,25 @@ function selectLogLines(all) {
   }
   let ordered = Array.from(selected.values());
   if (ordered.length > LOG_MAX_TOTAL_LINES) {
-    ordered.sort((a, b) => b.score - a.score || a.i - b.i);
+    ordered.sort((a, b2) => b2.score - a.score || a.i - b2.i);
     ordered = ordered.slice(0, LOG_MAX_TOTAL_LINES);
-    ordered.sort((a, b) => a.i - b.i);
+    ordered.sort((a, b2) => a.i - b2.i);
   }
   return ordered;
 }
 function formatLogOutput(selected, all) {
-  const count = (lv) => all.reduce((n, l) => l.level === lv ? n + 1 : n, 0);
-  const output = selected.map((l) => l.content);
+  const count = (lv) => all.reduce((n, l3) => l3.level === lv ? n + 1 : n, 0);
+  const output = selected.map((l3) => l3.content);
   const omitted = all.length - selected.length;
   if (omitted > 0) {
     const parts = [];
     const e = count("error");
     const f = count("fail");
-    const w = count("warn");
+    const w2 = count("warn");
     const inf = count("info");
     if (e > 0) parts.push(`${e} ERROR`);
     if (f > 0) parts.push(`${f} FAIL`);
-    if (w > 0) parts.push(`${w} WARN`);
+    if (w2 > 0) parts.push(`${w2} WARN`);
     if (inf > 0) parts.push(`${inf} INFO`);
     if (parts.length > 0)
       output.push(`[${omitted} lines omitted: ${parts.join(", ")}]`);
@@ -3965,7 +7597,7 @@ function crushLog(text) {
 }
 function errorLinesSurvive(input, output) {
   const kept = new Set(
-    output.split(/\r?\n/).map((l) => l.trim()).filter((l) => l.length > 0)
+    output.split(/\r?\n/).map((l3) => l3.trim()).filter((l3) => l3.length > 0)
   );
   for (const line of input.split(/\r?\n/)) {
     const level = classifyLevel(line);
@@ -4283,13 +7915,13 @@ function adjustBoundariesForReasoningPairs(startIndex, endIndex, messages) {
     const msg = messages[i];
     if (!msg) continue;
     if (msg.contentType === "reasoning") {
-      let j = i;
-      while (j + 1 < messages.length && messages[j + 1].contentType === "reasoning") {
-        j++;
+      let j2 = i;
+      while (j2 + 1 < messages.length && messages[j2 + 1].contentType === "reasoning") {
+        j2++;
       }
-      const companion = messages[j + 1];
+      const companion = messages[j2 + 1];
       if (companion !== void 0 && companion.role === "assistant" && (companion.contentType === "text" || companion.contentType === "tool-call")) {
-        let e = j + 1;
+        let e = j2 + 1;
         while (e + 1 < messages.length && messages[e + 1].role === "assistant" && (messages[e + 1].contentType === "text" || messages[e + 1].contentType === "tool-call")) {
           e++;
         }
@@ -4354,11 +7986,11 @@ function computeTurnGroups(messages) {
     }
     const members = /* @__PURE__ */ new Set();
     for (let k = reasoningStart; k <= burstEnd; k++) {
-      const m = messages[k];
-      if (!m.id) continue;
-      members.add(m.id);
-      if (m.role === "assistant" && m.contentType === "tool-call" && typeof m.toolCallId === "string") {
-        const rid = resultIdByCallId.get(m.toolCallId);
+      const m2 = messages[k];
+      if (!m2.id) continue;
+      members.add(m2.id);
+      if (m2.role === "assistant" && m2.contentType === "tool-call" && typeof m2.toolCallId === "string") {
+        const rid = resultIdByCallId.get(m2.toolCallId);
         if (rid) members.add(rid);
       }
     }
@@ -4376,18 +8008,18 @@ function computeIntegrityWithdrawals(messages, foldedIds) {
   const callIds = /* @__PURE__ */ new Set();
   const callIdByMessageId = /* @__PURE__ */ new Map();
   const resultIdByCallId = /* @__PURE__ */ new Map();
-  for (const m of messages) {
-    if (!m.id) continue;
-    if (m.contentType === "reasoning") reasoningIds.add(m.id);
-    if (m.role === "assistant" && m.contentType === "tool-call") {
-      callIds.add(m.id);
-      if (typeof m.toolCallId === "string") {
-        callIdByMessageId.set(m.id, m.toolCallId);
+  for (const m2 of messages) {
+    if (!m2.id) continue;
+    if (m2.contentType === "reasoning") reasoningIds.add(m2.id);
+    if (m2.role === "assistant" && m2.contentType === "tool-call") {
+      callIds.add(m2.id);
+      if (typeof m2.toolCallId === "string") {
+        callIdByMessageId.set(m2.id, m2.toolCallId);
       }
     }
-    if (m.contentType === "tool-result" && typeof m.toolCallId === "string") {
-      if (!resultIdByCallId.has(m.toolCallId)) {
-        resultIdByCallId.set(m.toolCallId, m.id);
+    if (m2.contentType === "tool-result" && typeof m2.toolCallId === "string") {
+      if (!resultIdByCallId.has(m2.toolCallId)) {
+        resultIdByCallId.set(m2.toolCallId, m2.id);
       }
     }
   }
@@ -4395,9 +8027,9 @@ function computeIntegrityWithdrawals(messages, foldedIds) {
   let changed = true;
   while (changed) {
     changed = false;
-    for (let g = 0; g < groups.length; g++) {
-      if (handledTurns.has(g)) continue;
-      const group = groups[g];
+    for (let g2 = 0; g2 < groups.length; g2++) {
+      if (handledTurns.has(g2)) continue;
+      const group = groups[g2];
       const foldHasReasoning = group.some(
         (id) => remaining.has(id) && reasoningIds.has(id)
       );
@@ -4406,24 +8038,24 @@ function computeIntegrityWithdrawals(messages, foldedIds) {
         (id) => !remaining.has(id) && callIds.has(id)
       );
       if (!keptHasCall) continue;
-      handledTurns.add(g);
+      handledTurns.add(g2);
       for (const id of group) {
         remaining.delete(id);
         withdrawn.add(id);
       }
       changed = true;
     }
-    for (const m of messages) {
-      if (!m.id || !callIds.has(m.id)) continue;
-      const callId = callIdByMessageId.get(m.id);
+    for (const m2 of messages) {
+      if (!m2.id || !callIds.has(m2.id)) continue;
+      const callId = callIdByMessageId.get(m2.id);
       if (callId === void 0 || handledPairs.has(callId)) continue;
       const resultId = resultIdByCallId.get(callId);
       if (resultId === void 0) continue;
-      if (remaining.has(m.id) === remaining.has(resultId)) continue;
+      if (remaining.has(m2.id) === remaining.has(resultId)) continue;
       handledPairs.add(callId);
-      remaining.delete(m.id);
+      remaining.delete(m2.id);
       remaining.delete(resultId);
-      withdrawn.add(m.id);
+      withdrawn.add(m2.id);
       withdrawn.add(resultId);
       changed = true;
     }
@@ -4478,8 +8110,8 @@ function computeProtectedRefs(messages, state, config, countTokens = estimateTex
     visible.push({ ref, tokens: countMessageTokens(msg, countTokens) });
   }
   if (preserveN > 0) {
-    for (const m of visible.slice(-preserveN)) {
-      result.add(m.ref);
+    for (const m2 of visible.slice(-preserveN)) {
+      result.add(m2.ref);
     }
   }
   if (preserveTokens > 0) {
@@ -4635,7 +8267,7 @@ function buildCompressibleRanges(messages, state, config, protectedZoneRefs, cou
   }
   if (pcur) protectedRanges.push(pcur);
   return {
-    compressible: compressible.filter((g) => g.tokens > 0),
+    compressible: compressible.filter((g2) => g2.tokens > 0),
     protected: protectedRanges
   };
 }
@@ -4723,7 +8355,7 @@ function refGateDiagnostics(state, requestedRanges, unknownCount) {
   return `[diagnostics: session highest ref=${highestRef}, unknown ranges in request=${unknownCount}/${requestedRanges}, session history=${state.stats.compressionCount} compression(s), ${state.blocks.length} block(s)]`;
 }
 function danglingMessageRefs(state, messages, spec) {
-  const visible = new Set(messages.map((m) => m.id));
+  const visible = new Set(messages.map((m2) => m2.id));
   const dangling = [];
   for (const ref of [spec.startRef, spec.endRef]) {
     const parsed = parseBoundary(ref);
@@ -4756,15 +8388,15 @@ function coveringBlockIds(state, spec) {
       }
     }
   }
-  return [...found].sort((x, y) => numericBlockId(x) - numericBlockId(y));
+  return [...found].sort((x2, y2) => numericBlockId(x2) - numericBlockId(y2));
 }
 function tierActionHint(config, state) {
   if (!config.tiers.enabled) return "";
-  const t2 = activeBlocks(state).filter((b) => b.tier === 2);
+  const t2 = activeBlocks(state).filter((b2) => b2.tier === 2);
   if (t2.length >= config.tiers.tier3Trigger) {
     return ` Tier condensation is actionable now: compress({ content: [{ startId: "${t2[0].blockId}", endId: "${t2[t2.length - 1].blockId}", summary: "...", topic: "..." }] }) merges those tier-2 blocks into one tier-3 block.`;
   }
-  const t1 = activeBlocks(state).filter((b) => b.tier === 1);
+  const t1 = activeBlocks(state).filter((b2) => b2.tier === 1);
   if (t1.length >= config.tiers.tier2Trigger) {
     return ` Tier distillation is actionable now: compress({ content: [{ startId: "${t1[0].blockId}", endId: "${t1[t1.length - 1].blockId}", summary: "...", topic: "..." }] }) merges those tier-1 blocks into one tier-2 block.`;
   }
@@ -4924,7 +8556,7 @@ function createCore(ports = {}) {
         end: resolution.resolved.endIndex
       });
     }
-    const sortedRanges = [...rangeSpans].sort((a, b) => a.start - b.start);
+    const sortedRanges = [...rangeSpans].sort((a, b2) => a.start - b2.start);
     const skipSpecs = /* @__PURE__ */ new Set();
     let acceptedMaxIndex = -1;
     for (const entry of sortedRanges) {
@@ -4949,7 +8581,7 @@ function createCore(ports = {}) {
         }
         countedRanges++;
         for (const id of resolution.resolved.messageIds) {
-          const msg = input.messages.find((m) => m.id === id);
+          const msg = input.messages.find((m2) => m2.id === id);
           totalRangeChars += msg?.text?.length ?? 0;
         }
       }
@@ -5119,7 +8751,7 @@ function createCore(ports = {}) {
     };
     const strategy = input.renderTags ?? "all";
     const nodes = buildNodes(strategy);
-    const inboundIds = input.messages.map((m) => m.id);
+    const inboundIds = input.messages.map((m2) => m2.id);
     const result = runPipeline(nodes, initial, ctx);
     const state = { ...result.state, lastPassIds: inboundIds };
     const ccrEffect = result.effects.ccr;
@@ -5205,13 +8837,13 @@ var assignRefsNode = {
   run(io, ctx) {
     const hasProtection = ctx.config.protectedTools.length > 0 || !!ctx.config.isToolProtected || (ctx.config.protectedLatestTools?.length ?? 0) > 0;
     const latest = hasProtection ? collectLatestProtected(io.messages, ctx.config) : void 0;
-    const protectedFn = (m) => hasMediaPayload(m) || (hasProtection ? isMessageProtected(m, ctx.config) || (latest ? isMessageLatestProtected(m, latest) : false) : false);
+    const protectedFn = (m2) => hasMediaPayload(m2) || (hasProtection ? isMessageProtected(m2, ctx.config) || (latest ? isMessageLatestProtected(m2, latest) : false) : false);
     const refResult = assignRefs(io.messages, {
       existing: io.state.messageRefs,
       nextIndex: highestUsedIndex(io.state.messageRefs) + 1,
       isProtected: protectedFn,
       // Ephemeral retrieval injections never consume a ref slot.
-      shouldSkip: (m) => m.id.startsWith(RETRIEVED_ID_PREFIX)
+      shouldSkip: (m2) => m2.id.startsWith(RETRIEVED_ID_PREFIX)
     });
     return { ...io, state: { ...io.state, messageRefs: refResult.map } };
   }
@@ -5447,7 +9079,7 @@ function applySingleRange(input) {
   );
   if (rangeMessageIds.length > resolved.messageIds.length) {
     const indexByMessageId = /* @__PURE__ */ new Map();
-    input.messages.forEach((m, i) => indexByMessageId.set(m.id, i));
+    input.messages.forEach((m2, i) => indexByMessageId.set(m2.id, i));
     const adjustedStart = rangeMessageIds.length > 0 ? indexByMessageId.get(rangeMessageIds[0]) ?? resolved.startIndex : resolved.startIndex;
     const adjustedEnd = rangeMessageIds.length > 0 ? indexByMessageId.get(rangeMessageIds[rangeMessageIds.length - 1]) ?? resolved.endIndex : resolved.endIndex;
     const nestedSeen = new Set(resolved.nestedBlockIds);
@@ -5493,7 +9125,7 @@ function applySingleRange(input) {
     }
   }
   const mediaExcluded = directMessageIds.filter((id) => {
-    const msg = input.messages.find((m) => m.id === id);
+    const msg = input.messages.find((m2) => m2.id === id);
     return !!msg && hasMediaPayload(msg);
   });
   if (mediaExcluded.length > 0) {
@@ -5510,7 +9142,7 @@ function applySingleRange(input) {
     const protectedSet = new Set(hitProtectedRaw);
     filteredIds = filteredIds.filter((id) => !protectedSet.has(id));
     for (const id of hitProtectedRaw) effectiveMessageIds.delete(id);
-    const hitRefs = hitProtectedRaw.map((id) => input.state.messageRefs.byRaw[id]).filter((v) => typeof v === "string");
+    const hitRefs = hitProtectedRaw.map((id) => input.state.messageRefs.byRaw[id]).filter((v2) => typeof v2 === "string");
     if (filteredIds.length === 0 && consumedBlockIds.length === 0) {
       const recentN = input.config.preserveRecentMessages;
       throw new Error(
@@ -5682,7 +9314,7 @@ function filterProtectedToolMessages(directMessageIds, messages, config) {
     }
   }
   for (const id of directMessageIds) {
-    const msg = messages.find((m) => m.id === id);
+    const msg = messages.find((m2) => m2.id === id);
     if (!msg) continue;
     if (hasMediaPayload(msg) || isMessageProtected(msg, config) || isMessageLatestProtected(msg, latest)) {
       removedIds.add(id);
@@ -5691,7 +9323,7 @@ function filterProtectedToolMessages(directMessageIds, messages, config) {
   }
   for (const id of directMessageIds) {
     if (removedIds.has(id)) continue;
-    const msg = messages.find((m) => m.id === id);
+    const msg = messages.find((m2) => m2.id === id);
     if (!msg) continue;
     if (msg.contentType === "tool-result" && msg.toolCallId && protectedCallIds.has(msg.toolCallId)) {
       removedIds.add(id);
@@ -5738,14 +9370,14 @@ function pendingByTier(state, recommendation, countTokens, minCompressRange) {
     targetBlocks: []
   };
   const active = activeBlocks(state);
-  const t1 = active.filter((b) => b.tier === 1);
-  const t2 = active.filter((b) => b.tier === 2);
+  const t1 = active.filter((b2) => b2.tier === 1);
+  const t2 = active.filter((b2) => b2.tier === 2);
   out[2] = {
-    pending: t1.reduce((s, b) => s + countTokens(b.summary), 0),
+    pending: t1.reduce((s, b2) => s + countTokens(b2.summary), 0),
     targetBlocks: t1
   };
   out[3] = {
-    pending: t2.reduce((s, b) => s + countTokens(b.summary), 0),
+    pending: t2.reduce((s, b2) => s + countTokens(b2.summary), 0),
     targetBlocks: t2
   };
   return out;
@@ -5995,9 +9627,9 @@ function triStateSection(raw, keys) {
   const out = {};
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
   for (const key of keys) {
-    const v = raw[key];
-    if (typeof v === "string") out[key] = v;
-    else if (v === null) out[key] = null;
+    const v2 = raw[key];
+    if (typeof v2 === "string") out[key] = v2;
+    else if (v2 === null) out[key] = null;
   }
   return out;
 }
@@ -6007,8 +9639,8 @@ function sanitizePackSurface(raw) {
   const rawPrompts = raw.prompts;
   if (rawPrompts && typeof rawPrompts === "object" && !Array.isArray(rawPrompts)) {
     for (const k of PROMPT_RULE_KEYS) {
-      const v = rawPrompts[k];
-      if (typeof v === "string") prompts[k] = v;
+      const v2 = rawPrompts[k];
+      if (typeof v2 === "string") prompts[k] = v2;
     }
   }
   const toolPrompts = {};
@@ -6021,10 +9653,10 @@ function sanitizePackSurface(raw) {
       if (typeof ov.description === "string") out.description = ov.description;
       if (ov.paramDescriptions && typeof ov.paramDescriptions === "object" && !Array.isArray(ov.paramDescriptions)) {
         const params = {};
-        for (const [p, d] of Object.entries(
+        for (const [p, d2] of Object.entries(
           ov.paramDescriptions
         )) {
-          if (typeof d === "string") params[p] = d;
+          if (typeof d2 === "string") params[p] = d2;
         }
         if (Object.keys(params).length > 0) out.paramDescriptions = params;
       }
@@ -6166,7 +9798,7 @@ function readPackFile(file) {
 function createDirPackSource(id, dir) {
   const resolve5 = (name) => {
     if (!isValidPackName(name)) return null;
-    const file = path3.join(dir, `${name}.json`);
+    const file = path6.join(dir, `${name}.json`);
     const raw = readPackFile(file);
     if (!raw) return null;
     return {
@@ -6317,7 +9949,7 @@ function buildStatusReport(state, messages, countTokens, options = {}) {
   const toolFilter = options.tool;
   const sort = options.sort ?? "size";
   const limit = options.limit ?? 30;
-  const activeBlocks2 = state.blocks.filter((b) => b.active).sort((a, b) => numericPart2(a.blockId) - numericPart2(b.blockId));
+  const activeBlocks2 = state.blocks.filter((b2) => b2.active).sort((a, b2) => numericPart2(a.blockId) - numericPart2(b2.blockId));
   if (scope === "compressed") {
     return renderCompressedDrilldown(
       activeBlocks2,
@@ -6375,16 +10007,16 @@ function renderOverview(visible, summaryTokens, blocks, state, countTokens, limi
     );
   }
   const topTool = [...toolTypeMap.entries()].sort(
-    (a, b) => b[1] - a[1]
+    (a, b2) => b2[1] - a[1]
   )[0]?.[0];
-  const totalTool = visible.filter((m) => m.isTool).reduce((sum, m) => sum + m.tokens, 0);
-  const totalText = visible.filter((m) => !m.isTool).reduce((sum, m) => sum + m.tokens, 0);
+  const totalTool = visible.filter((m2) => m2.isTool).reduce((sum, m2) => sum + m2.tokens, 0);
+  const totalText = visible.filter((m2) => !m2.isTool).reduce((sum, m2) => sum + m2.tokens, 0);
   const total = summaryTokens + totalTool + totalText;
   lines.push("CONTEXT BREAKDOWN");
   lines.push(
     `  ${formatTokens2(totalTool)} tool (${pct(totalTool, total)}%) | ${formatTokens2(totalText)} text (${pct(totalText, total)}%) | ${formatTokens2(summaryTokens)} summaries (${pct(summaryTokens, total)}%)`
   );
-  const topTypes = [...toolTypeMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const topTypes = [...toolTypeMap.entries()].sort((a, b2) => b2[1] - a[1]).slice(0, 3);
   if (topTypes.length > 0) {
     lines.push(
       `  Top tools: ${topTypes.map(([t, n]) => `${t} (${pct(n, total)}%)`).join(", ")}`
@@ -6396,11 +10028,11 @@ function renderOverview(visible, summaryTokens, blocks, state, countTokens, limi
     lines.push("  No compressed blocks.");
   } else {
     const totalSummary = blocks.reduce(
-      (s, b) => s + summaryTokensOf(b, countTokens),
+      (s, b2) => s + summaryTokensOf(b2, countTokens),
       0
     );
     const totalEffective = blocks.reduce(
-      (s, b) => s + effectiveCompressedTokens(b, state, countTokens),
+      (s, b2) => s + effectiveCompressedTokens(b2, state, countTokens),
       0
     );
     lines.push(
@@ -6410,7 +10042,7 @@ function renderOverview(visible, summaryTokens, blocks, state, countTokens, limi
     if (breakdown) lines.push(`  Tier usage: ${breakdown}`);
     lines.push("");
     const sorted = [...blocks].sort(
-      (a, b) => effectiveCompressedTokens(b, state, countTokens) - effectiveCompressedTokens(a, state, countTokens) || b.createdAt - a.createdAt
+      (a, b2) => effectiveCompressedTokens(b2, state, countTokens) - effectiveCompressedTokens(a, state, countTokens) || b2.createdAt - a.createdAt
     );
     for (const block of sorted.slice(0, limit)) {
       const topic = block.topic ?? "(no topic)";
@@ -6433,7 +10065,7 @@ function renderOverview(visible, summaryTokens, blocks, state, countTokens, limi
 }
 function renderUncompressedRanges(visible, sort, limit) {
   const lines = [];
-  const totalTokens = visible.reduce((s, m) => s + m.tokens, 0);
+  const totalTokens = visible.reduce((s, m2) => s + m2.tokens, 0);
   lines.push(
     `UNCOMPRESSED \u2014 ${formatTokens2(totalTokens)} | ${visible.length} visible messages`
   );
@@ -6465,16 +10097,16 @@ function renderUncompressedRanges(visible, sort, limit) {
       toolTokens: /* @__PURE__ */ new Map([[first.tool, first.tokens]])
     };
     for (let i = 1; i < group.length; i++) {
-      const m = group[i];
-      r.endRef = m.ref;
+      const m2 = group[i];
+      r.endRef = m2.ref;
       r.count += 1;
-      r.tokens += m.tokens;
-      r.toolTokens.set(m.tool, (r.toolTokens.get(m.tool) ?? 0) + m.tokens);
+      r.tokens += m2.tokens;
+      r.toolTokens.set(m2.tool, (r.toolTokens.get(m2.tool) ?? 0) + m2.tokens);
     }
     merged.push(r);
   }
   if (sort !== "time")
-    merged.sort((a, b) => b.tokens - a.tokens || a.startIndex - b.startIndex);
+    merged.sort((a, b2) => b2.tokens - a.tokens || a.startIndex - b2.startIndex);
   lines.push(`Sorted by ${sort === "time" ? "time" : "size"}`);
   lines.push("");
   for (const r of merged.slice(0, limit)) {
@@ -6490,15 +10122,15 @@ function renderUncompressedRanges(visible, sort, limit) {
 }
 function renderMessageDrilldown(visible, toolFilter, sort, limit) {
   let filtered = visible;
-  if (toolFilter) filtered = filtered.filter((m) => m.tool === toolFilter);
-  if (sort === "time") filtered.sort((a, b) => a.index - b.index);
+  if (toolFilter) filtered = filtered.filter((m2) => m2.tool === toolFilter);
+  if (sort === "time") filtered.sort((a, b2) => a.index - b2.index);
   else if (sort === "tool")
     filtered.sort(
-      (a, b) => a.tool.localeCompare(b.tool) || b.tokens - a.tokens
+      (a, b2) => a.tool.localeCompare(b2.tool) || b2.tokens - a.tokens
     );
-  else filtered.sort((a, b) => b.tokens - a.tokens);
-  const totalTokens = filtered.reduce((s, m) => s + m.tokens, 0);
-  const allTokens = visible.reduce((s, m) => s + m.tokens, 0);
+  else filtered.sort((a, b2) => b2.tokens - a.tokens);
+  const totalTokens = filtered.reduce((s, m2) => s + m2.tokens, 0);
+  const allTokens = visible.reduce((s, m2) => s + m2.tokens, 0);
   const header = toolFilter ? `UNCOMPRESSED \u2014 ${toolFilter}: ${formatTokens2(totalTokens)} | ${filtered.length} msgs | ${pct(totalTokens, allTokens)}% of visible` : `UNCOMPRESSED \u2014 ${formatTokens2(totalTokens)} | ${filtered.length} msgs`;
   const lines = [header, `Sorted by ${sort}`, ""];
   const shown = filtered.slice(0, limit);
@@ -6515,19 +10147,19 @@ function renderMessageDrilldown(visible, toolFilter, sort, limit) {
 }
 function renderCompressedDrilldown(blocks, state, sort, limit, countTokens, meta) {
   let sorted = [...blocks];
-  if (sort === "time") sorted.sort((a, b) => a.createdAt - b.createdAt);
+  if (sort === "time") sorted.sort((a, b2) => a.createdAt - b2.createdAt);
   else if (sort === "age")
-    sorted.sort((a, b) => b.survivedCount - a.survivedCount);
+    sorted.sort((a, b2) => b2.survivedCount - a.survivedCount);
   else
     sorted.sort(
-      (a, b) => effectiveCompressedTokens(b, state, countTokens) - effectiveCompressedTokens(a, state, countTokens) || b.createdAt - a.createdAt
+      (a, b2) => effectiveCompressedTokens(b2, state, countTokens) - effectiveCompressedTokens(a, state, countTokens) || b2.createdAt - a.createdAt
     );
   const totalSummary = sorted.reduce(
-    (s, b) => s + summaryTokensOf(b, countTokens),
+    (s, b2) => s + summaryTokensOf(b2, countTokens),
     0
   );
   const totalEffective = sorted.reduce(
-    (s, b) => s + effectiveCompressedTokens(b, state, countTokens),
+    (s, b2) => s + effectiveCompressedTokens(b2, state, countTokens),
     0
   );
   const lines = [];
@@ -6570,9 +10202,9 @@ function decomposeSample(prev, cur, pendingFolds) {
     let owner = -1;
     for (let i = 0; i < pendingFolds.length; i++) {
       const f = pendingFolds[i];
-      const x = f.firstFoldStartTokens ?? f.viewAfter ?? 0;
-      if (x < bestX) {
-        bestX = x;
+      const x2 = f.firstFoldStartTokens ?? f.viewAfter ?? 0;
+      if (x2 < bestX) {
+        bestX = x2;
         owner = i;
       }
     }
@@ -6592,12 +10224,12 @@ function hitPct(input, cached) {
   return input > 0 ? cached / input * 100 : 0;
 }
 function computeFoldEconomics(f, price) {
-  const w = price?.w ?? 1;
+  const w2 = price?.w ?? 1;
   const r = price?.r ?? 0.1;
-  const q = price?.q ?? 4;
+  const q2 = price?.q ?? 4;
   const netTokenDelta = f.T + f.sigma - f.S;
   const savingPerTurn = f.S - f.sigma;
-  const oneTimeCostUnits = (w - r) * f.T + q * f.sigma - r * f.S;
+  const oneTimeCostUnits = (w2 - r) * f.T + q2 * f.sigma - r * f.S;
   const perTurnSavingUnits = savingPerTurn * r;
   const breakevenTurns = perTurnSavingUnits > 0 ? Math.max(0, oneTimeCostUnits) / perTurnSavingUnits : null;
   const paidBack = f.turnsToNextFold !== null && breakevenTurns !== null ? f.turnsToNextFold >= breakevenTurns : null;
@@ -6639,15 +10271,15 @@ function summarizeFoldEconomics(foldEcon) {
   return econ;
 }
 function buildCacheReport(samplesIn, foldsIn, opts = {}) {
-  const samples = [...samplesIn].sort((a, b) => a.at - b.at);
+  const samples = [...samplesIn].sort((a, b2) => a.at - b2.at);
   const folds = [...foldsIn].sort(
-    (a, b) => a.at - b.at || a.tokensCompressed - b.tokensCompressed
+    (a, b2) => a.at - b2.at || a.tokensCompressed - b2.tokensCompressed
   );
   const maxLines = opts.maxLines && opts.maxLines > 0 ? opts.maxLines : 512;
   const price = opts.priceProfile;
-  const w = price?.w ?? 1;
+  const w2 = price?.w ?? 1;
   const r = price?.r ?? 0.1;
-  const q = price?.q ?? 4;
+  const q2 = price?.q ?? 4;
   const decs = [];
   for (let i = 0; i < samples.length; i++) {
     const s = samples[i];
@@ -6655,17 +10287,17 @@ function buildCacheReport(samplesIn, foldsIn, opts = {}) {
     const prevAt = prev ? prev.at : Number.NEGATIVE_INFINITY;
     const pending = [];
     let pendingBase = 0;
-    for (let j = 0; j < folds.length; j++) {
-      const fj = folds[j];
+    for (let j2 = 0; j2 < folds.length; j2++) {
+      const fj = folds[j2];
       if (fj.at <= prevAt) continue;
       if (fj.at > s.at) break;
-      if (pending.length === 0) pendingBase = j;
+      if (pending.length === 0) pendingBase = j2;
       pending.push(fj);
     }
-    const d = decomposeSample(prev, s, pending);
+    const d2 = decomposeSample(prev, s, pending);
     decs.push({
-      ...d,
-      foldSeq: d.foldIndex !== null ? pendingBase + d.foldIndex + 1 : null
+      ...d2,
+      foldSeq: d2.foldIndex !== null ? pendingBase + d2.foldIndex + 1 : null
     });
   }
   const totals = {
@@ -6682,13 +10314,13 @@ function buildCacheReport(samplesIn, foldsIn, opts = {}) {
   };
   for (let i = 0; i < samples.length; i++) {
     const s = samples[i];
-    const d = decs[i];
+    const d2 = decs[i];
     totals.input += s.input;
     totals.cached += s.cached;
     totals.output += s.output ?? 0;
-    totals.newContent += d.newContent;
-    totals.compRepay += d.compRepay;
-    totals.ttlRepay += d.ttlRepay;
+    totals.newContent += d2.newContent;
+    totals.compRepay += d2.compRepay;
+    totals.ttlRepay += d2.ttlRepay;
   }
   totals.hitPct = round1(hitPct(totals.input, totals.cached));
   totals.residual = totals.input - totals.cached - (totals.newContent + totals.compRepay + totals.ttlRepay);
@@ -6707,12 +10339,12 @@ function buildCacheReport(samplesIn, foldsIn, opts = {}) {
   });
   const linesOmitted = Math.max(0, lines.length - maxLines);
   const visibleLines = lines.slice(linesOmitted);
-  const foldEcon = folds.map((f, j) => {
-    const seq = j + 1;
+  const foldEcon = folds.map((f, j2) => {
+    const seq = j2 + 1;
     const S = f.tokensCompressed;
     const sigma = f.summaryTokens ?? 0;
-    const T = decs.reduce(
-      (n, d) => d.foldSeq === seq ? n + d.compRepay : n,
+    const T2 = decs.reduce(
+      (n, d2) => d2.foldSeq === seq ? n + d2.compRepay : n,
       0
     );
     let hPct = null;
@@ -6722,7 +10354,7 @@ function buildCacheReport(samplesIn, foldsIn, opts = {}) {
       requestsAfter++;
       if (hPct === null) hPct = round1(hitPct(s.input, s.cached));
     }
-    const nextAt = j + 1 < folds.length ? folds[j + 1]?.at : void 0;
+    const nextAt = j2 + 1 < folds.length ? folds[j2 + 1]?.at : void 0;
     const turnsToNextFold = nextAt !== void 0 ? samples.filter((s) => s.at > f.at && s.at <= nextAt).length : null;
     return computeFoldEconomics(
       {
@@ -6732,17 +10364,17 @@ function buildCacheReport(samplesIn, foldsIn, opts = {}) {
         sigma,
         Vprime: f.viewAfter,
         hPct,
-        T,
+        T: T2,
         requestsAfter,
         turnsToNextFold
       },
-      { w, r, q }
+      { w: w2, r, q: q2 }
     );
   });
   const econ = summarizeFoldEconomics(foldEcon);
   return {
     generatedAt: Date.now(),
-    profile: { w, r, q },
+    profile: { w: w2, r, q: q2 },
     totals,
     economics: econ,
     folds: foldEcon,
@@ -6754,13 +10386,13 @@ function round1(n) {
   return Math.round(n * 10) / 10;
 }
 function fmtTok(n) {
-  const v = Math.round(n);
-  return v >= 1e6 ? `${(v / 1e6).toFixed(2)}M` : v >= 1e4 ? `${(v / 1e3).toFixed(1)}K` : String(v);
+  const v2 = Math.round(n);
+  return v2 >= 1e6 ? `${(v2 / 1e6).toFixed(2)}M` : v2 >= 1e4 ? `${(v2 / 1e3).toFixed(1)}K` : String(v2);
 }
 function fmtTime(at) {
-  const d = new Date(at);
-  const p = (x) => String(x).padStart(2, "0");
-  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  const d2 = new Date(at);
+  const p = (x2) => String(x2).padStart(2, "0");
+  return `${p(d2.getHours())}:${p(d2.getMinutes())}:${p(d2.getSeconds())}`;
 }
 var HIT_HEALTHY_PCT = 90;
 var HIT_WATCH_PCT = 70;
@@ -6776,7 +10408,7 @@ function hitVerdict(pct2) {
 }
 function medianHitPct(lines) {
   if (lines.length === 0) return null;
-  const xs = lines.map((l) => l.hitPct).sort((a, b) => a - b);
+  const xs = lines.map((l3) => l3.hitPct).sort((a, b2) => a - b2);
   return xs[Math.floor(xs.length / 2)] ?? null;
 }
 function fmtIdleGap(ms) {
@@ -6841,10 +10473,10 @@ function formatCacheReportFull(report) {
     out.push(
       "  #     time      input  cached    hit%      new    comp     ttl  fold"
     );
-    for (const l of report.lines) {
-      const fold = l.foldSeq !== null ? `#${l.foldSeq}` : "";
+    for (const l3 of report.lines) {
+      const fold = l3.foldSeq !== null ? `#${l3.foldSeq}` : "";
       out.push(
-        `  ${String(l.seq).padStart(4)}  ${fmtTime(l.at)}  ${fmtTok(l.input).padStart(7)}  ${fmtTok(l.cached).padStart(7)}  ${l.hitPct.toFixed(1).padStart(5)}%  ${fmtTok(l.newContent).padStart(6)}  ${fmtTok(l.compRepay).padStart(6)}  ${fmtTok(l.ttlRepay).padStart(6)}  ${fold}`
+        `  ${String(l3.seq).padStart(4)}  ${fmtTime(l3.at)}  ${fmtTok(l3.input).padStart(7)}  ${fmtTok(l3.cached).padStart(7)}  ${l3.hitPct.toFixed(1).padStart(5)}%  ${fmtTok(l3.newContent).padStart(6)}  ${fmtTok(l3.compRepay).padStart(6)}  ${fmtTok(l3.ttlRepay).padStart(6)}  ${fold}`
       );
     }
   }
@@ -6870,19 +10502,19 @@ function formatCacheReportSummary(report) {
     `    compress re-pay ${fmtTok(t.compRepay)} tok  (${report.economics.folds} folds \u2014 re-billed prefix)`
   );
   const spikeIdx = [];
-  report.lines.forEach((l, i) => {
-    if (l.ttlRepay >= TTL_SPIKE_TOK) spikeIdx.push(i);
+  report.lines.forEach((l3, i) => {
+    if (l3.ttlRepay >= TTL_SPIKE_TOK) spikeIdx.push(i);
   });
   const spikes = [...spikeIdx].sort(
-    (a, b) => (report.lines[b]?.ttlRepay ?? 0) - (report.lines[a]?.ttlRepay ?? 0)
-  ).slice(0, SUMMARY_FOLD_TOPS).sort((a, b) => a - b);
+    (a, b2) => (report.lines[b2]?.ttlRepay ?? 0) - (report.lines[a]?.ttlRepay ?? 0)
+  ).slice(0, SUMMARY_FOLD_TOPS).sort((a, b2) => a - b2);
   const spikeText = spikes.map((i) => {
-    const l = report.lines[i];
-    if (!l) return "";
+    const l3 = report.lines[i];
+    if (!l3) return "";
     let idle = "";
     const prev = report.lines[i - 1];
-    if (prev && l.at > prev.at) idle = `, idle ${fmtIdleGap(l.at - prev.at)}`;
-    return `#${l.seq} ${fmtTok(l.ttlRepay)}${idle}`;
+    if (prev && l3.at > prev.at) idle = `, idle ${fmtIdleGap(l3.at - prev.at)}`;
+    return `#${l3.seq} ${fmtTok(l3.ttlRepay)}${idle}`;
   }).join(" \xB7 ");
   out.push(
     `    upstream-ttl-or-client-rewrite (unattributed)  ${fmtTok(t.ttlRepay)} tok  (stable-prefix misses: upstream TTL expiry / eviction or client-side wire rewrite \u2014 kernel cannot distinguish${spikeText ? `; top spikes: ${spikeText}` : ""})`
@@ -6915,8 +10547,8 @@ function formatCacheReportSummary(report) {
         );
       }
     } else {
-      const largest = [...report.folds].sort((a, b) => b.S - a.S).slice(0, SUMMARY_FOLD_TOPS);
-      const worst = [...report.folds].sort((a, b) => b.oneTimeCostUnits - a.oneTimeCostUnits).slice(0, SUMMARY_FOLD_TOPS);
+      const largest = [...report.folds].sort((a, b2) => b2.S - a.S).slice(0, SUMMARY_FOLD_TOPS);
+      const worst = [...report.folds].sort((a, b2) => b2.oneTimeCostUnits - a.oneTimeCostUnits).slice(0, SUMMARY_FOLD_TOPS);
       out.push(
         `  largest folds: ${largest.map((f) => `#${f.seq} S=${fmtTok(f.S)} ${foldVerdict(f)}`).join(" \xB7 ")}`
       );
@@ -6933,8 +10565,8 @@ function formatCacheReportSummary(report) {
   if (report.lines.length > 0) {
     out.push("");
     const shownIdx = [];
-    report.lines.forEach((l, i) => {
-      if (l.hitPct < ANOMALY_HIT_PCT || l.missed >= ANOMALY_MISS_TOK)
+    report.lines.forEach((l3, i) => {
+      if (l3.hitPct < ANOMALY_HIT_PCT || l3.missed >= ANOMALY_MISS_TOK)
         shownIdx.push(i);
     });
     const last = report.lines.length - 1;
@@ -6943,9 +10575,9 @@ function formatCacheReportSummary(report) {
       Math.max(0, shownIdx.length - SUMMARY_ANOMALY_CAP)
     );
     const anomalies = kept.filter((i) => {
-      const l = report.lines[i];
-      if (!l) return false;
-      return l.hitPct < ANOMALY_HIT_PCT || l.missed >= ANOMALY_MISS_TOK;
+      const l3 = report.lines[i];
+      if (!l3) return false;
+      return l3.hitPct < ANOMALY_HIT_PCT || l3.missed >= ANOMALY_MISS_TOK;
     }).length;
     if (anomalies === 0) {
       const med = medianHitPct(report.lines);
@@ -6960,16 +10592,16 @@ function formatCacheReportSummary(report) {
         "  #     time      input  cached    hit%      new    comp     ttl  fold"
       );
       for (const i of kept) {
-        const l = report.lines[i];
-        if (!l) continue;
-        const fold = l.foldSeq !== null ? `#${l.foldSeq}` : "";
+        const l3 = report.lines[i];
+        if (!l3) continue;
+        const fold = l3.foldSeq !== null ? `#${l3.foldSeq}` : "";
         out.push(
-          `  ${String(l.seq).padStart(4)}  ${fmtTime(l.at)}  ${fmtTok(l.input).padStart(7)}  ${fmtTok(l.cached).padStart(7)}  ${l.hitPct.toFixed(1).padStart(5)}%  ${fmtTok(l.newContent).padStart(6)}  ${fmtTok(l.compRepay).padStart(6)}  ${fmtTok(l.ttlRepay).padStart(6)}  ${fold}`
+          `  ${String(l3.seq).padStart(4)}  ${fmtTime(l3.at)}  ${fmtTok(l3.input).padStart(7)}  ${fmtTok(l3.cached).padStart(7)}  ${l3.hitPct.toFixed(1).padStart(5)}%  ${fmtTok(l3.newContent).padStart(6)}  ${fmtTok(l3.compRepay).padStart(6)}  ${fmtTok(l3.ttlRepay).padStart(6)}  ${fold}`
         );
       }
       const omitted = report.lines.length - kept.length;
       if (omitted > 0) {
-        const rest = report.lines.filter((_, i) => !kept.includes(i));
+        const rest = report.lines.filter((_2, i) => !kept.includes(i));
         const med = medianHitPct(rest);
         out.push(
           `  \u2026 ${omitted} lines omitted (median hit ${med !== null ? med.toFixed(1) : "n/a"}%${report.linesOmitted > 0 ? `, ${report.linesOmitted} older outside window` : ""} \u2014 detail:"full" lists all)`
@@ -6991,24 +10623,24 @@ function formatCacheReport(report, sessionLabel, opts) {
     formatCacheReportSummary(report)
   ].join("\n");
 }
-function renderMessage2(m) {
+function renderMessage2(m2) {
   const parts = [];
-  switch (m.contentType) {
+  switch (m2.contentType) {
     case "text":
-      parts.push(m.text ?? "");
+      parts.push(m2.text ?? "");
       break;
     case "tool-call":
       parts.push(
-        `\`${m.toolName ?? "?"}(${m.toolCallId ?? ""})\` args: ${m.text ?? ""}`
+        `\`${m2.toolName ?? "?"}(${m2.toolCallId ?? ""})\` args: ${m2.text ?? ""}`
       );
       break;
     case "tool-result":
       parts.push(
-        `\`${m.toolName ?? "?"}(${m.toolCallId ?? ""})\` \u2192 ${m.text ?? ""}`
+        `\`${m2.toolName ?? "?"}(${m2.toolCallId ?? ""})\` \u2192 ${m2.text ?? ""}`
       );
       break;
     case "reasoning":
-      parts.push(`_reasoning_: ${m.text ?? ""}`);
+      parts.push(`_reasoning_: ${m2.text ?? ""}`);
       break;
   }
   const body = parts.join("\n").trim();
@@ -7026,7 +10658,7 @@ function renderHandoff(input) {
   if (meta.contextTokens)
     lines.push(`- last context tokens: ~${meta.contextTokens}`);
   lines.push(
-    `- compression blocks: ${state.blocks.length} (active ${state.blocks.filter((b) => b.active).length})`
+    `- compression blocks: ${state.blocks.length} (active ${state.blocks.filter((b2) => b2.active).length})`
   );
   lines.push("");
   const folded = input.folded === true;
@@ -7040,22 +10672,22 @@ function renderHandoff(input) {
     lines.push("");
   }
   let lastRole = "";
-  for (const m of view) {
-    if (m.role !== lastRole) {
-      lines.push(`### ${m.role}`);
+  for (const m2 of view) {
+    if (m2.role !== lastRole) {
+      lines.push(`### ${m2.role}`);
       lines.push("");
-      lastRole = m.role;
+      lastRole = m2.role;
     }
-    lines.push(renderMessage2(m));
+    lines.push(renderMessage2(m2));
   }
   lines.push("");
   if (full && folded) {
-    for (const b of input.blocksFull ?? []) {
-      lines.push(`## Block ${b.blockId}${b.topic ? ` \u2014 ${b.topic}` : ""}`);
+    for (const b2 of input.blocksFull ?? []) {
+      lines.push(`## Block ${b2.blockId}${b2.topic ? ` \u2014 ${b2.topic}` : ""}`);
       lines.push("");
-      lines.push(`### Original messages (${b.count})`);
+      lines.push(`### Original messages (${b2.count})`);
       lines.push("");
-      lines.push(b.fullText.trim());
+      lines.push(b2.fullText.trim());
       lines.push("");
     }
   }
@@ -7163,12 +10795,12 @@ function createHeuristicClassifier(options = {}) {
   return {
     name: "heuristic-v1",
     isScreenshotLike(meta) {
-      const w = meta.width;
+      const w2 = meta.width;
       const h = meta.height;
-      if (!w || !h || w <= 0 || h <= 0) return false;
-      const shortSide = Math.min(w, h);
+      if (!w2 || !h || w2 <= 0 || h <= 0) return false;
+      const shortSide = Math.min(w2, h);
       if (shortSide < minShortSide) return false;
-      const ratio = Math.max(w, h) / shortSide;
+      const ratio = Math.max(w2, h) / shortSide;
       return ratio >= aspectRatioMin && ratio <= aspectRatioMax;
     }
   };
@@ -7412,7 +11044,7 @@ function parseLineEntry(entry, callId) {
 }
 function deriveTopicFromSummary(summary) {
   const heading = /^#{1,6}\s+(.+)$/m.exec(summary);
-  const source = heading !== null ? heading[1] : summary.split("\n").find((l) => l.trim().length > 0) ?? "";
+  const source = heading !== null ? heading[1] : summary.split("\n").find((l3) => l3.trim().length > 0) ?? "";
   const text = source.trim().replace(/^[\u2022\-*]\s+/, "");
   if (text.length === 0) return void 0;
   return text.length > 60 ? clampPrefix(text, 60).trimEnd() : text;
@@ -7581,10 +11213,10 @@ function stripTrailingCommas(s) {
       continue;
     }
     if (ch === ",") {
-      let j = i + 1;
-      while (j < s.length && (s.charAt(j) === " " || s.charAt(j) === "	" || s.charAt(j) === "\n" || s.charAt(j) === "\r"))
-        j++;
-      if (j < s.length && (s.charAt(j) === "}" || s.charAt(j) === "]"))
+      let j2 = i + 1;
+      while (j2 < s.length && (s.charAt(j2) === " " || s.charAt(j2) === "	" || s.charAt(j2) === "\n" || s.charAt(j2) === "\r"))
+        j2++;
+      if (j2 < s.length && (s.charAt(j2) === "}" || s.charAt(j2) === "]"))
         continue;
     }
     out += ch;
@@ -7655,9 +11287,9 @@ function repairAtParserPositions(s) {
       if (esc === void 0) return cur;
       cur = cur.slice(0, pos) + esc + cur.slice(pos + 1);
     } else if (/Bad escaped character/i.test(msg)) {
-      const b = cur.charAt(pos - 1) === "\\" ? pos - 1 : cur.charAt(pos) === "\\" ? pos : -1;
-      if (b < 0) return cur;
-      cur = cur.slice(0, b) + "\\\\" + cur.slice(b + 1);
+      const b2 = cur.charAt(pos - 1) === "\\" ? pos - 1 : cur.charAt(pos) === "\\" ? pos : -1;
+      if (b2 < 0) return cur;
+      cur = cur.slice(0, b2) + "\\\\" + cur.slice(b2 + 1);
     } else {
       return cur;
     }
@@ -7725,28 +11357,28 @@ function salvageContentEntries(raw) {
   return entries;
 }
 function stem(word) {
-  let w = word;
-  if (w.length <= 3) return w;
-  if (w.endsWith("ies")) w = w.slice(0, -3) + "y";
-  else if (w.endsWith("ses") || w.endsWith("xes") || w.endsWith("zes"))
-    w = w.slice(0, -2);
-  else if (w.endsWith("ches") || w.endsWith("shes")) w = w.slice(0, -2);
-  else if (w.endsWith("s") && !w.endsWith("ss")) w = w.slice(0, -1);
-  if (w.endsWith("ing") && w.length > 5) w = w.slice(0, -3);
-  if (w.endsWith("ed") && w.length > 4) w = w.slice(0, -2);
-  if (w.endsWith("ation") && w.length > 6) w = w.slice(0, -3);
-  else if (w.endsWith("tion") && w.length > 5) w = w.slice(0, -4) + "t";
-  else if (w.endsWith("ion") && w.length > 4) w = w.slice(0, -3);
-  if (w.endsWith("ment") && w.length > 6) w = w.slice(0, -4);
-  if (w.endsWith("ness") && w.length > 6) w = w.slice(0, -4);
-  if (w.endsWith("ly") && w.length > 4) w = w.slice(0, -2);
-  return w;
+  let w2 = word;
+  if (w2.length <= 3) return w2;
+  if (w2.endsWith("ies")) w2 = w2.slice(0, -3) + "y";
+  else if (w2.endsWith("ses") || w2.endsWith("xes") || w2.endsWith("zes"))
+    w2 = w2.slice(0, -2);
+  else if (w2.endsWith("ches") || w2.endsWith("shes")) w2 = w2.slice(0, -2);
+  else if (w2.endsWith("s") && !w2.endsWith("ss")) w2 = w2.slice(0, -1);
+  if (w2.endsWith("ing") && w2.length > 5) w2 = w2.slice(0, -3);
+  if (w2.endsWith("ed") && w2.length > 4) w2 = w2.slice(0, -2);
+  if (w2.endsWith("ation") && w2.length > 6) w2 = w2.slice(0, -3);
+  else if (w2.endsWith("tion") && w2.length > 5) w2 = w2.slice(0, -4) + "t";
+  else if (w2.endsWith("ion") && w2.length > 4) w2 = w2.slice(0, -3);
+  if (w2.endsWith("ment") && w2.length > 6) w2 = w2.slice(0, -4);
+  if (w2.endsWith("ness") && w2.length > 6) w2 = w2.slice(0, -4);
+  if (w2.endsWith("ly") && w2.length > 4) w2 = w2.slice(0, -2);
+  return w2;
 }
 var CJK = /[\u3400-\u9fff\uf900-\ufaff\u3040-\u30ff\uac00-\ud7af]/;
 var LATIN_WORD = /[a-z][a-z0-9_]*[a-z0-9]|[a-z0-9]/g;
 var cjkSegmenter = new Intl.Segmenter("zh", { granularity: "word" });
 function cjkRunTokens(segs) {
-  const words = segs.filter((w) => w.length >= 2);
+  const words = segs.filter((w2) => w2.length >= 2);
   if (words.length > 0) return words;
   const run = segs.join("");
   const out = [];
@@ -7758,10 +11390,10 @@ function tokenize(text, opts = {}) {
   const lower = text.toLowerCase();
   const tokens = [];
   const latin = lower.match(LATIN_WORD) ?? [];
-  for (let w of latin) {
-    if (w.length >= 2) {
-      if (opts.stem) w = stem(w);
-      tokens.push(w);
+  for (let w2 of latin) {
+    if (w2.length >= 2) {
+      if (opts.stem) w2 = stem(w2);
+      tokens.push(w2);
     }
   }
   if (!CJK.test(lower)) return tokens;
@@ -7792,9 +11424,9 @@ function charBigrams(text) {
   return grams;
 }
 function tfMap(text, stem2) {
-  const m = /* @__PURE__ */ new Map();
-  for (const t of tokenize(text, { stem: stem2 })) m.set(t, (m.get(t) ?? 0) + 1);
-  return m;
+  const m2 = /* @__PURE__ */ new Map();
+  for (const t of tokenize(text, { stem: stem2 })) m2.set(t, (m2.get(t) ?? 0) + 1);
+  return m2;
 }
 var DEFAULT_CAP_CHARS = 8 * 1024 * 1024;
 var capChars = DEFAULT_CAP_CHARS;
@@ -7803,7 +11435,7 @@ var cachedChars = 0;
 function build(text) {
   const tf = tfMap(text, true);
   let len = 0;
-  for (const v of tf.values()) len += v;
+  for (const v2 of tf.values()) len += v2;
   const lower = text.toLowerCase();
   return { tf, len, lower, grams: new Set(charBigrams(lower)) };
 }
@@ -7831,12 +11463,12 @@ var substringAlgorithm = {
   description: "Exact substring counting (original baseline). Predictable, no normalization.",
   score(docs, query) {
     const terms = query.toLowerCase().trim().split(/\s+/).filter((t) => t.length > 0);
-    if (terms.length === 0) return docs.map((d) => ({ ref: d.ref, score: 0 }));
-    return docs.map((d) => {
-      const haystack = docFeatures(d.text).lower;
+    if (terms.length === 0) return docs.map((d2) => ({ ref: d2.ref, score: 0 }));
+    return docs.map((d2) => {
+      const haystack = docFeatures(d2.text).lower;
       let score = 0;
       for (const term of terms) score += countOccurrences2(haystack, term);
-      return { ref: d.ref, score };
+      return { ref: d2.ref, score };
     });
   }
 };
@@ -7848,31 +11480,31 @@ var bm25Algorithm = {
   name: "bm25",
   description: "BM25 with stemming + CJK bigram tokenization. IR-standard relevance ranking.",
   score(docs, query) {
-    const N = docs.length;
+    const N2 = docs.length;
     const k1 = 1.2;
-    const b = 0.75;
-    const parsed = docs.map((d) => {
-      const f = docFeatures(d.text);
-      return { id: d.ref, tf: f.tf, len: f.len };
+    const b2 = 0.75;
+    const parsed = docs.map((d2) => {
+      const f = docFeatures(d2.text);
+      return { id: d2.ref, tf: f.tf, len: f.len };
     });
-    const avgdl = parsed.reduce((s, d) => s + d.len, 0) / (N || 1);
+    const avgdl = parsed.reduce((s, d2) => s + d2.len, 0) / (N2 || 1);
     const qTerms = tokenize(query, { stem: true });
-    if (qTerms.length === 0) return docs.map((d) => ({ ref: d.ref, score: 0 }));
+    if (qTerms.length === 0) return docs.map((d2) => ({ ref: d2.ref, score: 0 }));
     const idf = /* @__PURE__ */ new Map();
     for (const t of new Set(qTerms)) {
       let df = 0;
-      for (const d of parsed) if (d.tf.has(t)) df++;
-      idf.set(t, Math.log(1 + (N - df + 0.5) / (df + 0.5)));
+      for (const d2 of parsed) if (d2.tf.has(t)) df++;
+      idf.set(t, Math.log(1 + (N2 - df + 0.5) / (df + 0.5)));
     }
-    return parsed.map((d) => {
+    return parsed.map((d2) => {
       let score = 0;
       for (const t of qTerms) {
-        const f = d.tf.get(t) ?? 0;
+        const f = d2.tf.get(t) ?? 0;
         if (f === 0) continue;
         const idfT = idf.get(t) ?? 0;
-        score += idfT * (f * (k1 + 1)) / (f + k1 * (1 - b + b * d.len / (avgdl || 1)));
+        score += idfT * (f * (k1 + 1)) / (f + k1 * (1 - b2 + b2 * d2.len / (avgdl || 1)));
       }
-      return { ref: d.id, score };
+      return { ref: d2.id, score };
     });
   }
 };
@@ -7882,15 +11514,15 @@ var fuzzyAlgorithm = {
   score(docs, query) {
     const qTokens = query.toLowerCase().split(/[\s,]+/).filter((t) => t.length >= 4 || t.length >= 2 && CJK.test(t));
     if (qTokens.length === 0)
-      return docs.map((d) => ({ ref: d.ref, score: 0 }));
+      return docs.map((d2) => ({ ref: d2.ref, score: 0 }));
     const qGrams = /* @__PURE__ */ new Set();
-    for (const t of qTokens) for (const g of charBigrams(t)) qGrams.add(g);
-    if (qGrams.size === 0) return docs.map((d) => ({ ref: d.ref, score: 0 }));
-    return docs.map((d) => {
-      const docGrams = docFeatures(d.text).grams;
+    for (const t of qTokens) for (const g2 of charBigrams(t)) qGrams.add(g2);
+    if (qGrams.size === 0) return docs.map((d2) => ({ ref: d2.ref, score: 0 }));
+    return docs.map((d2) => {
+      const docGrams = docFeatures(d2.text).grams;
       let hits = 0;
-      for (const g of qGrams) if (docGrams.has(g)) hits++;
-      return { ref: d.ref, score: hits / qGrams.size };
+      for (const g2 of qGrams) if (docGrams.has(g2)) hits++;
+      return { ref: d2.ref, score: hits / qGrams.size };
     });
   }
 };
@@ -7902,13 +11534,13 @@ var hybridAlgorithm = {
   score(docs, query) {
     const bm = bm25Algorithm.score(docs, query);
     const fz = fuzzyAlgorithm.score(docs, query);
-    const maxBm = bm.reduce((m, r) => r.score > m ? r.score : m, 1e-9);
-    const maxFz = fz.reduce((m, r) => r.score > m ? r.score : m, 1e-9);
+    const maxBm = bm.reduce((m2, r) => r.score > m2 ? r.score : m2, 1e-9);
+    const maxFz = fz.reduce((m2, r) => r.score > m2 ? r.score : m2, 1e-9);
     const bmMap = new Map(bm.map((r) => [r.ref, r.score / maxBm]));
     const fzMap = new Map(fz.map((r) => [r.ref, r.score / maxFz]));
-    return docs.map((d) => ({
-      ref: d.ref,
-      score: W_BM25 * (bmMap.get(d.ref) ?? 0) + W_FUZZY * (fzMap.get(d.ref) ?? 0)
+    return docs.map((d2) => ({
+      ref: d2.ref,
+      score: W_BM25 * (bmMap.get(d2.ref) ?? 0) + W_FUZZY * (fzMap.get(d2.ref) ?? 0)
     }));
   }
 };
@@ -7931,36 +11563,36 @@ var DEFAULT_ROLE_WEIGHTS = {
 };
 var DEFAULT_ALGORITHM = "hybrid";
 function blockDocs(state) {
-  return state.blocks.map((b) => ({
+  return state.blocks.map((b2) => ({
     kind: "block",
-    ref: b.blockId,
-    text: `${b.topic ?? ""} ${b.summary ?? ""}`,
-    title: b.topic ?? b.blockId,
-    blockId: b.blockId,
-    tier: b.tier ?? 1,
-    tokens: b.compressedTokens
+    ref: b2.blockId,
+    text: `${b2.topic ?? ""} ${b2.summary ?? ""}`,
+    title: b2.topic ?? b2.blockId,
+    blockId: b2.blockId,
+    tier: b2.tier ?? 1,
+    tokens: b2.compressedTokens
   }));
 }
 function messageDocs(msgs) {
-  return msgs.map((m) => ({
+  return msgs.map((m2) => ({
     kind: "message",
-    ref: m.ref,
-    text: m.text,
-    title: `${m.role}: ${clampPrefix(m.text, 60)}`,
-    role: m.role,
-    blockId: m.blockId,
-    tier: m.tier,
-    tokens: m.tokens
+    ref: m2.ref,
+    text: m2.text,
+    title: `${m2.role}: ${clampPrefix(m2.text, 60)}`,
+    role: m2.role,
+    blockId: m2.blockId,
+    tier: m2.tier,
+    tokens: m2.tokens
   }));
 }
 function applyRoleWeight(scored, docs, rw) {
   if (docs.length === 0) return scored;
-  const docByRef = new Map(docs.map((d) => [d.ref, d]));
+  const docByRef = new Map(docs.map((d2) => [d2.ref, d2]));
   return scored.map((s) => {
     const doc = docByRef.get(s.ref);
     if (!doc) return s;
-    const w = doc.kind === "message" ? doc.role === "user" ? rw.user : doc.role === "assistant" ? rw.assistant : rw.tool : rw.block;
-    return { ref: s.ref, score: s.score * w };
+    const w2 = doc.kind === "message" ? doc.role === "user" ? rw.user : doc.role === "assistant" ? rw.assistant : rw.tool : rw.block;
+    return { ref: s.ref, score: s.score * w2 };
   });
 }
 function runSearch(docs, query, options) {
@@ -7974,7 +11606,7 @@ function runSearch(docs, query, options) {
   if (docs.length === 0) return [];
   const scoredOrPromise = algo.score(docs, query);
   const buildResults = (weighted) => {
-    const byRef = new Map(docs.map((d) => [d.ref, d]));
+    const byRef = new Map(docs.map((d2) => [d2.ref, d2]));
     return weighted.map((s) => {
       const doc = byRef.get(s.ref);
       if (!doc) return null;
@@ -7989,7 +11621,7 @@ function runSearch(docs, query, options) {
         role: doc.role,
         tokens: doc.tokens
       };
-    }).filter((r) => r !== null && r.score >= minScore).sort((a, b) => b.score - a.score).slice(0, limit);
+    }).filter((r) => r !== null && r.score >= minScore).sort((a, b2) => b2.score - a.score).slice(0, limit);
   };
   if (scoredOrPromise instanceof Promise) {
     return scoredOrPromise.then(
@@ -8046,9 +11678,9 @@ var DEFAULT_DELEGATE_POLICY = {
 var DEFAULT_TOOL_BASH_TIMEOUT = 60;
 var DEFAULT_TOOL_OUTPUT_MAX_BYTES = 5e4;
 function resolveDelegate(adapter) {
-  const d = adapter.delegate;
-  const cfg = typeof d === "object" && d !== null ? d : {};
-  const enabled = typeof d === "object" && d !== null ? d.enabled !== false : d !== false;
+  const d2 = adapter.delegate;
+  const cfg = typeof d2 === "object" && d2 !== null ? d2 : {};
+  const enabled = typeof d2 === "object" && d2 !== null ? d2.enabled !== false : d2 !== false;
   const displayUsage = cfg.displayUsage ?? adapter.displayUsage ?? "separate";
   const maxDepth = resolveMaxDepth(process.env.PI_ACP_DELEGATE_MAX_DEPTH ?? cfg.maxDepth);
   const syncTimeoutMs = resolveTimeoutMinutes(
@@ -8123,16 +11755,16 @@ function resolveMaxConcurrent(envValue, cfgValue) {
   return DEFAULT_DELEGATE_POLICY.maxConcurrent;
 }
 var REPETITION_GUARD_DEFAULTS = { warn: 3, abort: 5 };
-function positiveInt(v, fallback) {
-  return typeof v === "number" && Number.isFinite(v) && v >= 1 ? Math.floor(v) : fallback;
+function positiveInt(v2, fallback) {
+  return typeof v2 === "number" && Number.isFinite(v2) && v2 >= 1 ? Math.floor(v2) : fallback;
 }
 function resolveRepetitionGuard(adapter) {
-  const g = adapter.repetitionGuard;
-  if (g === false) return { enabled: false, warn: REPETITION_GUARD_DEFAULTS.warn, abort: REPETITION_GUARD_DEFAULTS.abort };
-  if (typeof g === "object" && g !== null) {
-    const warn = positiveInt(g.warn, REPETITION_GUARD_DEFAULTS.warn);
-    const abort = Math.max(positiveInt(g.abort, REPETITION_GUARD_DEFAULTS.abort), warn + 1);
-    return { enabled: g.enabled !== false, warn, abort };
+  const g2 = adapter.repetitionGuard;
+  if (g2 === false) return { enabled: false, warn: REPETITION_GUARD_DEFAULTS.warn, abort: REPETITION_GUARD_DEFAULTS.abort };
+  if (typeof g2 === "object" && g2 !== null) {
+    const warn = positiveInt(g2.warn, REPETITION_GUARD_DEFAULTS.warn);
+    const abort = Math.max(positiveInt(g2.abort, REPETITION_GUARD_DEFAULTS.abort), warn + 1);
+    return { enabled: g2.enabled !== false, warn, abort };
   }
   return { enabled: true, warn: REPETITION_GUARD_DEFAULTS.warn, abort: REPETITION_GUARD_DEFAULTS.abort };
 }
@@ -8214,16 +11846,16 @@ function resolveConfig(adapter, liveContextLimit, provider, modelId) {
   }
   return config;
 }
-function parsePercent(v) {
-  if (typeof v === "number") return v;
-  const s = v.trim();
+function parsePercent(v2) {
+  if (typeof v2 === "number") return v2;
+  const s = v2.trim();
   if (s.endsWith("%")) return Number(s.slice(0, -1)) / 100;
   return Number(s);
 }
 
 // src/runtime.ts
-import { createHash as createHash2 } from "node:crypto";
-import { readFileSync as readFileSync2 } from "node:fs";
+import { createHash as createHash2 } from "crypto";
+import { readFileSync as readFileSync3 } from "fs";
 
 // src/reasoning-drop.ts
 var DEFAULT_COMPRESS_REASONING = { drop: true, threshold: 2048 };
@@ -8253,15 +11885,15 @@ function isThinking(part) {
 function hasCompressCall(content) {
   if (!Array.isArray(content)) return false;
   return content.some((p) => {
-    const b = p;
-    return b?.type === "toolCall" && b.name === "compress";
+    const b2 = p;
+    return b2?.type === "toolCall" && b2.name === "compress";
   });
 }
 function compressCallIds(content) {
   if (!Array.isArray(content)) return [];
   return content.filter((p) => {
-    const b = p;
-    return b?.type === "toolCall" && b.name === "compress";
+    const b2 = p;
+    return b2?.type === "toolCall" && b2.name === "compress";
   }).map((p) => p.id).filter((id) => typeof id === "string");
 }
 function resultIndexByCallId(messages) {
@@ -8278,7 +11910,7 @@ function reasoningLength(content) {
   return content.reduce((n, p) => isThinking(p) ? n + p.thinking.length : n, 0);
 }
 function countThinkingChars(messages) {
-  return messages.reduce((n, m) => n + reasoningLength(m.content), 0);
+  return messages.reduce((n, m2) => n + reasoningLength(m2.content), 0);
 }
 function dropCompressReasoning(messages, cfg) {
   const { drop, threshold } = resolveReasoningDrop(cfg);
@@ -8366,7 +11998,9 @@ var EntryProjectionCache = class {
    *  internal array is shared across turns, and callers hand it to kernel code
    * that must never observe (or mutate) cross-turn state. */
   project(entries) {
-    if (this.count > 0 && entries.length >= this.count && entries.length - this.count <= MAX_INCREMENTAL_ENTRIES && this.firstId !== null && this.lastId !== null && entries[0]?.id === this.firstId && entries[this.count - 1]?.id === this.lastId) {
+    if (this.count > 0 && entries.length >= this.count && entries.length - this.count <= MAX_INCREMENTAL_ENTRIES && // A new context edit changes an existing canonical message without
+    // changing its ID. An append-only cache must not resurrect its old body.
+    !entries.slice(this.count).some((entry) => String(entry.type) === "context_edit") && this.firstId !== null && this.lastId !== null && entries[0]?.id === this.firstId && entries[this.count - 1]?.id === this.lastId) {
       for (let i = this.count; i < entries.length; i++) {
         const entry = entries[i];
         if (entry.type === "message") {
@@ -8461,8 +12095,8 @@ function extractText(content) {
   if (!Array.isArray(content)) return "";
   const parts = [];
   for (const block of content) {
-    const b = block;
-    if (b.type === "text" && typeof b.text === "string") parts.push(stripRefTag(b.text));
+    const b2 = block;
+    if (b2.type === "text" && typeof b2.text === "string") parts.push(stripRefTag(b2.text));
   }
   return parts.join("\n");
 }
@@ -8470,8 +12104,8 @@ function thinkingTokenCount(content) {
   if (!Array.isArray(content)) return 0;
   const parts = [];
   for (const block of content) {
-    const b = block;
-    if (b.type === "thinking" && typeof b.thinking === "string") parts.push(b.thinking);
+    const b2 = block;
+    if (b2.type === "thinking" && typeof b2.thinking === "string") parts.push(b2.thinking);
   }
   return parts.length > 0 ? defaultCountTokens(parts.join("\n")) : 0;
 }
@@ -8482,8 +12116,8 @@ function countImageBlocks(content) {
   if (!Array.isArray(content)) return 0;
   let n = 0;
   for (const block of content) {
-    const b = block;
-    if (b?.type === "image") n++;
+    const b2 = block;
+    if (b2?.type === "image") n++;
   }
   return n;
 }
@@ -8547,8 +12181,8 @@ function allToolCalls(content) {
   if (!Array.isArray(content)) return [];
   const calls = [];
   for (const block of content) {
-    const b = block;
-    if (b.type === "toolCall" && b.name) calls.push({ name: b.name, id: b.id ?? "", arguments: b.arguments });
+    const b2 = block;
+    if (b2.type === "toolCall" && b2.name) calls.push({ name: b2.name, id: b2.id ?? "", arguments: b2.arguments });
   }
   return calls;
 }
@@ -8605,12 +12239,12 @@ function compactedArgsFrom(kernelText, originalArgs) {
 function syncToolCallArgs(blocks, kernelTextFor) {
   let changed = false;
   const out = blocks.map((block) => {
-    const b = block;
-    if (b.type !== "toolCall" || !b.id) return block;
-    const compacted = compactedArgsFrom(kernelTextFor(b.id), b.arguments);
+    const b2 = block;
+    if (b2.type !== "toolCall" || !b2.id) return block;
+    const compacted = compactedArgsFrom(kernelTextFor(b2.id), b2.arguments);
     if (compacted === null) return block;
     changed = true;
-    return { ...b, arguments: compacted };
+    return { ...b2, arguments: compacted };
   });
   return changed ? out : blocks;
 }
@@ -8621,8 +12255,8 @@ function reconstructToolCallMessage(original, firstCore, survivingCallIds, kerne
   if (base.role === "assistant" || !tag) {
     const rawBlocks2 = Array.isArray(base.content) ? base.content : typeof base.content === "string" ? [{ type: "text", text: base.content }] : [];
     const filtered2 = rawBlocks2.filter((block) => {
-      const b = block;
-      if (b.type === "toolCall") return survivingCallIds.has(b.id ?? "");
+      const b2 = block;
+      if (b2.type === "toolCall") return survivingCallIds.has(b2.id ?? "");
       return true;
     });
     const peeled2 = syncToolCallArgs(
@@ -8633,8 +12267,8 @@ function reconstructToolCallMessage(original, firstCore, survivingCallIds, kerne
   }
   const rawBlocks = Array.isArray(base.content) ? base.content : typeof base.content === "string" ? [{ type: "text", text: base.content }] : [];
   const filtered = rawBlocks.filter((block) => {
-    const b = block;
-    if (b.type === "toolCall") return survivingCallIds.has(b.id ?? "");
+    const b2 = block;
+    if (b2.type === "toolCall") return survivingCallIds.has(b2.id ?? "");
     return true;
   });
   const peeled = syncToolCallArgs(
@@ -8642,7 +12276,7 @@ function reconstructToolCallMessage(original, firstCore, survivingCallIds, kerne
     (callId) => kernelTextByCallId.get(callId)
   );
   const stableTag = rewriteTagTokens(tag, coreBodyOf(firstCore.text ?? "", tag));
-  const lastTextIdx = [...peeled].reverse().findIndex((b) => b.type === "text");
+  const lastTextIdx = [...peeled].reverse().findIndex((b2) => b2.type === "text");
   if (lastTextIdx >= 0) {
     const idx = peeled.length - 1 - lastTextIdx;
     const lastBlock = peeled[idx];
@@ -8662,6 +12296,9 @@ function coreBodyOf(coreText, tag) {
 }
 function patchRefTag(original, core) {
   const base = original;
+  if (base.role === "compactionSummary" || base.role === "branchSummary") {
+    return { ...original, summary: core.text };
+  }
   if (base.role === "assistant") {
     if (core.contentType === "tool-call" && core.toolCallId) {
       const rawBlocks2 = Array.isArray(base.content) ? base.content : [];
@@ -8690,10 +12327,10 @@ function patchRefTag(original, core) {
   const newBlocks = [...peeled];
   let injected = false;
   for (let i = newBlocks.length - 1; i >= 0; i--) {
-    const b = newBlocks[i];
-    if (b?.type === "text" && typeof b.text === "string" && b.text.length > 0) {
-      const baseText = b.text.replace(/\n*$/, "");
-      newBlocks[i] = { ...b, text: `${baseText}
+    const b2 = newBlocks[i];
+    if (b2?.type === "text" && typeof b2.text === "string" && b2.text.length > 0) {
+      const baseText = b2.text.replace(/\n*$/, "");
+      newBlocks[i] = { ...b2, text: `${baseText}
 
 ${stableTag}` };
       injected = true;
@@ -8717,7 +12354,7 @@ ${tag}`;
     return { ...original, content: text };
   }
   if (Array.isArray(base.content)) {
-    const nonText = base.content.filter((b) => b.type !== "text");
+    const nonText = base.content.filter((b2) => b2.type !== "text");
     return {
       ...original,
       content: [...nonText, { type: "text", text }]
@@ -8728,10 +12365,10 @@ ${tag}`;
 function peelRefTagBlocks(blocks) {
   const out = [];
   for (const block of blocks) {
-    const b = block;
-    if (b?.type === "text" && typeof b.text === "string") {
-      const stripped = stripRefTag(b.text);
-      if (stripped.length > 0 || b.text.length === 0) out.push({ ...b, text: stripped });
+    const b2 = block;
+    if (b2?.type === "text" && typeof b2.text === "string") {
+      const stripped = stripRefTag(b2.text);
+      if (stripped.length > 0 || b2.text.length === 0) out.push({ ...b2, text: stripped });
     } else {
       out.push(block);
     }
@@ -8740,13 +12377,62 @@ function peelRefTagBlocks(blocks) {
 }
 
 // src/state.ts
-import { promises as fs2 } from "node:fs";
-import * as path4 from "node:path";
+import { promises as fs4 } from "fs";
+import * as path7 from "path";
 
 // src/contract.ts
 var SIDECAR_SCHEMA_VERSION = 1;
 function sidecarProducer() {
   return `billion-context-pi@${true ? "0.1.83" : "dev"}`;
+}
+var LIVE_CONTEXT_USAGE_SYMBOL = /* @__PURE__ */ Symbol.for("billion-context-pi.live-context-usage.v1");
+function usageKey(query) {
+  return JSON.stringify([query.sessionId, query.provider ?? "", query.modelId]);
+}
+function isRegistry(value) {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value;
+  return candidate.version === 1 && typeof candidate.get === "function" && typeof candidate.publish === "function" && typeof candidate.clear === "function" && typeof candidate.revision === "function";
+}
+function registry3() {
+  const current = Reflect.get(globalThis, LIVE_CONTEXT_USAGE_SYMBOL);
+  if (isRegistry(current)) return current;
+  const records = /* @__PURE__ */ new Map();
+  const revisions = /* @__PURE__ */ new Map();
+  const created = {
+    version: 1,
+    get(query) {
+      const record = records.get(usageKey(query));
+      return record ? { ...record } : void 0;
+    },
+    publish(usage) {
+      for (const [key, record] of records) if (record.sessionId === usage.sessionId) records.delete(key);
+      records.set(usageKey(usage), { ...usage });
+    },
+    clear(sessionId) {
+      for (const [key, record] of records) if (record.sessionId === sessionId) records.delete(key);
+      revisions.set(sessionId, (revisions.get(sessionId) ?? 0) + 1);
+    },
+    revision(sessionId) {
+      return revisions.get(sessionId) ?? 0;
+    }
+  };
+  Reflect.set(globalThis, LIVE_CONTEXT_USAGE_SYMBOL, created);
+  return created;
+}
+function publishLiveContextUsage(usage, revision) {
+  if (revision !== void 0 && revision !== liveContextUsageRevision(usage.sessionId)) return;
+  if (!Number.isFinite(usage.tokens) || usage.tokens < 0 || !Number.isFinite(usage.contextWindow) || usage.contextWindow <= 0) {
+    clearLiveContextUsage(usage.sessionId);
+    return;
+  }
+  registry3().publish({ ...usage, percent: usage.tokens / usage.contextWindow * 100 });
+}
+function liveContextUsageRevision(sessionId) {
+  return registry3().revision(sessionId);
+}
+function clearLiveContextUsage(sessionId) {
+  registry3().clear(sessionId);
 }
 
 // src/state.ts
@@ -8757,7 +12443,7 @@ function stateFileFor(sessionFile) {
 }
 async function readParentSessionPath(sessionFile) {
   try {
-    const handle = await fs2.open(sessionFile, "r");
+    const handle = await fs4.open(sessionFile, "r");
     try {
       const buf = Buffer.alloc(65536);
       const { bytesRead } = await handle.read(buf, 0, buf.length, 0);
@@ -8793,7 +12479,7 @@ var SessionStateStore = class {
     let activePack;
     if (file) {
       try {
-        const raw = await fs2.readFile(file, "utf8");
+        const raw = await fs4.readFile(file, "utf8");
         const parsed = JSON.parse(raw);
         if (typeof parsed.schemaVersion === "number" && parsed.schemaVersion > SIDECAR_SCHEMA_VERSION) {
           logWarn("state", { event: "schema-newer", file, schemaVersion: parsed.schemaVersion, known: SIDECAR_SCHEMA_VERSION });
@@ -8837,11 +12523,11 @@ var SessionStateStore = class {
     const activePack = prev?.activePack;
     this.cache.set(key, { state, liveRefOrigins, derivedFrom, activePack });
     if (!file) return;
-    const dir = path4.dirname(file);
-    await fs2.mkdir(dir, { recursive: true }).catch((e) => {
+    const dir = path7.dirname(file);
+    await fs4.mkdir(dir, { recursive: true }).catch((e) => {
       logError("state", { event: "save-mkdir-failed", dir, error: e instanceof Error ? e.message : String(e) });
     });
-    const tmp = path4.join(dir, `.acp-tmp-${path4.basename(file)}`);
+    const tmp = path7.join(dir, `.acp-tmp-${path7.basename(file)}`);
     try {
       const payload = {
         ...state,
@@ -8851,8 +12537,8 @@ var SessionStateStore = class {
       };
       if (derivedFrom) payload.derivedFrom = derivedFrom;
       if (activePack) payload.activePack = activePack;
-      await fs2.writeFile(tmp, JSON.stringify(payload), "utf8");
-      await fs2.rename(tmp, file);
+      await fs4.writeFile(tmp, JSON.stringify(payload), "utf8");
+      await fs4.rename(tmp, file);
     } catch (e) {
       logError("state", { event: "save-failed", file, error: e instanceof Error ? e.message : String(e) });
     }
@@ -8885,7 +12571,7 @@ var SessionStateStore = class {
       const parentAcp = stateFileFor(parentJsonl);
       if (!parentAcp) return void 0;
       try {
-        const raw = await fs2.readFile(parentAcp, "utf8");
+        const raw = await fs4.readFile(parentAcp, "utf8");
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.blocks) && parsed.blocks.length > 0) {
           logInfo("state", { event: "inherited-parent-state", file: parentAcp, depth, blocks: parsed.blocks.length, tokensCompressed: parsed.stats?.tokensCompressed ?? 0 });
@@ -8960,8 +12646,8 @@ function mergeInitialState(parsed) {
 // src/summary-sanitize.ts
 var UNICODE_ESCAPE_RE = /\\u[0-9a-fA-F]{4}/g;
 function countUnicodeEscapes(s) {
-  const m = s.match(UNICODE_ESCAPE_RE);
-  return m ? m.length : 0;
+  const m2 = s.match(UNICODE_ESCAPE_RE);
+  return m2 ? m2.length : 0;
 }
 function decodeUnicodeEscapes(s) {
   let out = "";
@@ -9008,8 +12694,8 @@ var MESSAGE_REF_RE = /\bm\d{4,}\b/i;
 function findUnverifiableUserQuote(summary) {
   if (MESSAGE_REF_RE.test(summary)) return null;
   for (const re of USER_QUOTE_CLAIMS) {
-    const m = re.exec(summary);
-    if (m) return m[0].slice(0, 80);
+    const m2 = re.exec(summary);
+    if (m2) return m2[0].slice(0, 80);
   }
   return null;
 }
@@ -9020,8 +12706,8 @@ function toolCallsOf(message) {
   if (!Array.isArray(content)) return [];
   const calls = [];
   for (const block of content) {
-    const b = block;
-    if (b.type === "toolCall" && b.name && b.id) calls.push({ name: b.name, id: b.id, arguments: b.arguments });
+    const b2 = block;
+    if (b2.type === "toolCall" && b2.name && b2.id) calls.push({ name: b2.name, id: b2.id, arguments: b2.arguments });
   }
   return calls;
 }
@@ -9031,9 +12717,9 @@ function entryMessage(entry) {
 }
 function hasCompressHistory(entries) {
   for (const entry of entries) {
-    const m = entryMessage(entry);
-    if (!m || m.role !== "toolResult" || m.toolName !== "compress" || !m.toolCallId) continue;
-    if (m.isError !== true) return true;
+    const m2 = entryMessage(entry);
+    if (!m2 || m2.role !== "toolResult" || m2.toolName !== "compress" || !m2.toolCallId) continue;
+    if (m2.isError !== true) return true;
   }
   return false;
 }
@@ -9061,16 +12747,16 @@ function rebuildStateFromLog(input) {
   const errored = /* @__PURE__ */ new Set();
   const succeeded = /* @__PURE__ */ new Set();
   for (const entry of entries) {
-    const m = entryMessage(entry);
-    if (!m || m.role !== "toolResult" || m.toolName !== "compress" || !m.toolCallId) continue;
-    if (m.isError === true) errored.add(m.toolCallId);
-    else succeeded.add(m.toolCallId);
+    const m2 = entryMessage(entry);
+    if (!m2 || m2.role !== "toolResult" || m2.toolName !== "compress" || !m2.toolCallId) continue;
+    if (m2.isError === true) errored.add(m2.toolCallId);
+    else succeeded.add(m2.toolCallId);
   }
   const calls = [];
   entries.forEach((entry, entryIndex) => {
-    const m = entryMessage(entry);
-    if (!m || m.role !== "assistant") return;
-    for (const call of toolCallsOf(m)) {
+    const m2 = entryMessage(entry);
+    if (!m2 || m2.role !== "assistant") return;
+    for (const call of toolCallsOf(m2)) {
       if (call.name !== "compress" || !call.id || !succeeded.has(call.id)) continue;
       const parsed = parseCompressCall(call.id, call.arguments, entryIndex);
       if (parsed) calls.push(parsed);
@@ -9084,7 +12770,7 @@ function rebuildStateFromLog(input) {
     let applied;
     try {
       const messages = entriesToCoreMessages(entries.slice(0, call.entryIndex + 1));
-      const tokenCount = messages.reduce((sum, m) => sum + estimateTokensFast(String(m.text ?? "")), 0);
+      const tokenCount = messages.reduce((sum, m2) => sum + estimateTokensFast(String(m2.text ?? "")), 0);
       const turn = core.processTurn({ messages, state, config: input.config, tokenCount });
       state = turn.state;
       applied = core.applyCompression({
@@ -9110,6 +12796,9 @@ function rebuildStateFromLog(input) {
   report.blocks = state.blocks.length;
   return { state, report };
 }
+
+// src/surface.ts
+import { readFileSync as readFileSync2 } from "fs";
 
 // src/system-prompt.ts
 var SECTIONS = [
@@ -9170,9 +12859,9 @@ var SECTION_KEYS = new Set(SECTIONS.map(([key]) => key));
 function sanitizePromptSections(raw) {
   if (!raw || typeof raw !== "object") return {};
   const out = {};
-  for (const [k, v] of Object.entries(raw)) {
-    if (SECTION_KEYS.has(k) && (typeof v === "string" || v === null)) {
-      out[k] = v;
+  for (const [k, v2] of Object.entries(raw)) {
+    if (SECTION_KEYS.has(k) && (typeof v2 === "string" || v2 === null)) {
+      out[k] = v2;
     }
   }
   return out;
@@ -9205,8 +12894,8 @@ When a background delegate finishes, an automated completion notification is inj
 // src/surface.ts
 var TOOL_NAMES = /* @__PURE__ */ new Set(["compress", "decompress", "search_context", "acp_status", "acp_cache"]);
 var NUDGE_KEYS = /* @__PURE__ */ new Set(["efficiencyNote", "emergencyHeader", "t2Guidance", "t3Guidance"]);
-function normalizeGuidelines(g) {
-  return Array.isArray(g) ? g : [g];
+function normalizeGuidelines(g2) {
+  return Array.isArray(g2) ? g2 : [g2];
 }
 function sanitizeToolPrompts(raw) {
   const out = {};
@@ -9218,14 +12907,14 @@ function sanitizeToolPrompts(raw) {
     if (typeof src.description === "string") entry.description = src.description;
     if (typeof src.promptSnippet === "string") entry.promptSnippet = src.promptSnippet;
     if (typeof src.promptGuidelines === "string" || Array.isArray(src.promptGuidelines)) {
-      if (Array.isArray(src.promptGuidelines) ? src.promptGuidelines.every((g) => typeof g === "string") : true) {
+      if (Array.isArray(src.promptGuidelines) ? src.promptGuidelines.every((g2) => typeof g2 === "string") : true) {
         entry.promptGuidelines = src.promptGuidelines;
       }
     }
     if (src.paramDescriptions && typeof src.paramDescriptions === "object" && !Array.isArray(src.paramDescriptions)) {
       const params = {};
-      for (const [k, v] of Object.entries(src.paramDescriptions)) {
-        if (typeof v === "string") params[k] = v;
+      for (const [k, v2] of Object.entries(src.paramDescriptions)) {
+        if (typeof v2 === "string") params[k] = v2;
       }
       if (Object.keys(params).length > 0) entry.paramDescriptions = params;
     }
@@ -9236,9 +12925,9 @@ function sanitizeToolPrompts(raw) {
 function sanitizeNudgeSections(raw) {
   const out = {};
   if (!raw || typeof raw !== "object") return out;
-  for (const [k, v] of Object.entries(raw)) {
-    if (NUDGE_KEYS.has(k) && (typeof v === "string" || v === null)) {
-      out[k] = v;
+  for (const [k, v2] of Object.entries(raw)) {
+    if (NUDGE_KEYS.has(k) && (typeof v2 === "string" || v2 === null)) {
+      out[k] = v2;
     }
   }
   return out;
@@ -9246,9 +12935,9 @@ function sanitizeNudgeSections(raw) {
 function withParamDescriptions(schema, descriptions) {
   const src = schema.properties ?? {};
   const properties = {};
-  for (const [k, v] of Object.entries(src)) {
-    const d = descriptions[k];
-    properties[k] = d !== void 0 && v && typeof v === "object" ? { ...v, description: d } : v;
+  for (const [k, v2] of Object.entries(src)) {
+    const d2 = descriptions[k];
+    properties[k] = d2 !== void 0 && v2 && typeof v2 === "object" ? { ...v2, description: d2 } : v2;
   }
   return { ...schema, properties };
 }
@@ -9449,7 +13138,7 @@ function findPositionalPrefixRun(candidates, live) {
   return void 0;
 }
 function buildSuffixArray(sequence) {
-  const suffixArray = sequence.map((_, index) => index);
+  const suffixArray = sequence.map((_2, index) => index);
   let ranks = [...sequence];
   for (let width = 1; width < sequence.length; width *= 2) {
     suffixArray.sort((left, right) => ranks[left] - ranks[right] || (ranks[left + width] ?? -1) - (ranks[right + width] ?? -1));
@@ -9496,14 +13185,14 @@ function isNoBody4xxError(haystack) {
 }
 var NO_BODY_ARM_RATIO = 0.5;
 function parseOverflowWindow(text) {
-  let m = />\s*(\d[\d,]*)\s*(?:tokens?)?\s*maximum/i.exec(text);
-  if (m) return toTokenNumber(m[1]);
-  m = /maximum context length is (\d[\d,]*)/i.exec(text);
-  if (m) return toTokenNumber(m[1]);
-  m = /maximum context size (?:is|of) (\d[\d,]*)/i.exec(text);
-  if (m) return toTokenNumber(m[1]);
-  m = /(?:maximum|limit) of (\d[\d,]*)\s*(?:input\s+)?tokens/i.exec(text);
-  if (m) return toTokenNumber(m[1]);
+  let m2 = />\s*(\d[\d,]*)\s*(?:tokens?)?\s*maximum/i.exec(text);
+  if (m2) return toTokenNumber(m2[1]);
+  m2 = /maximum context length is (\d[\d,]*)/i.exec(text);
+  if (m2) return toTokenNumber(m2[1]);
+  m2 = /maximum context size (?:is|of) (\d[\d,]*)/i.exec(text);
+  if (m2) return toTokenNumber(m2[1]);
+  m2 = /(?:maximum|limit) of (\d[\d,]*)\s*(?:input\s+)?tokens/i.exec(text);
+  if (m2) return toTokenNumber(m2[1]);
   return void 0;
 }
 function toTokenNumber(raw) {
@@ -9630,13 +13319,31 @@ function lastTurnBoundaryIndex(entries, policy) {
 // src/runtime.ts
 function readContextEntries(sm) {
   const source = sm;
+  if (typeof source.buildSessionProjection === "function") {
+    return source.buildSessionProjection().entries.flatMap(({ sourceEntry: entry, messages }) => {
+      if (entry.type === "custom_message") {
+        const message = messages[0];
+        return message?.role === "custom" ? [{ ...entry, content: message.content }] : [];
+      }
+      if (entry.type === "message" || entry.type === "compaction" || entry.type === "branch_summary") {
+        return messages.map((message, index) => ({
+          type: "message",
+          id: String(message.role) === "system" && entry.type !== "message" ? `${entry.id}#system` : index === 0 || "summary" in message ? entry.id : `${entry.id}#projection-${index}`,
+          parentId: entry.parentId,
+          timestamp: entry.timestamp,
+          message
+        }));
+      }
+      return [entry];
+    });
+  }
   if (typeof source.buildContextEntries === "function") return source.buildContextEntries();
   if (typeof source.getBranch === "function") return source.getBranch();
   return [];
 }
 function isPiHost(sm) {
   const source = sm;
-  return typeof source.buildContextEntries === "function";
+  return typeof source.buildSessionProjection === "function" || typeof source.buildContextEntries === "function";
 }
 function retryBreakerKey(sm, policy) {
   return lastTurnBoundaryId(readContextEntries(sm), policy);
@@ -9725,14 +13432,14 @@ function sameToolResult(stored, visible) {
   if (stored.role !== "toolResult" || visible.role !== "toolResult") return false;
   return sameNonTextBlocks(stored.content, visible.content) && matchesStoredText(extractText(stored.content), extractText(visible.content));
 }
-function sameNonTextBlocks(a, b) {
+function sameNonTextBlocks(a, b2) {
   const nonText = (blocks) => blocks.filter((block) => {
     if (!block || typeof block !== "object" || !("type" in block)) return true;
     return block.type !== "text";
   });
   try {
     const na = Array.isArray(a) ? nonText(a) : [];
-    const nb = Array.isArray(b) ? nonText(b) : [];
+    const nb = Array.isArray(b2) ? nonText(b2) : [];
     return JSON.stringify(na) === JSON.stringify(nb);
   } catch {
     return false;
@@ -9980,29 +13687,29 @@ function createRuntime(adapter) {
   function liveContextLimit(ctx) {
     const usage = ctx.getContextUsage?.();
     if (usage?.contextWindow && usage.contextWindow > 0) return usage.contextWindow;
-    const m = ctx.model;
-    return m?.contextWindow ?? 0;
+    const m2 = ctx.model;
+    return m2?.contextWindow ?? 0;
   }
   function configFor(ctx) {
-    const m = ctx.model;
-    return resolveConfig(adapterRef, liveContextLimit(ctx), m?.provider, m?.id);
+    const m2 = ctx.model;
+    return resolveConfig(adapterRef, liveContextLimit(ctx), m2?.provider, m2?.id);
   }
   function reasoningDropFor(ctx) {
-    const m = ctx.model;
-    const resolved = resolveReasoningDrop(resolveCompress(adapterRef.compress, m?.provider, m?.id).reasoning);
-    const gated = applyStrictReasoningGate(resolved, m?.provider, m?.baseUrl);
+    const m2 = ctx.model;
+    const resolved = resolveReasoningDrop(resolveCompress(adapterRef.compress, m2?.provider, m2?.id).reasoning);
+    const gated = applyStrictReasoningGate(resolved, m2?.provider, m2?.baseUrl);
     if (resolved.drop && !gated.drop) {
       const sid = ctx.sessionManager.getSessionId();
       if (!strictEchoLogged.has(sid)) {
         strictEchoLogged.add(sid);
-        logInfo("runtime", { sid, event: "compress-reasoning-auto-disabled", reason: "strict-echo-upstream", provider: m?.provider ?? null, issue: "#361" });
+        logInfo("runtime", { sid, event: "compress-reasoning-auto-disabled", reason: "strict-echo-upstream", provider: m2?.provider ?? null, issue: "#361" });
       }
     }
     return gated;
   }
   function stripImagesFor(ctx) {
-    const m = ctx.model;
-    const c = resolveCompress(adapterRef.compress, m?.provider, m?.id);
+    const m2 = ctx.model;
+    const c = resolveCompress(adapterRef.compress, m2?.provider, m2?.id);
     const raw = Number(c.stripImagesKeepRecent);
     const keepRecent = Number.isFinite(raw) && raw >= 0 ? Math.floor(raw) : 5;
     return { enabled: c.stripImages === true, keepRecent };
@@ -10040,8 +13747,9 @@ function createRuntime(adapter) {
     const live = piHost ? void 0 : liveMessages ?? lastLiveBySession.get(sessionId);
     let state = await store.load(sessionFile, sessionId);
     const entries = readContextEntries(sm);
-    if (sessionFile && state.blocks.length === 0 && hasCompressHistory(entries)) {
-      const rebuilt = rebuildStateFromLog({ entries, state, config: configFor(ctx), core });
+    const durableEntries = sm.getBranch?.() ?? entries;
+    if (sessionFile && state.blocks.length === 0 && hasCompressHistory(durableEntries)) {
+      const rebuilt = rebuildStateFromLog({ entries: durableEntries, state, config: configFor(ctx), core });
       if (rebuilt.report.blocks > 0) {
         state = rebuilt.state;
         await store.save(state, sessionFile, sessionId);
@@ -10077,7 +13785,7 @@ function createRuntime(adapter) {
   }
   function ownSidecarHasBlocks(sessionFile) {
     try {
-      const parsed = JSON.parse(readFileSync2(`${sessionFile}.acp.json`, "utf8"));
+      const parsed = JSON.parse(readFileSync3(`${sessionFile}.acp.json`, "utf8"));
       return Array.isArray(parsed.blocks) && parsed.blocks.length > 0;
     } catch {
       return false;
@@ -10101,16 +13809,16 @@ function createRuntime(adapter) {
   let delegateStoodDown = false;
   return { core, store, get refused() {
     return refused;
-  }, set refused(v) {
-    refused = v;
+  }, set refused(v2) {
+    refused = v2;
   }, get refusalMessage() {
     return refusalMessage;
-  }, set refusalMessage(v) {
-    refusalMessage = v;
+  }, set refusalMessage(v2) {
+    refusalMessage = v2;
   }, get delegateStoodDown() {
     return delegateStoodDown;
-  }, set delegateStoodDown(v) {
-    delegateStoodDown = v;
+  }, set delegateStoodDown(v2) {
+    delegateStoodDown = v2;
   }, get adapter() {
     return adapterRef;
   }, setAdapter: (a) => {
@@ -10122,7 +13830,7 @@ function createRuntime(adapter) {
   }, markNudgeShown, nudgeShownFor, nudgeShownTokensFor, clearNudgeTracking, clearNudgeTokenStamps, markNudgeRecorded, nudgeRecordedFor, noteCompressOutcomes, compressRetryCappedFor, clearCompressRetryTracking, liveContextLimit, configFor, reasoningDropFor, reloadConfig, stateFor, save, deriveChildState: deriveChild, acquireLock, overflowFor, overflowDrop, noteSentViewCount, peekSentViewCount, dropSentViewCount, dropProjectionCache, noteDeadCompress, clearDeadCompress, throttleFor, throttleDrop, noteTokenScale, dropTokenScale, noteHostUsage, dropHostUsageSamples, noteSizeDivergence, dropSizeDivergence, noteTerminalEscape, dropTerminalEscape, noteTruncationSkipped, dropTruncationSkipped, stripImagesFor };
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/memory.mjs
+// ../main/node_modules/typebox/build/system/memory/memory.mjs
 var memory_exports = {};
 __export(memory_exports, {
   Assign: () => Assign,
@@ -10133,7 +13841,7 @@ __export(memory_exports, {
   Update: () => Update
 });
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/metrics.mjs
+// ../main/node_modules/typebox/build/system/memory/metrics.mjs
 var Metrics = {
   assign: 0,
   create: 0,
@@ -10142,15 +13850,13 @@ var Metrics = {
   update: 0
 };
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/settings/settings.mjs
-var settings_exports = {};
-__export(settings_exports, {
-  Get: () => Get,
-  Reset: () => Reset,
-  Set: () => Set2
-});
+// ../main/node_modules/typebox/build/system/memory/assign.mjs
+function Assign(left, right) {
+  Metrics.assign += 1;
+  return { ...left, ...right };
+}
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/guard/guard.mjs
+// ../main/node_modules/typebox/build/guard/guard.mjs
 var guard_exports = {};
 __export(guard_exports, {
   Counted: () => Counted,
@@ -10193,7 +13899,7 @@ __export(guard_exports, {
   Values: () => Values
 });
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/guard/string.mjs
+// ../main/node_modules/typebox/build/guard/string.mjs
 function IsBetween(value, min, max) {
   return value >= min && value <= max;
 }
@@ -10230,7 +13936,7 @@ function NextGraphemeClusterIndex(value, clusterStart) {
   const startCP = value.codePointAt(clusterStart);
   let clusterEnd = clusterStart + CodePointLength(startCP);
   clusterEnd = ConsumeModifiers(value, clusterEnd);
-  while (clusterEnd < value.length - 1 && IsZeroWidthJoiner(value.codePointAt(clusterEnd))) {
+  while (clusterEnd < value.length - 1 && value[clusterEnd] === "\u200D") {
     const nextCP = value.codePointAt(clusterEnd + 1);
     clusterEnd += 1 + CodePointLength(nextCP);
     clusterEnd = ConsumeModifiers(value, clusterEnd);
@@ -10241,8 +13947,7 @@ function NextGraphemeClusterIndex(value, clusterStart) {
   return clusterEnd;
 }
 function IsGraphemeCodePoint(value) {
-  return value >= 768 && // above special range
-  (IsHighSurrogate(value) || IsCombiningMark(value) || IsVariationSelector(value) || IsZeroWidthJoiner(value));
+  return IsHighSurrogate(value) || IsCombiningMark(value) || IsVariationSelector(value) || IsZeroWidthJoiner(value);
 }
 function GraphemeCount(value) {
   let count = 0;
@@ -10253,54 +13958,58 @@ function GraphemeCount(value) {
   }
   return count;
 }
-function IsMinLengthSegmented(value, minLength) {
+function IsMinLength(value, minLength) {
+  if (minLength === 0)
+    return true;
   let count = 0;
   let index = 0;
   while (index < value.length) {
     index = NextGraphemeClusterIndex(value, index);
-    if (++count >= minLength)
+    count++;
+    if (count >= minLength)
       return true;
   }
   return false;
 }
-function IsMaxLengthSegmented(value, maxLength) {
+function IsMaxLength(value, maxLength) {
   let count = 0;
   let index = 0;
   while (index < value.length) {
     index = NextGraphemeClusterIndex(value, index);
-    if (++count > maxLength)
+    count++;
+    if (count > maxLength)
       return false;
   }
   return true;
 }
-function IsMinLength(value, minLength) {
+function IsMinLengthFast(value, minLength) {
   if (minLength === 0)
     return true;
-  if (value.length < minLength)
-    return false;
   let index = 0;
-  while (true) {
+  while (index < value.length) {
     if (IsGraphemeCodePoint(value.charCodeAt(index))) {
-      return IsMinLengthSegmented(value, minLength);
+      return IsMinLength(value, minLength);
     }
-    if (++index >= minLength)
+    index++;
+    if (index >= minLength)
       return true;
   }
+  return false;
 }
-function IsMaxLength(value, maxLength) {
-  if (value.length <= maxLength)
-    return true;
+function IsMaxLengthFast(value, maxLength) {
   let index = 0;
-  while (true) {
+  while (index < value.length) {
     if (IsGraphemeCodePoint(value.charCodeAt(index))) {
-      return IsMaxLengthSegmented(value, maxLength);
+      return IsMaxLength(value, maxLength);
     }
-    if (++index > maxLength)
+    index++;
+    if (index > maxLength)
       return false;
   }
+  return true;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/guard/guard.mjs
+// ../main/node_modules/typebox/build/guard/guard.mjs
 function IsArray(value) {
   return Array.isArray(value);
 }
@@ -10389,31 +14098,39 @@ function GraphemeCount2(value) {
   return GraphemeCount(value);
 }
 function IsMaxLength2(value, length) {
-  return IsMaxLength(value, length);
+  return IsMaxLengthFast(value, length);
 }
 function IsMinLength2(value, length) {
-  return IsMinLength(value, length);
+  return IsMinLengthFast(value, length);
 }
 function Every(value, offset, callback) {
-  return value.every((item, index) => index < offset || callback(item, index));
+  for (let index = offset; index < value.length; index++) {
+    if (!callback(value[index], index))
+      return false;
+  }
+  return true;
 }
 function EveryAll(value, offset, callback) {
   let result = true;
-  value.forEach((item, index) => {
-    if (index >= offset && !callback(item, index))
+  for (let index = offset; index < value.length; index++) {
+    if (!callback(value[index], index))
       result = false;
-  });
+  }
   return result;
 }
 function Some(value, callback) {
-  return value.some((value2, index) => callback(value2, index));
+  for (let index = 0; index < value.length; index++) {
+    if (callback(value[index], index))
+      return true;
+  }
+  return false;
 }
 function SomeAll(value, callback) {
   let result = false;
-  value.forEach((item, index) => {
-    if (callback(item, index))
+  for (let index = 0; index < value.length; index++) {
+    if (callback(value[index], index))
       result = true;
-  });
+  }
   return result;
 }
 function Counted(value, callback) {
@@ -10450,13 +14167,13 @@ function DeepEqualObject(left, right) {
   return IsEqual(keys.length, Keys(right).length) && keys.every((key) => IsDeepEqual(left[key], right[key]));
 }
 function DeepEqualArray(left, right) {
-  return IsArray(right) && IsEqual(left.length, right.length) && left.every((_, index) => IsDeepEqual(left[index], right[index]));
+  return IsArray(right) && IsEqual(left.length, right.length) && left.every((_2, index) => IsDeepEqual(left[index], right[index]));
 }
 function IsDeepEqual(left, right) {
   return IsArray(left) ? DeepEqualArray(left, right) : IsObject(left) ? DeepEqualObject(left, right) : IsEqual(left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/guard/globals.mjs
+// ../main/node_modules/typebox/build/guard/globals.mjs
 var globals_exports = {};
 __export(globals_exports, {
   IsBigInt64Array: () => IsBigInt64Array,
@@ -10537,68 +14254,22 @@ function IsMap(value) {
   return value instanceof globalThis.Map;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/settings/settings.mjs
-var settings = {
-  immutableTypes: false,
-  maxErrors: 8,
-  maxInstantiationCount: 128,
-  useAcceleration: true,
-  exactOptionalPropertyTypes: false,
-  enumerableKind: false,
-  correctiveParse: false,
-  unionPrioritySort: true
-};
-function Reset() {
-  settings.immutableTypes = false;
-  settings.maxErrors = 8;
-  settings.maxInstantiationCount = 128;
-  settings.useAcceleration = true;
-  settings.exactOptionalPropertyTypes = false;
-  settings.enumerableKind = false;
-  settings.correctiveParse = false;
-  settings.unionPrioritySort = true;
-}
-function Set2(options) {
-  for (const key of guard_exports.Keys(options)) {
-    const value = options[key];
-    if (value !== void 0) {
-      Object.defineProperty(settings, key, { value });
-    }
-  }
-}
-function Get() {
-  return settings;
-}
-
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/freeze.mjs
-function Freeze(value) {
-  return settings_exports.Get().immutableTypes ? Object.freeze(value) : value;
-}
-
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/assign.mjs
-function Assign(left, right) {
-  Metrics.assign += 1;
-  return Freeze({ ...left, ...right });
-}
-
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/clone.mjs
+// ../main/node_modules/typebox/build/system/memory/clone.mjs
 function FromClassInstance(value) {
   return value;
 }
-function IsSchemaObject(value) {
+function IsTypeObject(value) {
   return guard_exports.HasPropertyKey(value, "~kind") || guard_exports.HasPropertyKey(value, "~unsafe");
 }
-function FromSchemaObject(value) {
+function FromTypeObject(value) {
   const result = {};
-  for (const key of guard_exports.Keys(value)) {
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const key of Object.keys(descriptors)) {
     if (guard_exports.IsUnsafePropertyKey(key))
       continue;
-    const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    descriptor.value = FromValue(descriptor.value);
-    if (guard_exports.IsEqual(descriptor.enumerable, true)) {
-      result[key] = descriptor.value;
-    } else {
-      Object.defineProperty(result, key, descriptor);
+    const descriptor = descriptors[key];
+    if (guard_exports.HasPropertyKey(descriptor, "value")) {
+      Object.defineProperty(result, key, { ...descriptor, value: FromValue(descriptor.value) });
     }
   }
   return result;
@@ -10616,7 +14287,7 @@ function FromPlainObject(value) {
   return result;
 }
 function FromObject(value) {
-  return guard_exports.IsClassInstance(value) ? FromClassInstance(value) : IsSchemaObject(value) ? FromSchemaObject(value) : FromPlainObject(value);
+  return guard_exports.IsClassInstance(value) ? FromClassInstance(value) : IsTypeObject(value) ? FromTypeObject(value) : FromPlainObject(value);
 }
 function FromArray(value) {
   return value.map((element) => FromValue(element));
@@ -10641,7 +14312,44 @@ function Clone(value) {
   return FromValue(value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/create.mjs
+// ../main/node_modules/typebox/build/system/settings/settings.mjs
+var settings_exports = {};
+__export(settings_exports, {
+  Get: () => Get,
+  Reset: () => Reset,
+  Set: () => Set2
+});
+var settings = {
+  immutableTypes: false,
+  maxErrors: 8,
+  useAcceleration: true,
+  exactOptionalPropertyTypes: false,
+  enumerableKind: false,
+  correctiveParse: false,
+  unionPrioritySort: true
+};
+function Reset() {
+  settings.immutableTypes = false;
+  settings.maxErrors = 8;
+  settings.useAcceleration = true;
+  settings.exactOptionalPropertyTypes = false;
+  settings.enumerableKind = false;
+  settings.correctiveParse = false;
+  settings.unionPrioritySort = true;
+}
+function Set2(options) {
+  for (const key of guard_exports.Keys(options)) {
+    const value = options[key];
+    if (value !== void 0) {
+      Object.defineProperty(settings, key, { value });
+    }
+  }
+}
+function Get() {
+  return settings;
+}
+
+// ../main/node_modules/typebox/build/system/memory/create.mjs
 function MergeHidden(left, right) {
   for (const key of Object.keys(right)) {
     Object.defineProperty(left, key, {
@@ -10658,26 +14366,27 @@ function Merge(left, right) {
 }
 function Create(hidden, enumerable, options = {}) {
   Metrics.create += 1;
+  const settings2 = settings_exports.Get();
   const withOptions = Merge(enumerable, options);
-  const withHidden = settings_exports.Get().enumerableKind ? Merge(withOptions, hidden) : MergeHidden(withOptions, hidden);
-  return Freeze(withHidden);
+  const withHidden = settings2.enumerableKind ? Merge(withOptions, hidden) : MergeHidden(withOptions, hidden);
+  return settings2.immutableTypes ? Object.freeze(withHidden) : withHidden;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/discard.mjs
+// ../main/node_modules/typebox/build/system/memory/discard.mjs
 function Discard(value, propertyKeys) {
   Metrics.discard += 1;
   const result = {};
-  for (const key of guard_exports.Keys(value)) {
-    if (propertyKeys.includes(key))
+  const descriptors = Object.getOwnPropertyDescriptors(Clone(value));
+  const keysToDiscard = new Set(propertyKeys);
+  for (const key of Object.keys(descriptors)) {
+    if (keysToDiscard.has(key))
       continue;
-    const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    descriptor.value = Clone(descriptor.value);
-    Object.defineProperty(result, key, descriptor);
+    Object.defineProperty(result, key, descriptors[key]);
   }
-  return Freeze(result);
+  return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/memory/update.mjs
+// ../main/node_modules/typebox/build/system/memory/update.mjs
 function Update(current, hidden, enumerable) {
   Metrics.update += 1;
   const settings2 = settings_exports.Get();
@@ -10698,10 +14407,10 @@ function Update(current, hidden, enumerable) {
       value: enumerable[key]
     });
   }
-  return Freeze(result);
+  return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/schema.mjs
+// ../main/node_modules/typebox/build/type/types/schema.mjs
 function IsKind(value, kind) {
   return guard_exports.IsObject(value) && guard_exports.HasPropertyKey(value, "~kind") && guard_exports.IsEqual(value["~kind"], kind);
 }
@@ -10709,7 +14418,7 @@ function IsSchema(value) {
   return guard_exports.IsObject(value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/deferred.mjs
+// ../main/node_modules/typebox/build/type/types/deferred.mjs
 function Deferred(action, parameters, options) {
   return memory_exports.Create({ "~kind": "Deferred" }, { type: "deferred", action, parameters, options }, {});
 }
@@ -10717,7 +14426,7 @@ function IsDeferred(value) {
   return IsKind(value, "Deferred");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly/instantiate_add.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly/instantiate_add.mjs
 function AddReadonlyOperation(type) {
   return memory_exports.Update(type, { "~readonly": true }, {});
 }
@@ -10730,7 +14439,7 @@ function AddReadonlyInstantiate(context, state, type, options) {
   return AddReadonlyAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/optional/instantiate_add.mjs
+// ../main/node_modules/typebox/build/type/engine/optional/instantiate_add.mjs
 function AddOptionalOperation(type) {
   return memory_exports.Update(type, { "~optional": true }, {});
 }
@@ -10743,7 +14452,7 @@ function AddOptionalInstantiate(context, state, type, options) {
   return AddOptionalAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/array.mjs
+// ../main/node_modules/typebox/build/type/types/array.mjs
 function _Array_(items, options) {
   return memory_exports.Create({ "~kind": "Array" }, { type: "array", items }, options);
 }
@@ -10754,7 +14463,7 @@ function ArrayOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "items"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/constructor.mjs
+// ../main/node_modules/typebox/build/type/types/constructor.mjs
 function Constructor(parameters, instanceType, options = {}) {
   return memory_exports.Create({ "~kind": "Constructor" }, { type: "constructor", parameters, instanceType }, options);
 }
@@ -10765,7 +14474,7 @@ function ConstructorOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "parameters", "instanceType"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/function.mjs
+// ../main/node_modules/typebox/build/type/types/function.mjs
 function _Function_(parameters, returnType, options = {}) {
   return memory_exports.Create({ ["~kind"]: "Function" }, { type: "function", parameters, returnType }, options);
 }
@@ -10776,7 +14485,7 @@ function FunctionOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "parameters", "returnType"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/ref.mjs
+// ../main/node_modules/typebox/build/type/types/ref.mjs
 function Ref(ref, options) {
   return memory_exports.Create({ ["~kind"]: "Ref" }, { $ref: ref }, options);
 }
@@ -10784,7 +14493,7 @@ function IsRef(value) {
   return IsKind(value, "Ref");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/generic.mjs
+// ../main/node_modules/typebox/build/type/types/generic.mjs
 function Generic(parameters, expression) {
   return memory_exports.Create({ "~kind": "Generic" }, { type: "generic", parameters, expression });
 }
@@ -10792,7 +14501,7 @@ function IsGeneric(value) {
   return IsKind(value, "Generic");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/any.mjs
+// ../main/node_modules/typebox/build/type/types/any.mjs
 function Any(options) {
   return memory_exports.Create({ ["~kind"]: "Any" }, {}, options);
 }
@@ -10800,7 +14509,7 @@ function IsAny(value) {
   return IsKind(value, "Any");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/never.mjs
+// ../main/node_modules/typebox/build/type/types/never.mjs
 var NeverPattern = "(?!)";
 function Never(options) {
   return memory_exports.Create({ "~kind": "Never" }, { not: {} }, options);
@@ -10809,7 +14518,7 @@ function IsNever(value) {
   return IsKind(value, "Never");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/_add_optional.mjs
+// ../main/node_modules/typebox/build/type/action/_add_optional.mjs
 function AddOptionalDeferred(type, options = {}) {
   return Deferred("AddOptional", [type], options);
 }
@@ -10817,7 +14526,7 @@ function AddOptional(type, options = {}) {
   return AddOptionalAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/_optional.mjs
+// ../main/node_modules/typebox/build/type/types/_optional.mjs
 function Optional(type) {
   return AddOptional(type);
 }
@@ -10825,7 +14534,7 @@ function IsOptional(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~optional");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/properties.mjs
+// ../main/node_modules/typebox/build/type/types/properties.mjs
 function RequiredArray(properties) {
   return guard_exports.Keys(properties).filter((key) => !IsOptional(properties[key]));
 }
@@ -10836,7 +14545,7 @@ function PropertyValues(properties) {
   return guard_exports.Values(properties);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/object.mjs
+// ../main/node_modules/typebox/build/type/types/object.mjs
 function _Object_(properties, options = {}) {
   const requiredKeys = RequiredArray(properties);
   const required = requiredKeys.length > 0 ? { required: requiredKeys } : {};
@@ -10849,7 +14558,7 @@ function ObjectOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "properties", "required"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/unknown.mjs
+// ../main/node_modules/typebox/build/type/types/unknown.mjs
 function Unknown(options) {
   return memory_exports.Create({ ["~kind"]: "Unknown" }, {}, options);
 }
@@ -10857,7 +14566,7 @@ function IsUnknown(value) {
   return IsKind(value, "Unknown");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/cyclic.mjs
+// ../main/node_modules/typebox/build/type/types/cyclic.mjs
 function Cyclic($defs, $ref, options) {
   const defs = guard_exports.Keys($defs).reduce((result, key) => {
     return { ...result, [key]: memory_exports.Update($defs[key], {}, { $id: key }) };
@@ -10868,7 +14577,7 @@ function IsCyclic(value) {
   return IsKind(value, "Cyclic");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/unsafe.mjs
+// ../main/node_modules/typebox/build/type/types/unsafe.mjs
 function Unsafe(schema) {
   return memory_exports.Update(schema, { ["~unsafe"]: null }, {});
 }
@@ -10876,7 +14585,7 @@ function IsUnsafe(value) {
   return guard_exports.IsObjectNotArray(value) && guard_exports.HasPropertyKey(value, "~unsafe") && guard_exports.IsNull(value["~unsafe"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/arguments/arguments.mjs
+// ../main/node_modules/typebox/build/system/arguments/arguments.mjs
 var arguments_exports = {};
 __export(arguments_exports, {
   Match: () => Match
@@ -10887,7 +14596,7 @@ function Match(args, match) {
   })();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/infer.mjs
+// ../main/node_modules/typebox/build/type/types/infer.mjs
 function Infer(...args) {
   const [name, extends_] = arguments_exports.Match(args, {
     2: (name2, extends_2) => [name2, extends_2, extends_2],
@@ -10899,7 +14608,7 @@ function IsInfer(value) {
   return IsKind(value, "Infer");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/dependent.mjs
+// ../main/node_modules/typebox/build/type/types/dependent.mjs
 function Dependent(if_, then_, else_, options = {}) {
   return memory_exports.Create({ "~kind": "Dependent" }, { if: if_, then: then_, else: else_ }, options);
 }
@@ -10910,7 +14619,7 @@ function DependentOptions(type) {
   return memory_exports.Discard(type, ["~kind", "if", "then", "else"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/enum/typescript_enum_to_enum_values.mjs
+// ../main/node_modules/typebox/build/type/engine/enum/typescript_enum_to_enum_values.mjs
 function IsTypeScriptEnumLike(value) {
   return guard_exports.IsObjectNotArray(value);
 }
@@ -10919,7 +14628,7 @@ function TypeScriptEnumToEnumValues(type) {
   return keys.reduce((result, key) => [...result, type[key]], []);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/enum.mjs
+// ../main/node_modules/typebox/build/type/types/enum.mjs
 function IsEnumValue(value) {
   return guard_exports.IsString(value) || guard_exports.IsNumber(value);
 }
@@ -10931,7 +14640,7 @@ function IsEnum(value) {
   return IsKind(value, "Enum");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/intersect.mjs
+// ../main/node_modules/typebox/build/type/types/intersect.mjs
 function Intersect(types, options = {}) {
   return memory_exports.Create({ "~kind": "Intersect" }, { allOf: types }, options);
 }
@@ -10942,12 +14651,12 @@ function IntersectOptions(type) {
   return memory_exports.Discard(type, ["~kind", "allOf"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/unreachable/unreachable.mjs
+// ../main/node_modules/typebox/build/system/unreachable/unreachable.mjs
 function Unreachable() {
   throw new Error("Unreachable");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/system/hashing/hash.mjs
+// ../main/node_modules/typebox/build/system/hashing/hash.mjs
 var ByteMarker;
 (function(ByteMarker2) {
   ByteMarker2[ByteMarker2["Array"] = 0] = "Array";
@@ -10970,13 +14679,13 @@ var [Prime, Size] = [BigInt("1099511628211"), BigInt(
   "18446744073709551616"
   /* 2 ^ 64 */
 )];
-var Bytes = Array.from({ length: 256 }).map((_, i) => BigInt(i));
+var Bytes = Array.from({ length: 256 }).map((_2, i) => BigInt(i));
 var F64 = new Float64Array(1);
 var F64In = new DataView(F64.buffer);
 var F64Out = new Uint8Array(F64.buffer);
 var encoder = new TextEncoder();
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/_codec.mjs
+// ../main/node_modules/typebox/build/type/types/_codec.mjs
 var EncodeBuilder = class {
   constructor(type, decode) {
     this.type = type;
@@ -11015,7 +14724,7 @@ function IsCodec(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~codec") && guard_exports.IsObject(value["~codec"]) && guard_exports.HasPropertyKey(value["~codec"], "encode") && guard_exports.HasPropertyKey(value["~codec"], "decode");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/_immutable.mjs
+// ../main/node_modules/typebox/build/type/types/_immutable.mjs
 function Immutable(type) {
   return AddImmutable(type);
 }
@@ -11023,7 +14732,7 @@ function IsImmutable(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~immutable");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/_add_readonly.mjs
+// ../main/node_modules/typebox/build/type/action/_add_readonly.mjs
 function AddReadonlyDeferred(type, options = {}) {
   return Deferred("AddReadonly", [type], options);
 }
@@ -11031,7 +14740,7 @@ function AddReadonly(type, options = {}) {
   return AddReadonlyAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/_readonly.mjs
+// ../main/node_modules/typebox/build/type/types/_readonly.mjs
 function Readonly(type) {
   return AddReadonly(type);
 }
@@ -11039,7 +14748,7 @@ function IsReadonly(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~readonly");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/_refine.mjs
+// ../main/node_modules/typebox/build/type/types/_refine.mjs
 function RefineAdd(type, refinement) {
   const refinements = IsRefine(type) ? [...type["~refine"], refinement] : [refinement];
   return memory_exports.Update(type, { "~refine": refinements }, {});
@@ -11058,7 +14767,7 @@ function IsRefine(value) {
   return IsSchema(value) && guard_exports.HasPropertyKey(value, "~refine") && guard_exports.IsArray(value["~refine"]) && guard_exports.Every(value["~refine"], 0, (value2) => IsRefinement(value2));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/bigint.mjs
+// ../main/node_modules/typebox/build/type/types/bigint.mjs
 var BigIntPattern = "-?(?:0|[1-9][0-9]*)n";
 function BigInt2(options) {
   return memory_exports.Create({ "~kind": "BigInt" }, { type: "bigint" }, options);
@@ -11067,7 +14776,7 @@ function IsBigInt2(value) {
   return IsKind(value, "BigInt");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/boolean.mjs
+// ../main/node_modules/typebox/build/type/types/boolean.mjs
 function Boolean2(options) {
   return memory_exports.Create({ "~kind": "Boolean" }, { type: "boolean" }, options);
 }
@@ -11075,7 +14784,7 @@ function IsBoolean3(value) {
   return IsKind(value, "Boolean");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/identifier.mjs
+// ../main/node_modules/typebox/build/type/types/identifier.mjs
 function Identifier(name) {
   return memory_exports.Create({ "~kind": "Identifier" }, { name });
 }
@@ -11083,7 +14792,7 @@ function IsIdentifier(value) {
   return IsKind(value, "Identifier");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/integer.mjs
+// ../main/node_modules/typebox/build/type/types/integer.mjs
 var IntegerPattern = "-?(?:0|[1-9][0-9]*)";
 function Integer(options) {
   return memory_exports.Create({ "~kind": "Integer" }, { type: "integer" }, options);
@@ -11092,7 +14801,7 @@ function IsInteger2(value) {
   return IsKind(value, "Integer");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/literal.mjs
+// ../main/node_modules/typebox/build/type/types/literal.mjs
 var InvalidLiteralValue = class extends Error {
   constructor(value) {
     super(`Invalid Literal value`);
@@ -11125,7 +14834,7 @@ function IsLiteral(value) {
   return IsKind(value, "Literal");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/null.mjs
+// ../main/node_modules/typebox/build/type/types/null.mjs
 function Null(options) {
   return memory_exports.Create({ "~kind": "Null" }, { type: "null" }, options);
 }
@@ -11133,7 +14842,7 @@ function IsNull2(value) {
   return IsKind(value, "Null");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/number.mjs
+// ../main/node_modules/typebox/build/type/types/number.mjs
 var NumberPattern = "-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?";
 function Number2(options) {
   return memory_exports.Create({ "~kind": "Number" }, { type: "number" }, options);
@@ -11142,7 +14851,7 @@ function IsNumber3(value) {
   return IsKind(value, "Number");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/symbol.mjs
+// ../main/node_modules/typebox/build/type/types/symbol.mjs
 function Symbol2(options) {
   return memory_exports.Create({ "~kind": "Symbol" }, { type: "symbol" }, options);
 }
@@ -11150,7 +14859,7 @@ function IsSymbol2(value) {
   return IsKind(value, "Symbol");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/parameter.mjs
+// ../main/node_modules/typebox/build/type/types/parameter.mjs
 function Parameter(...args) {
   const [name, extends_, equals] = arguments_exports.Match(args, {
     3: (name2, extends_2, equals2) => [name2, extends_2, equals2],
@@ -11163,7 +14872,7 @@ function IsParameter(value) {
   return IsKind(value, "Parameter");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/string.mjs
+// ../main/node_modules/typebox/build/type/types/string.mjs
 var StringPattern = ".*";
 function String2(options) {
   return memory_exports.Create({ "~kind": "String" }, { type: "string" }, options);
@@ -11172,7 +14881,7 @@ function IsString3(value) {
   return IsKind(value, "String");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/union.mjs
+// ../main/node_modules/typebox/build/type/types/union.mjs
 function Union(anyOf, options = {}) {
   return memory_exports.Create({ "~kind": "Union" }, { anyOf }, options);
 }
@@ -11183,14 +14892,14 @@ function UnionOptions(type) {
   return memory_exports.Discard(type, ["~kind", "anyOf"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/patterns/pattern.mjs
+// ../main/node_modules/typebox/build/type/engine/patterns/pattern.mjs
 function ParsePatternIntoTypes(pattern) {
   const parsed = Pattern(pattern);
   const result = guard_exports.IsEqual(parsed.length, 2) ? parsed[0] : [];
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/template_literal/is_finite.mjs
+// ../main/node_modules/typebox/build/type/engine/template_literal/is_finite.mjs
 function FromLiteral(_value) {
   return true;
 }
@@ -11209,12 +14918,12 @@ function IsTemplateLiteralFinite(types) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/template_literal/create.mjs
+// ../main/node_modules/typebox/build/type/engine/template_literal/create.mjs
 function TemplateLiteralCreate(pattern) {
   return memory_exports.Create({ ["~kind"]: "TemplateLiteral" }, { type: "string", pattern }, {});
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/template_literal/decode.mjs
+// ../main/node_modules/typebox/build/type/engine/template_literal/decode.mjs
 function FromLiteralPush(variants, value, result = []) {
   return guard_exports.ShiftLeft(variants, (left, right) => FromLiteralPush(right, value, [...result, `${left}${value}`]), () => result);
 }
@@ -11257,24 +14966,24 @@ function TemplateLiteralDecode(pattern) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/record_create.mjs
+// ../main/node_modules/typebox/build/type/engine/record/record_create.mjs
 function CreateRecord(key, value) {
   const type = "object";
   const patternProperties = { [key]: value };
   return memory_exports.Create({ ["~kind"]: "Record" }, { type, patternProperties });
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_any.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_any.mjs
 function FromAnyKey(value) {
   return CreateRecord(StringKey, value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_boolean.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_boolean.mjs
 function FromBooleanKey(value) {
   return _Object_({ true: value, false: value });
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/tuple.mjs
+// ../main/node_modules/typebox/build/type/types/tuple.mjs
 function Tuple(types, options = {}) {
   const [items, minItems, additionalItems] = [types, types.length, false];
   return memory_exports.Create({ ["~kind"]: "Tuple" }, { type: "array", additionalItems, items, minItems }, options);
@@ -11286,7 +14995,7 @@ function TupleOptions(type) {
   return memory_exports.Discard(type, ["~kind", "type", "items", "minItems", "additionalItems"]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly/instantiate_remove.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly/instantiate_remove.mjs
 function RemoveReadonlyOperation(type) {
   return memory_exports.Discard(type, ["~readonly"]);
 }
@@ -11299,7 +15008,7 @@ function RemoveReadonlyInstantiate(context, state, type, options) {
   return RemoveReadonlyAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/_remove_readonly.mjs
+// ../main/node_modules/typebox/build/type/action/_remove_readonly.mjs
 function RemoveReadonlyDeferred(type, options = {}) {
   return Deferred("RemoveReadonly", [type], options);
 }
@@ -11307,7 +15016,7 @@ function RemoveReadonly(type, options = {}) {
   return RemoveReadonlyAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/optional/instantiate_remove.mjs
+// ../main/node_modules/typebox/build/type/engine/optional/instantiate_remove.mjs
 function RemoveOptionalOperation(type) {
   return memory_exports.Discard(type, ["~optional"]);
 }
@@ -11320,7 +15029,7 @@ function RemoveOptionalInstantiate(context, state, type, options) {
   return RemoveOptionalAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/_remove_optional.mjs
+// ../main/node_modules/typebox/build/type/action/_remove_optional.mjs
 function RemoveOptionalDeferred(type, options = {}) {
   return Deferred("RemoveOptional", [type], options);
 }
@@ -11328,7 +15037,7 @@ function RemoveOptional(type, options = {}) {
   return RemoveOptionalAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/tuple/to_object.mjs
+// ../main/node_modules/typebox/build/type/engine/tuple/to_object.mjs
 function TupleElementsToProperties(types) {
   const result = types.reduceRight((result2, right, index) => {
     return { [index]: right, ...result2 };
@@ -11341,10 +15050,7 @@ function TupleToObject(type) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/composite.mjs
-function CanComposite(type) {
-  return IsObject2(type) || IsTuple(type);
-}
+// ../main/node_modules/typebox/build/type/engine/evaluate/composite.mjs
 function IsReadonlyProperty(left, right) {
   return IsReadonly(left) ? IsReadonly(right) ? true : false : false;
 }
@@ -11362,52 +15068,49 @@ function CompositePropertyKey(left, right, key) {
   return key in left ? key in right ? CompositeProperty(left[key], right[key]) : left[key] : key in right ? right[key] : Never();
 }
 function CompositeProperties(left, right) {
-  const keys = /* @__PURE__ */ new Set([...guard_exports.Keys(left), ...guard_exports.Keys(right)]);
-  const result = [...keys].reduce((result2, key) => {
-    return { ...result2, [key]: CompositePropertyKey(left, right, key) };
+  const keys = /* @__PURE__ */ new Set([...guard_exports.Keys(right), ...guard_exports.Keys(left)]);
+  return [...keys].reduce((result, key) => {
+    return { ...result, [key]: CompositePropertyKey(left, right, key) };
   }, {});
-  return result;
 }
 function GetProperties(type) {
-  const result = IsObject2(type) ? type.properties : IsTuple(type) ? TupleElementsToProperties(type.items) : {};
+  const result = IsObject2(type) ? type.properties : IsTuple(type) ? TupleElementsToProperties(type.items) : Unreachable();
   return result;
 }
 function Composite(left, right) {
   const leftProperties = GetProperties(left);
   const rightProperties = GetProperties(right);
   const properties = CompositeProperties(leftProperties, rightProperties);
-  const result = _Object_(properties);
-  return result;
+  return _Object_(properties);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/narrow.mjs
-function NarrowCompareRule(left, right) {
-  const result = Compare(left, right);
-  return guard_exports.IsEqual(result, CompareResultLeftInside) ? left : guard_exports.IsEqual(result, CompareResultRightInside) ? right : guard_exports.IsEqual(result, CompareResultEqual) ? right : Never();
-}
-function NarrowCompositeRule(left, right) {
-  const canCompositeLeft = CanComposite(left);
-  const canCompositeRight = CanComposite(right);
-  return canCompositeLeft && canCompositeRight ? Composite(left, right) : canCompositeLeft && !canCompositeRight ? left : !canCompositeLeft && canCompositeRight ? right : NarrowCompareRule(left, right);
-}
+// ../main/node_modules/typebox/build/type/engine/evaluate/narrow.mjs
 function Narrow(left, right) {
-  return IsNever(left) ? left : IsAny(left) ? left : IsUnknown(left) ? right : IsNever(right) ? right : IsAny(right) ? right : IsUnknown(right) ? left : NarrowCompositeRule(left, right);
+  const result = Compare(left, right);
+  return guard_exports.IsEqual(result, ResultLeftInside) ? left : guard_exports.IsEqual(result, ResultRightInside) ? right : guard_exports.IsEqual(result, ResultEqual) ? right : Never();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/distribute.mjs
-function ShouldEvaluate(left, right) {
-  const result = IsUnion(left) || IsUnion(right);
+// ../main/node_modules/typebox/build/type/engine/evaluate/distribute.mjs
+function IsObjectLike(type) {
+  return IsObject2(type) || IsTuple(type);
+}
+function IsUnionOperand(left, right) {
+  const isUnionLeft = IsUnion(left);
+  const isUnionRight = IsUnion(right);
+  const result = isUnionLeft || isUnionRight;
   return result;
 }
 function DistributeOperation(left, right) {
   const evaluatedLeft = EvaluateType(left);
   const evaluatedRight = EvaluateType(right);
-  const shouldEvaluate = ShouldEvaluate(evaluatedLeft, evaluatedRight);
-  const result = shouldEvaluate ? EvaluateIntersect([evaluatedLeft, evaluatedRight]) : Narrow(evaluatedLeft, evaluatedRight);
+  const isUnionOperand = IsUnionOperand(evaluatedLeft, evaluatedRight);
+  const isObjectLeft = IsObjectLike(evaluatedLeft);
+  const IsObjectRight = IsObjectLike(evaluatedRight);
+  const result = isUnionOperand ? EvaluateIntersect([evaluatedLeft, evaluatedRight]) : isObjectLeft && IsObjectRight ? Composite(evaluatedLeft, evaluatedRight) : isObjectLeft && !IsObjectRight ? evaluatedLeft : !isObjectLeft && IsObjectRight ? evaluatedRight : Narrow(evaluatedLeft, evaluatedRight);
   return result;
 }
 function DistributeType(type, types, result = []) {
-  return guard_exports.ShiftLeft(types, (left, right) => DistributeType(type, right, [...result, DistributeOperation(left, type)]), () => guard_exports.IsEqual(result.length, 0) ? [type] : result);
+  return guard_exports.ShiftLeft(types, (left, right) => DistributeType(type, right, [...result, DistributeOperation(type, left)]), () => guard_exports.IsEqual(result.length, 0) ? [type] : result);
 }
 function DistributeUnion(types, distribution, result = []) {
   return guard_exports.ShiftLeft(types, (left, right) => DistributeUnion(right, distribution, [...result, ...Distribute([left], distribution)]), () => result);
@@ -11416,14 +15119,16 @@ function Distribute(types, result = []) {
   return guard_exports.ShiftLeft(types, (left, right) => IsUnion(left) ? Distribute(right, DistributeUnion(left.anyOf, result)) : Distribute(right, DistributeType(left, result)), () => result);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/exclude/operation.mjs
+// ../main/node_modules/typebox/build/type/engine/exclude/operation.mjs
 function ExcludeType(left, right) {
   const check = Extends({}, left, right);
   const result = result_exports.IsExtendsTrueLike(check) ? [] : [left];
   return result;
 }
-function ExcludeUnion(left, right, result = []) {
-  return guard_exports.ShiftLeft(left, (head, tail) => ExcludeUnion(tail, right, [...result, ...ExcludeType(head, right)]), () => result);
+function ExcludeUnion(types, right) {
+  return types.reduce((result, head) => {
+    return [...result, ...ExcludeType(head, right)];
+  }, []);
 }
 function ExcludeOperation(left, right) {
   const evaluated = EvaluateType(left);
@@ -11433,20 +15138,21 @@ function ExcludeOperation(left, right) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/evaluate.mjs
+// ../main/node_modules/typebox/build/type/engine/evaluate/evaluate.mjs
 function EvaluateDependent(if_, then_, else_) {
-  const intersected = EvaluateIntersect([if_, then_]);
+  const intersect = Intersect([if_, then_]);
   const excluded = ExcludeOperation(else_, if_);
-  const result = EvaluateUnion([intersected, excluded]);
+  const result = EvaluateUnion([intersect, excluded]);
   return result;
 }
-function EvaluateEnum(values, result = []) {
-  return guard_exports.ShiftLeft(values, (left, right) => EvaluateEnum(right, [...result, Literal(left)]), () => EvaluateUnion(result));
+function EvaluateEnum(values) {
+  const result = values.map((value) => Literal(value));
+  return EvaluateUnion(result);
 }
 function EvaluateIntersect(types) {
   const distribution = Distribute(types);
   const broadend = Broaden(distribution);
-  const result = EvaluateUnion(broadend);
+  const result = EvaluateUnionFast(broadend);
   return result;
 }
 function EvaluateTemplateLiteral(pattern) {
@@ -11460,51 +15166,50 @@ function EvaluateUnion(types) {
   return result;
 }
 function EvaluateType(type) {
-  const result = IsDependent(type) ? EvaluateDependent(type.if, type.then, type.else) : IsEnum(type) ? EvaluateEnum(type.enum) : IsIntersect(type) ? EvaluateIntersect(type.allOf) : IsTemplateLiteral(type) ? EvaluateTemplateLiteral(type.pattern) : IsUnion(type) ? EvaluateUnion(type.anyOf) : type;
-  return result;
+  return IsDependent(type) ? EvaluateDependent(type.if, type.then, type.else) : IsEnum(type) ? EvaluateEnum(type.enum) : IsIntersect(type) ? EvaluateIntersect(type.allOf) : IsTemplateLiteral(type) ? EvaluateTemplateLiteral(type.pattern) : IsUnion(type) ? EvaluateUnion(type.anyOf) : type;
 }
 function EvaluateUnionFast(types) {
   const result = guard_exports.IsEqual(types.length, 1) ? types[0] : guard_exports.IsEqual(types.length, 0) ? Never() : Union(types);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_enum.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_enum.mjs
 function FromEnumKey(values, value) {
   const unionKey = EvaluateEnum(values);
   const result = FromKey(unionKey, value);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_integer.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_integer.mjs
 function FromIntegerKey(_key, value) {
   const result = CreateRecord(IntegerKey, value);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_intersect.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_intersect.mjs
 function FromIntersectKey(types, value) {
   const evaluatedKey = EvaluateIntersect(types);
   const result = FromKey(evaluatedKey, value);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_literal.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_literal.mjs
 function FromLiteralKey(key, value) {
   return guard_exports.IsString(key) || guard_exports.IsNumber(key) ? _Object_({ [key]: value }) : guard_exports.IsEqual(key, false) ? _Object_({ false: value }) : guard_exports.IsEqual(key, true) ? _Object_({ true: value }) : _Object_({});
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_number.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_number.mjs
 function FromNumberKey(_key, value) {
   const result = CreateRecord(NumberKey, value);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_string.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_string.mjs
 function FromStringKey(key, value) {
   return guard_exports.HasPropertyKey(key, "pattern") && (guard_exports.IsString(key.pattern) || key.pattern instanceof RegExp) ? CreateRecord(key.pattern.toString(), value) : CreateRecord(StringKey, value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_template_literal.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_template_literal.mjs
 function FromTemplateKey(pattern, value) {
   const types = ParsePatternIntoTypes(pattern);
   const finite = IsTemplateLiteralFinite(types);
@@ -11512,16 +15217,18 @@ function FromTemplateKey(pattern, value) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/flatten.mjs
+// ../main/node_modules/typebox/build/type/engine/evaluate/flatten.mjs
 function FlattenType(type) {
   const result = IsUnion(type) ? Flatten(type.anyOf) : [type];
   return result;
 }
-function Flatten(types, result = []) {
-  return guard_exports.ShiftLeft(types, (left, right) => Flatten(right, [...result, ...FlattenType(left)]), () => result);
+function Flatten(types) {
+  return types.reduce((result, type) => {
+    return [...result, ...FlattenType(type)];
+  }, []);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key_union.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key_union.mjs
 function StringOrNumberCheck(types) {
   return types.some((type) => IsString3(type) || IsNumber3(type) || IsInteger2(type));
 }
@@ -11544,13 +15251,13 @@ function FromUnionKey(types, value) {
   return IsSchema(record) ? record : CreateObject(flattened, value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/from_key.mjs
+// ../main/node_modules/typebox/build/type/engine/record/from_key.mjs
 function FromKey(key, value) {
   const result = IsAny(key) ? FromAnyKey(value) : IsBoolean3(key) ? FromBooleanKey(value) : IsEnum(key) ? FromEnumKey(key.enum, value) : IsInteger2(key) ? FromIntegerKey(key, value) : IsIntersect(key) ? FromIntersectKey(key.allOf, value) : IsLiteral(key) ? FromLiteralKey(key.const, value) : IsNumber3(key) ? FromNumberKey(key, value) : IsUnion(key) ? FromUnionKey(key.anyOf, value) : IsString3(key) ? FromStringKey(key, value) : IsTemplateLiteral(key) ? FromTemplateKey(key.pattern, value) : _Object_({});
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/record/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/record/instantiate.mjs
 function RecordAction(key, value, options) {
   const result = CanInstantiate([key]) ? memory_exports.Update(FromKey(key, value), {}, options) : RecordDeferred(key, value, options);
   return result;
@@ -11561,7 +15268,7 @@ function RecordInstantiate(context, state, key, value, options) {
   return RecordAction(instantiatedKey, instantiatedValue, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/record.mjs
+// ../main/node_modules/typebox/build/type/types/record.mjs
 var IntegerKey = `^${IntegerPattern}$`;
 var NumberKey = `^${NumberPattern}$`;
 var StringKey = `^${StringPattern}$`;
@@ -11593,7 +15300,7 @@ function IsRecord(value) {
   return IsKind(value, "Record");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/rest.mjs
+// ../main/node_modules/typebox/build/type/types/rest.mjs
 function Rest(type) {
   return memory_exports.Create({ "~kind": "Rest" }, { type: "rest", items: type }, {});
 }
@@ -11601,7 +15308,7 @@ function IsRest(value) {
   return IsKind(value, "Rest");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/this.mjs
+// ../main/node_modules/typebox/build/type/types/this.mjs
 function This(options) {
   return memory_exports.Create({ ["~kind"]: "This" }, { $ref: "#" }, options);
 }
@@ -11609,7 +15316,7 @@ function IsThis(value) {
   return IsKind(value, "This");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/undefined.mjs
+// ../main/node_modules/typebox/build/type/types/undefined.mjs
 function Undefined(options) {
   return memory_exports.Create({ "~kind": "Undefined" }, { type: "undefined" }, options);
 }
@@ -11617,7 +15324,7 @@ function IsUndefined2(value) {
   return IsKind(value, "Undefined");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/void.mjs
+// ../main/node_modules/typebox/build/type/types/void.mjs
 function Void(options) {
   return memory_exports.Create({ "~kind": "Void" }, { type: "void" }, options);
 }
@@ -11625,19 +15332,22 @@ function IsVoid(value) {
   return IsKind(value, "Void");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/mapping.mjs
+// ../main/node_modules/typebox/build/type/script/mapping.mjs
 function IntrinsicOrCall(ref, parameters) {
   return guard_exports.IsEqual(ref, "Array") ? _Array_(parameters[0]) : guard_exports.IsEqual(ref, "Capitalize") ? CapitalizeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "ConstructorParameters") ? ConstructorParametersDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Evaluate") ? EvaluateDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Exclude") ? ExcludeDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Extract") ? ExtractDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Index") ? IndexDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "InstanceType") ? InstanceTypeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Lowercase") ? LowercaseDeferred(parameters[0]) : guard_exports.IsEqual(ref, "NonNullable") ? NonNullableDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Omit") ? OmitDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Parameters") ? ParametersDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Partial") ? PartialDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Pick") ? PickDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Readonly") ? ReadonlyObjectDeferred(parameters[0]) : guard_exports.IsEqual(ref, "KeyOf") ? KeyOfDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Record") ? RecordDeferred(parameters[0], parameters[1]) : guard_exports.IsEqual(ref, "Required") ? RequiredDeferred(parameters[0]) : guard_exports.IsEqual(ref, "ReturnType") ? ReturnTypeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Uncapitalize") ? UncapitalizeDeferred(parameters[0]) : guard_exports.IsEqual(ref, "Uppercase") ? UppercaseDeferred(parameters[0]) : CallConstruct(Ref(ref), parameters);
 }
 function Unreachable2() {
   throw Error("Unreachable");
 }
-function DelimitedDecode(input, result = []) {
-  return guard_exports.ShiftLeft(input, (left, right) => DelimitedDecode(right, [...result, left[1]]), () => result);
-}
-function Delimited(input) {
-  return guard_exports.IsEqual(input.length, 3) ? [input[0], ...DelimitedDecode(input[1])] : [];
-}
+var DelimitedDecode = (input, result = []) => {
+  return input.reduce((result2, left) => {
+    return guard_exports.IsArray(left) && guard_exports.IsEqual(left.length, 2) ? [...result2, left[0]] : [...result2, left];
+  }, []);
+};
+var Delimited = (input) => {
+  const [left, right] = input;
+  return DelimitedDecode([...left, ...right]);
+};
 function GenericParameterExtendsEqualsMapping(input) {
   return Parameter(input[0], input[2], input[4]);
 }
@@ -11868,11 +15578,17 @@ function _Object_Mapping(input) {
 function ElementNamedMapping(input) {
   return guard_exports.IsEqual(input.length, 5) ? AddReadonlyDeferred(AddOptionalDeferred(input[4])) : guard_exports.IsEqual(input.length, 3) ? input[2] : guard_exports.IsEqual(input.length, 4) ? guard_exports.IsEqual(input[2], "readonly") ? AddReadonlyDeferred(input[3]) : AddOptionalDeferred(input[3]) : Unreachable2();
 }
+function ElementReadonlyOptionalMapping(input) {
+  return AddReadonlyDeferred(AddOptionalDeferred(input[1]));
+}
+function ElementReadonlyMapping(input) {
+  return AddReadonlyDeferred(input[1]);
+}
+function ElementOptionalMapping(input) {
+  return AddOptionalDeferred(input[0]);
+}
 function ElementBaseMapping(input) {
-  if (!guard_exports.IsArray(input) || !guard_exports.IsEqual(input.length, 3))
-    return input;
-  const [isReadonly, type, isOptional] = input;
-  return isReadonly && isOptional ? AddReadonlyDeferred(AddOptionalDeferred(type)) : isReadonly && !isOptional ? AddReadonlyDeferred(type) : !isReadonly && isOptional ? AddOptionalDeferred(type) : type;
+  return input;
 }
 function ElementMapping(input) {
   return guard_exports.IsEqual(input.length, 2) ? Rest(input[1]) : guard_exports.IsEqual(input.length, 1) ? input[0] : Unreachable2();
@@ -12040,20 +15756,21 @@ function ModuleDeclarationDelimiterMapping(input) {
   return input;
 }
 function ModuleDeclarationListMapping(input) {
-  return Delimited(input);
+  return PropertiesReduce(Delimited(input));
 }
 function ModuleDeclarationMapping(input) {
   return input[1];
 }
 function ModuleMapping(input) {
-  const [moduleDeclaration, moduleDeclarationList] = [input[0], input[1]];
-  return ModuleDeferred(memory_exports.Assign(moduleDeclaration, PropertiesReduce(moduleDeclarationList)[0]));
+  const moduleDeclaration = input[0];
+  const moduleDeclarationList = input[1];
+  return ModuleDeferred(memory_exports.Assign(moduleDeclaration, moduleDeclarationList[0]));
 }
 function ScriptMapping(input) {
   return input;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/internal/match.mjs
+// ../main/node_modules/typebox/build/type/script/token/internal/match.mjs
 function IsMatch(value) {
   return IsEqual(value.length, 2);
 }
@@ -12061,7 +15778,7 @@ function Match2(input, ok, fail) {
   return IsMatch(input) ? ok(input[0], input[1]) : fail();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/internal/take.mjs
+// ../main/node_modules/typebox/build/type/script/token/internal/take.mjs
 function TakeVariant(variant, input) {
   return IsEqual(input.indexOf(variant), 0) ? [variant, input.slice(variant.length)] : [];
 }
@@ -12074,9 +15791,9 @@ function Take(variants, input) {
   return [];
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/internal/char.mjs
+// ../main/node_modules/typebox/build/type/script/token/internal/char.mjs
 function Range(start, end) {
-  return Array.from({ length: end - start + 1 }, (_, i) => String.fromCharCode(start + i));
+  return Array.from({ length: end - start + 1 }, (_2, i) => String.fromCharCode(start + i));
 }
 var Alpha = [
   ...Range(97, 122),
@@ -12094,7 +15811,7 @@ var Dot = ".";
 var DollarSign = "$";
 var Hyphen = "-";
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/internal/trim.mjs
+// ../main/node_modules/typebox/build/type/script/token/internal/trim.mjs
 var LineComment = "//";
 var OpenComment = "/*";
 var CloseComment = "*/";
@@ -12120,12 +15837,12 @@ function Trim(input) {
   return trimmed.startsWith(OpenComment) ? Trim(DiscardMultilineComment(trimmed.slice(2))) : trimmed.startsWith(LineComment) ? Trim(DiscardLineComment(trimmed.slice(2))) : trimmed;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/internal/optional.mjs
+// ../main/node_modules/typebox/build/type/script/token/internal/optional.mjs
 function Optional2(value, input) {
   return Match2(Take([value], input), (Optional4, Rest2) => [Optional4, Rest2], () => ["", input]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/internal/many.mjs
+// ../main/node_modules/typebox/build/type/script/token/internal/many.mjs
 function IsDiscard(discard, input) {
   return discard.includes(input);
 }
@@ -12133,7 +15850,7 @@ function Many(allowed, discard, input, result = "") {
   return Match2(Take(allowed, input), (Char, Rest2) => IsDiscard(discard, Char) ? Many(allowed, discard, Rest2, result) : Many(allowed, discard, Rest2, `${result}${Char}`), () => [result, input]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/unsigned_integer.mjs
+// ../main/node_modules/typebox/build/type/script/token/unsigned_integer.mjs
 function TakeNonZero(input) {
   return Take(NonZero, input);
 }
@@ -12153,7 +15870,7 @@ function UnsignedInteger(input) {
   return TakeUnsignedInteger(Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/integer.mjs
+// ../main/node_modules/typebox/build/type/script/token/integer.mjs
 function TakeSign(input) {
   return Optional2(Hyphen, input);
 }
@@ -12169,7 +15886,7 @@ function Integer2(input) {
   return TakeSignedInteger(Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/bigint.mjs
+// ../main/node_modules/typebox/build/type/script/token/bigint.mjs
 function TakeBigInt(input) {
   return Match2(
     Integer2(input),
@@ -12182,7 +15899,7 @@ function BigInt3(input) {
   return TakeBigInt(input);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/const.mjs
+// ../main/node_modules/typebox/build/type/script/token/const.mjs
 function TakeConst(const_, input) {
   return Take([const_], input);
 }
@@ -12190,7 +15907,7 @@ function Const(const_, input) {
   return IsEqual(const_, "") ? ["", input] : const_.startsWith(NewLine) ? TakeConst(const_, TrimWhitespace(input)) : const_.startsWith(WhiteSpace) ? TakeConst(const_, input) : TakeConst(const_, Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/ident.mjs
+// ../main/node_modules/typebox/build/type/script/token/ident.mjs
 var Initial = [...Alpha, UnderScore, DollarSign];
 function TakeInitial(input) {
   return Take(Initial, input);
@@ -12211,7 +15928,7 @@ function Ident(input) {
   return TakeIdent(Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/unsigned_number.mjs
+// ../main/node_modules/typebox/build/type/script/token/unsigned_number.mjs
 var AllowedDigits2 = [...Digit, UnderScore];
 function IsLeadingDot(input) {
   return IsMatch(Take([Dot], input));
@@ -12247,7 +15964,7 @@ function UnsignedNumber(input) {
   return TakeUnsignedNumber(Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/number.mjs
+// ../main/node_modules/typebox/build/type/script/token/number.mjs
 function TakeSign2(input) {
   return Optional2(Hyphen, input);
 }
@@ -12263,7 +15980,7 @@ function Number3(input) {
   return TakeSignedNumber(Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/until.mjs
+// ../main/node_modules/typebox/build/type/script/token/until.mjs
 function TakeOne(input) {
   const result = IsEqual(input, "") ? [] : [input.slice(0, 1), input.slice(1)];
   return result;
@@ -12279,13 +15996,13 @@ function Until(end, input, result = "") {
   );
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/span.mjs
+// ../main/node_modules/typebox/build/type/script/token/span.mjs
 function MultiLine(start, end, input) {
   return Match2(
     Take([start], input),
-    (_, Rest2) => Match2(
+    (_2, Rest2) => Match2(
       Until([end], Rest2),
-      (Until2, UntilRest) => Match2(Take([end], UntilRest), (_2, Rest3) => [`${Until2}`, Rest3], () => []),
+      (Until2, UntilRest) => Match2(Take([end], UntilRest), (_3, Rest3) => [`${Until2}`, Rest3], () => []),
       // fail: did not match End
       () => []
     ),
@@ -12296,9 +16013,9 @@ function MultiLine(start, end, input) {
 function SingleLine(start, end, input) {
   return Match2(
     Take([start], input),
-    (_, Rest2) => Match2(
+    (_2, Rest2) => Match2(
       Until([NewLine, end], Rest2),
-      (Until2, UntilRest) => Match2(Take([end], UntilRest), (_2, EndRest) => [`${Until2}`, EndRest], () => []),
+      (Until2, UntilRest) => Match2(Take([end], UntilRest), (_3, EndRest) => [`${Until2}`, EndRest], () => []),
       // fail: did not match End
       () => []
     ),
@@ -12310,7 +16027,7 @@ function Span(start, end, multiLine, input) {
   return multiLine ? MultiLine(start, end, Trim(input)) : SingleLine(start, end, Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/string.mjs
+// ../main/node_modules/typebox/build/type/script/token/string.mjs
 function TakeInitial2(quotes, input) {
   return Take(quotes, input);
 }
@@ -12324,23 +16041,23 @@ function String3(quotes, input) {
   return TakeString(quotes, Trim(input));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/token/until_1.mjs
+// ../main/node_modules/typebox/build/type/script/token/until_1.mjs
 function Until_1(end, input) {
   return Match2(Until(end, input), (Until2, UntilRest) => IsEqual(Until2, "") ? [] : [Until2, UntilRest], () => []);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/parser.mjs
+// ../main/node_modules/typebox/build/type/script/parser.mjs
 var If = (result, left, right = () => []) => result.length === 2 ? left(result) : right();
 var GenericParameterExtendsEquals = (input) => If(If(Ident(input), ([_0, input2]) => If(Const("extends", input2), ([_1, input3]) => If(Type(input3), ([_2, input4]) => If(Const("=", input4), ([_3, input5]) => If(Type(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [GenericParameterExtendsEqualsMapping(_0), input2]);
 var GenericParameterExtends = (input) => If(If(Ident(input), ([_0, input2]) => If(Const("extends", input2), ([_1, input3]) => If(Type(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [GenericParameterExtendsMapping(_0), input2]);
 var GenericParameterEquals = (input) => If(If(Ident(input), ([_0, input2]) => If(Const("=", input2), ([_1, input3]) => If(Type(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [GenericParameterEqualsMapping(_0), input2]);
 var GenericParameterIdentifier = (input) => If(Ident(input), ([_0, input2]) => [GenericParameterIdentifierMapping(_0), input2]);
 var GenericParameter = (input) => If(If(GenericParameterExtendsEquals(input), ([_0, input2]) => [_0, input2], () => If(GenericParameterExtends(input), ([_0, input2]) => [_0, input2], () => If(GenericParameterEquals(input), ([_0, input2]) => [_0, input2], () => If(GenericParameterIdentifier(input), ([_0, input2]) => [_0, input2], () => [])))), ([_0, input2]) => [GenericParameterMapping(_0), input2]);
-var GenericParameterList_0 = (input, result = []) => If(If(Const(",", input), ([_0, input2]) => If(GenericParameter(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => GenericParameterList_0(input2, [...result, _0]), () => [result, input]);
-var GenericParameterList = (input) => If(If(If(GenericParameter(input), ([_0, input2]) => If(GenericParameterList_0(input2), ([_1, input3]) => If(If(Const(",", input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [GenericParameterListMapping(_0), input2]);
+var GenericParameterList_0 = (input, result = []) => If(If(GenericParameter(input), ([_0, input2]) => If(Const(",", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => GenericParameterList_0(input2, [...result, _0]), () => [result, input]);
+var GenericParameterList = (input) => If(If(GenericParameterList_0(input), ([_0, input2]) => If(If(If(GenericParameter(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [GenericParameterListMapping(_0), input2]);
 var GenericParameters = (input) => If(If(Const("<", input), ([_0, input2]) => If(GenericParameterList(input2), ([_1, input3]) => If(Const(">", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [GenericParametersMapping(_0), input2]);
-var GenericCallArgumentList_0 = (input, result = []) => If(If(Const(",", input), ([_0, input2]) => If(Type(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => GenericCallArgumentList_0(input2, [...result, _0]), () => [result, input]);
-var GenericCallArgumentList = (input) => If(If(If(Type(input), ([_0, input2]) => If(GenericCallArgumentList_0(input2), ([_1, input3]) => If(If(Const(",", input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [GenericCallArgumentListMapping(_0), input2]);
+var GenericCallArgumentList_0 = (input, result = []) => If(If(Type(input), ([_0, input2]) => If(Const(",", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => GenericCallArgumentList_0(input2, [...result, _0]), () => [result, input]);
+var GenericCallArgumentList = (input) => If(If(GenericCallArgumentList_0(input), ([_0, input2]) => If(If(If(Type(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [GenericCallArgumentListMapping(_0), input2]);
 var GenericCallArguments = (input) => If(If(Const("<", input), ([_0, input2]) => If(GenericCallArgumentList(input2), ([_1, input3]) => If(Const(">", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [GenericCallArgumentsMapping(_0), input2]);
 var GenericCall = (input) => If(If(Ident(input), ([_0, input2]) => If(GenericCallArguments(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [GenericCallMapping(_0), input2]);
 var OptionalSemiColon = (input) => If(If(If(Const(";", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [OptionalSemiColonMapping(_0), input2]);
@@ -12393,15 +16110,18 @@ var Readonly2 = (input) => If(If(If(Const("readonly", input), ([_0, input2]) => 
 var Optional3 = (input) => If(If(If(Const("?", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [OptionalMapping(_0), input2]);
 var Property = (input) => If(If(Readonly2(input), ([_0, input2]) => If(PropertyKey(input2), ([_1, input3]) => If(Optional3(input3), ([_2, input4]) => If(Const(":", input4), ([_3, input5]) => If(Type(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [PropertyMapping(_0), input2]);
 var PropertyDelimiter = (input) => If(If(If(Const(",", input), ([_0, input2]) => If(Const("\n", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(Const(";", input), ([_0, input2]) => If(Const("\n", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(Const(",", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If(If(Const(";", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If(If(Const("\n", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => []))))), ([_0, input2]) => [PropertyDelimiterMapping(_0), input2]);
-var PropertyList_0 = (input, result = []) => If(If(PropertyDelimiter(input), ([_0, input2]) => If(Property(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => PropertyList_0(input2, [...result, _0]), () => [result, input]);
-var PropertyList = (input) => If(If(If(Property(input), ([_0, input2]) => If(PropertyList_0(input2), ([_1, input3]) => If(If(PropertyDelimiter(input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [PropertyListMapping(_0), input2]);
+var PropertyList_0 = (input, result = []) => If(If(Property(input), ([_0, input2]) => If(PropertyDelimiter(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => PropertyList_0(input2, [...result, _0]), () => [result, input]);
+var PropertyList = (input) => If(If(PropertyList_0(input), ([_0, input2]) => If(If(If(Property(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [PropertyListMapping(_0), input2]);
 var Properties = (input) => If(If(Const("{", input), ([_0, input2]) => If(PropertyList(input2), ([_1, input3]) => If(Const("}", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [PropertiesMapping(_0), input2]);
 var _Object_2 = (input) => If(Properties(input), ([_0, input2]) => [_Object_Mapping(_0), input2]);
 var ElementNamed = (input) => If(If(If(Ident(input), ([_0, input2]) => If(Const("?", input2), ([_1, input3]) => If(Const(":", input3), ([_2, input4]) => If(Const("readonly", input4), ([_3, input5]) => If(Type(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [_0, input2], () => If(If(Ident(input), ([_0, input2]) => If(Const(":", input2), ([_1, input3]) => If(Const("readonly", input3), ([_2, input4]) => If(Type(input4), ([_3, input5]) => [[_0, _1, _2, _3], input5])))), ([_0, input2]) => [_0, input2], () => If(If(Ident(input), ([_0, input2]) => If(Const("?", input2), ([_1, input3]) => If(Const(":", input3), ([_2, input4]) => If(Type(input4), ([_3, input5]) => [[_0, _1, _2, _3], input5])))), ([_0, input2]) => [_0, input2], () => If(If(Ident(input), ([_0, input2]) => If(Const(":", input2), ([_1, input3]) => If(Type(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => [])))), ([_0, input2]) => [ElementNamedMapping(_0), input2]);
-var ElementBase = (input) => If(If(ElementNamed(input), ([_0, input2]) => [_0, input2], () => If(If(Readonly2(input), ([_0, input2]) => If(Type(input2), ([_1, input3]) => If(Optional3(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ElementBaseMapping(_0), input2]);
+var ElementReadonlyOptional = (input) => If(If(Const("readonly", input), ([_0, input2]) => If(Type(input2), ([_1, input3]) => If(Const("?", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [ElementReadonlyOptionalMapping(_0), input2]);
+var ElementReadonly = (input) => If(If(Const("readonly", input), ([_0, input2]) => If(Type(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ElementReadonlyMapping(_0), input2]);
+var ElementOptional = (input) => If(If(Type(input), ([_0, input2]) => If(Const("?", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ElementOptionalMapping(_0), input2]);
+var ElementBase = (input) => If(If(ElementNamed(input), ([_0, input2]) => [_0, input2], () => If(ElementReadonlyOptional(input), ([_0, input2]) => [_0, input2], () => If(ElementReadonly(input), ([_0, input2]) => [_0, input2], () => If(ElementOptional(input), ([_0, input2]) => [_0, input2], () => If(Type(input), ([_0, input2]) => [_0, input2], () => []))))), ([_0, input2]) => [ElementBaseMapping(_0), input2]);
 var Element = (input) => If(If(If(Const("...", input), ([_0, input2]) => If(ElementBase(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(ElementBase(input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ElementMapping(_0), input2]);
-var ElementList_0 = (input, result = []) => If(If(Const(",", input), ([_0, input2]) => If(Element(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => ElementList_0(input2, [...result, _0]), () => [result, input]);
-var ElementList = (input) => If(If(If(Element(input), ([_0, input2]) => If(ElementList_0(input2), ([_1, input3]) => If(If(Const(",", input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ElementListMapping(_0), input2]);
+var ElementList_0 = (input, result = []) => If(If(Element(input), ([_0, input2]) => If(Const(",", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => ElementList_0(input2, [...result, _0]), () => [result, input]);
+var ElementList = (input) => If(If(ElementList_0(input), ([_0, input2]) => If(If(If(Element(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ElementListMapping(_0), input2]);
 var _Tuple_ = (input) => If(If(Const("[", input), ([_0, input2]) => If(ElementList(input2), ([_1, input3]) => If(Const("]", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_Tuple_Mapping(_0), input2]);
 var ParameterReadonlyOptional = (input) => If(If(Ident(input), ([_0, input2]) => If(Const("?", input2), ([_1, input3]) => If(Const(":", input3), ([_2, input4]) => If(Const("readonly", input4), ([_3, input5]) => If(Type(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [ParameterReadonlyOptionalMapping(_0), input2]);
 var ParameterReadonly = (input) => If(If(Ident(input), ([_0, input2]) => If(Const(":", input2), ([_1, input3]) => If(Const("readonly", input3), ([_2, input4]) => If(Type(input4), ([_3, input5]) => [[_0, _1, _2, _3], input5])))), ([_0, input2]) => [ParameterReadonlyMapping(_0), input2]);
@@ -12409,8 +16129,8 @@ var ParameterOptional = (input) => If(If(Ident(input), ([_0, input2]) => If(Cons
 var ParameterType = (input) => If(If(Ident(input), ([_0, input2]) => If(Const(":", input2), ([_1, input3]) => If(Type(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [ParameterTypeMapping(_0), input2]);
 var ParameterBase = (input) => If(If(ParameterReadonlyOptional(input), ([_0, input2]) => [_0, input2], () => If(ParameterReadonly(input), ([_0, input2]) => [_0, input2], () => If(ParameterOptional(input), ([_0, input2]) => [_0, input2], () => If(ParameterType(input), ([_0, input2]) => [_0, input2], () => [])))), ([_0, input2]) => [ParameterBaseMapping(_0), input2]);
 var Parameter2 = (input) => If(If(If(Const("...", input), ([_0, input2]) => If(ParameterBase(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(ParameterBase(input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ParameterMapping(_0), input2]);
-var ParameterList_0 = (input, result = []) => If(If(Const(",", input), ([_0, input2]) => If(Parameter2(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => ParameterList_0(input2, [...result, _0]), () => [result, input]);
-var ParameterList = (input) => If(If(If(Parameter2(input), ([_0, input2]) => If(ParameterList_0(input2), ([_1, input3]) => If(If(Const(",", input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ParameterListMapping(_0), input2]);
+var ParameterList_0 = (input, result = []) => If(If(Parameter2(input), ([_0, input2]) => If(Const(",", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => ParameterList_0(input2, [...result, _0]), () => [result, input]);
+var ParameterList = (input) => If(If(ParameterList_0(input), ([_0, input2]) => If(If(If(Parameter2(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ParameterListMapping(_0), input2]);
 var _Function_2 = (input) => If(If(Const("(", input), ([_0, input2]) => If(ParameterList(input2), ([_1, input3]) => If(Const(")", input3), ([_2, input4]) => If(Const("=>", input4), ([_3, input5]) => If(Type(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [_Function_Mapping(_0), input2]);
 var _Constructor_ = (input) => If(If(Const("new", input), ([_0, input2]) => If(Const("(", input2), ([_1, input3]) => If(ParameterList(input3), ([_2, input4]) => If(Const(")", input4), ([_3, input5]) => If(Const("=>", input5), ([_4, input6]) => If(Type(input6), ([_5, input7]) => [[_0, _1, _2, _3, _4, _5], input7])))))), ([_0, input2]) => [_Constructor_Mapping(_0), input2]);
 var MappedReadonly = (input) => If(If(If(Const("+", input), ([_0, input2]) => If(Const("readonly", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(Const("-", input), ([_0, input2]) => If(Const("readonly", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(Const("readonly", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])))), ([_0, input2]) => [MappedReadonlyMapping(_0), input2]);
@@ -12425,11 +16145,11 @@ var WithString = (input) => If(String3(['"', "'"], input), ([_0, input2]) => [Wi
 var WithNull = (input) => If(Const("null", input), ([_0, input2]) => [WithNullMapping(_0), input2]);
 var WithUndefined = (input) => If(Const("undefined", input), ([_0, input2]) => [WithUndefinedMapping(_0), input2]);
 var WithProperty = (input) => If(If(PropertyKey(input), ([_0, input2]) => If(Const(":", input2), ([_1, input3]) => If(WithValue(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [WithPropertyMapping(_0), input2]);
-var WithPropertyList_0 = (input, result = []) => If(If(PropertyDelimiter(input), ([_0, input2]) => If(WithProperty(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => WithPropertyList_0(input2, [...result, _0]), () => [result, input]);
-var WithPropertyList = (input) => If(If(If(WithProperty(input), ([_0, input2]) => If(WithPropertyList_0(input2), ([_1, input3]) => If(If(PropertyDelimiter(input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [WithPropertyListMapping(_0), input2]);
+var WithPropertyList_0 = (input, result = []) => If(If(WithProperty(input), ([_0, input2]) => If(PropertyDelimiter(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => WithPropertyList_0(input2, [...result, _0]), () => [result, input]);
+var WithPropertyList = (input) => If(If(WithPropertyList_0(input), ([_0, input2]) => If(If(If(WithProperty(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [WithPropertyListMapping(_0), input2]);
 var WithObject = (input) => If(If(Const("{", input), ([_0, input2]) => If(WithPropertyList(input2), ([_1, input3]) => If(Const("}", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [WithObjectMapping(_0), input2]);
-var WithElementList_0 = (input, result = []) => If(If(Const(",", input), ([_0, input2]) => If(WithValue(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => WithElementList_0(input2, [...result, _0]), () => [result, input]);
-var WithElementList = (input) => If(If(If(WithValue(input), ([_0, input2]) => If(WithElementList_0(input2), ([_1, input3]) => If(If(Const(",", input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [WithElementListMapping(_0), input2]);
+var WithElementList_0 = (input, result = []) => If(If(WithValue(input), ([_0, input2]) => If(Const(",", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => WithElementList_0(input2, [...result, _0]), () => [result, input]);
+var WithElementList = (input) => If(If(WithElementList_0(input), ([_0, input2]) => If(If(If(WithValue(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [WithElementListMapping(_0), input2]);
 var WithArray = (input) => If(If(Const("[", input), ([_0, input2]) => If(WithElementList(input2), ([_1, input3]) => If(Const("]", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [WithArrayMapping(_0), input2]);
 var WithValue = (input) => If(If(WithBigInt(input), ([_0, input2]) => [_0, input2], () => If(WithNumber(input), ([_0, input2]) => [_0, input2], () => If(WithBoolean(input), ([_0, input2]) => [_0, input2], () => If(WithString(input), ([_0, input2]) => [_0, input2], () => If(WithNull(input), ([_0, input2]) => [_0, input2], () => If(WithUndefined(input), ([_0, input2]) => [_0, input2], () => If(WithObject(input), ([_0, input2]) => [_0, input2], () => If(WithArray(input), ([_0, input2]) => [_0, input2], () => [])))))))), ([_0, input2]) => [WithValueMapping(_0), input2]);
 var PatternBigInt = (input) => If(Const("-?(?:0|[1-9][0-9]*)n", input), ([_0, input2]) => [PatternBigIntMapping(_0), input2]);
@@ -12444,8 +16164,8 @@ var PatternUnion = (input) => If(If(If(PatternTerm(input), ([_0, input2]) => If(
 var PatternTerm = (input) => If(If(PatternBase(input), ([_0, input2]) => If(PatternBody(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [PatternTermMapping(_0), input2]);
 var PatternBody = (input) => If(If(PatternUnion(input), ([_0, input2]) => [_0, input2], () => If(PatternTerm(input), ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [PatternBodyMapping(_0), input2]);
 var Pattern = (input) => If(If(Const("^", input), ([_0, input2]) => If(PatternBody(input2), ([_1, input3]) => If(Const("$", input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [PatternMapping(_0), input2]);
-var InterfaceDeclarationHeritageList_0 = (input, result = []) => If(If(Const(",", input), ([_0, input2]) => If(Type(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => InterfaceDeclarationHeritageList_0(input2, [...result, _0]), () => [result, input]);
-var InterfaceDeclarationHeritageList = (input) => If(If(If(Type(input), ([_0, input2]) => If(InterfaceDeclarationHeritageList_0(input2), ([_1, input3]) => If(If(Const(",", input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [InterfaceDeclarationHeritageListMapping(_0), input2]);
+var InterfaceDeclarationHeritageList_0 = (input, result = []) => If(If(Type(input), ([_0, input2]) => If(Const(",", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => InterfaceDeclarationHeritageList_0(input2, [...result, _0]), () => [result, input]);
+var InterfaceDeclarationHeritageList = (input) => If(If(InterfaceDeclarationHeritageList_0(input), ([_0, input2]) => If(If(If(Type(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [InterfaceDeclarationHeritageListMapping(_0), input2]);
 var InterfaceDeclarationHeritage = (input) => If(If(If(Const("extends", input), ([_0, input2]) => If(InterfaceDeclarationHeritageList(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [InterfaceDeclarationHeritageMapping(_0), input2]);
 var InterfaceDeclarationGeneric = (input) => If(If(Const("interface", input), ([_0, input2]) => If(Ident(input2), ([_1, input3]) => If(GenericParameters(input3), ([_2, input4]) => If(InterfaceDeclarationHeritage(input4), ([_3, input5]) => If(Properties(input5), ([_4, input6]) => [[_0, _1, _2, _3, _4], input6]))))), ([_0, input2]) => [InterfaceDeclarationGenericMapping(_0), input2]);
 var InterfaceDeclaration = (input) => If(If(Const("interface", input), ([_0, input2]) => If(Ident(input2), ([_1, input3]) => If(InterfaceDeclarationHeritage(input3), ([_2, input4]) => If(Properties(input4), ([_3, input5]) => [[_0, _1, _2, _3], input5])))), ([_0, input2]) => [InterfaceDeclarationMapping(_0), input2]);
@@ -12453,20 +16173,20 @@ var TypeAliasDeclarationGeneric = (input) => If(If(Const("type", input), ([_0, i
 var TypeAliasDeclaration = (input) => If(If(Const("type", input), ([_0, input2]) => If(Ident(input2), ([_1, input3]) => If(Const("=", input3), ([_2, input4]) => If(Type(input4), ([_3, input5]) => [[_0, _1, _2, _3], input5])))), ([_0, input2]) => [TypeAliasDeclarationMapping(_0), input2]);
 var ExportKeyword = (input) => If(If(If(Const("export", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ExportKeywordMapping(_0), input2]);
 var ModuleDeclarationDelimiter = (input) => If(If(If(Const(";", input), ([_0, input2]) => If(Const("\n", input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [_0, input2], () => If(If(Const(";", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => If(If(Const("\n", input), ([_0, input2]) => [[_0], input2]), ([_0, input2]) => [_0, input2], () => []))), ([_0, input2]) => [ModuleDeclarationDelimiterMapping(_0), input2]);
-var ModuleDeclarationList_0 = (input, result = []) => If(If(ModuleDeclarationDelimiter(input), ([_0, input2]) => If(ModuleDeclaration(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => ModuleDeclarationList_0(input2, [...result, _0]), () => [result, input]);
-var ModuleDeclarationList = (input) => If(If(If(ModuleDeclaration(input), ([_0, input2]) => If(ModuleDeclarationList_0(input2), ([_1, input3]) => If(If(ModuleDeclarationDelimiter(input3), ([_02, input4]) => [[_02], input4], () => [[], input3]), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [_0, input2], () => If([[], input], ([_0, input2]) => [_0, input2], () => [])), ([_0, input2]) => [ModuleDeclarationListMapping(_0), input2]);
+var ModuleDeclarationList_0 = (input, result = []) => If(If(ModuleDeclaration(input), ([_0, input2]) => If(ModuleDeclarationDelimiter(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => ModuleDeclarationList_0(input2, [...result, _0]), () => [result, input]);
+var ModuleDeclarationList = (input) => If(If(ModuleDeclarationList_0(input), ([_0, input2]) => If(If(If(ModuleDeclaration(input2), ([_02, input3]) => [[_02], input3]), ([_02, input3]) => [_02, input3], () => If([[], input2], ([_02, input3]) => [_02, input3], () => [])), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ModuleDeclarationListMapping(_0), input2]);
 var ModuleDeclaration = (input) => If(If(ExportKeyword(input), ([_0, input2]) => If(If(InterfaceDeclarationGeneric(input2), ([_02, input3]) => [_02, input3], () => If(InterfaceDeclaration(input2), ([_02, input3]) => [_02, input3], () => If(TypeAliasDeclarationGeneric(input2), ([_02, input3]) => [_02, input3], () => If(TypeAliasDeclaration(input2), ([_02, input3]) => [_02, input3], () => [])))), ([_1, input3]) => If(OptionalSemiColon(input3), ([_2, input4]) => [[_0, _1, _2], input4]))), ([_0, input2]) => [ModuleDeclarationMapping(_0), input2]);
 var Module = (input) => If(If(ModuleDeclaration(input), ([_0, input2]) => If(ModuleDeclarationList(input2), ([_1, input3]) => [[_0, _1], input3])), ([_0, input2]) => [ModuleMapping(_0), input2]);
 var Script = (input) => If(If(Module(input), ([_0, input2]) => [_0, input2], () => If(GenericType(input), ([_0, input2]) => [_0, input2], () => If(Type(input), ([_0, input2]) => [_0, input2], () => []))), ([_0, input2]) => [ScriptMapping(_0), input2]);
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/patterns/template.mjs
+// ../main/node_modules/typebox/build/type/engine/patterns/template.mjs
 function ParseTemplateIntoTypes(template) {
   const parsed = TemplateLiteralTypes(`\`${template}\``);
   const result = guard_exports.IsEqual(parsed.length, 2) ? parsed[0] : Unreachable();
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/template_literal/encode.mjs
+// ../main/node_modules/typebox/build/type/engine/template_literal/encode.mjs
 function JoinString(input) {
   return input.join("|");
 }
@@ -12523,7 +16243,7 @@ function TemplateLiteralEncode(types) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/template_literal/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/template_literal/instantiate.mjs
 function TemplateLiteralAction(types, options) {
   const result = CanInstantiate(types) ? memory_exports.Update(TemplateLiteralEncode(types), {}, options) : TemplateLiteralDeferred(types, options);
   return result;
@@ -12533,7 +16253,7 @@ function TemplateLiteralInstantiate(context, state, types, options) {
   return TemplateLiteralAction(instantiatedTypes, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/template_literal.mjs
+// ../main/node_modules/typebox/build/type/types/template_literal.mjs
 function TemplateLiteralDeferred(types, options = {}) {
   return Deferred("TemplateLiteral", [types], options);
 }
@@ -12555,7 +16275,7 @@ function IsTemplateLiteral(value) {
   return IsKind(value, "TemplateLiteral");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/result.mjs
+// ../main/node_modules/typebox/build/type/extends/result.mjs
 var result_exports = {};
 __export(result_exports, {
   ExtendsFalse: () => ExtendsFalse,
@@ -12592,7 +16312,7 @@ function Match3(result, true_, false_) {
   return IsExtendsTrueLike(result) ? true_(result.inferred) : false_();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/extends_right.mjs
+// ../main/node_modules/typebox/build/type/extends/extends_right.mjs
 function ExtendsRightInfer(inferred, name, left, right) {
   return Match3(ExtendsLeft(inferred, left, right), (checkInferred) => ExtendsTrue(memory_exports.Assign(memory_exports.Assign(inferred, checkInferred), { [name]: left })), () => ExtendsFalse());
 }
@@ -12620,12 +16340,12 @@ function ExtendsRight(inferred, left, right) {
   return IsAny(right) ? ExtendsRightAny(inferred, left) : IsDependent(right) ? ExtendsRightDependent(inferred, left, right.if, right.then, right.else) : IsEnum(right) ? ExtendsRightEnum(inferred, left, right.enum) : IsInfer(right) ? ExtendsRightInfer(inferred, right.name, left, right.extends) : IsIntersect(right) ? ExtendsRightIntersect(inferred, left, right.allOf) : IsTemplateLiteral(right) ? ExtendsRightTemplateLiteral(inferred, left, right.pattern) : IsUnion(right) ? ExtendsRightUnion(inferred, left, right.anyOf) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/any.mjs
+// ../main/node_modules/typebox/build/type/extends/any.mjs
 function ExtendsAny(inferred, left, right) {
   return IsInfer(right) ? ExtendsRight(inferred, left, right) : IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsUnion(inferred);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/array.mjs
+// ../main/node_modules/typebox/build/type/extends/array.mjs
 function ExtendsImmutable(left, right) {
   const isImmutableLeft = IsImmutable(left);
   const isImmutableRight = IsImmutable(right);
@@ -12635,17 +16355,17 @@ function ExtendsArray(inferred, arrayLeft, left, right) {
   return IsArray2(right) ? ExtendsImmutable(arrayLeft, right) ? ExtendsLeft(inferred, left, right.items) : ExtendsFalse() : ExtendsRight(inferred, arrayLeft, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/bigint.mjs
+// ../main/node_modules/typebox/build/type/extends/bigint.mjs
 function ExtendsBigInt(inferred, left, right) {
   return IsBigInt2(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/boolean.mjs
+// ../main/node_modules/typebox/build/type/extends/boolean.mjs
 function ExtendsBoolean(inferred, left, right) {
   return IsBoolean3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/parameters.mjs
+// ../main/node_modules/typebox/build/type/extends/parameters.mjs
 function ParameterCompare(inferred, left, leftRest, right, rightRest) {
   const checkLeft = IsInfer(right) ? left : right;
   const checkRight = IsInfer(right) ? right : left;
@@ -12663,44 +16383,44 @@ function ExtendsParameters(inferred, left, right) {
   return ParametersLeft(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/return_type.mjs
+// ../main/node_modules/typebox/build/type/extends/return_type.mjs
 function ExtendsReturnType(inferred, left, right) {
   return IsVoid(right) ? ExtendsTrue(inferred) : ExtendsLeft(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/constructor.mjs
+// ../main/node_modules/typebox/build/type/extends/constructor.mjs
 function ExtendsConstructor(inferred, parameters, returnType, right) {
   return IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : IsConstructor2(right) ? Match3(ExtendsParameters(inferred, parameters, right["parameters"]), (inferred2) => ExtendsReturnType(inferred2, returnType, right["instanceType"]), () => ExtendsFalse()) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/dependent.mjs
+// ../main/node_modules/typebox/build/type/extends/dependent.mjs
 function ExtendsDependent(inferred, if_, then_, else_, right) {
   return Match3(ExtendsLeft(inferred, if_, right), () => ExtendsLeft(inferred, then_, right), () => ExtendsLeft(inferred, else_, right));
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/enum.mjs
+// ../main/node_modules/typebox/build/type/extends/enum.mjs
 function ExtendsEnum(inferred, left, right) {
   const evaluated = EvaluateEnum(left);
   return ExtendsLeft(inferred, evaluated, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/function.mjs
+// ../main/node_modules/typebox/build/type/extends/function.mjs
 function ExtendsFunction(inferred, parameters, returnType, right) {
   return IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : IsFunction2(right) ? Match3(ExtendsParameters(inferred, parameters, right["parameters"]), (inferred2) => ExtendsReturnType(inferred2, returnType, right["returnType"]), () => ExtendsFalse()) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/integer.mjs
+// ../main/node_modules/typebox/build/type/extends/integer.mjs
 function ExtendsInteger(inferred, left, right) {
   return IsInteger2(right) ? ExtendsTrue(inferred) : IsNumber3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/intersect.mjs
+// ../main/node_modules/typebox/build/type/extends/intersect.mjs
 function ExtendsIntersect(inferred, left, right) {
   const evaluated = EvaluateIntersect(left);
   return ExtendsLeft(inferred, evaluated, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/literal.mjs
+// ../main/node_modules/typebox/build/type/extends/literal.mjs
 function ExtendsLiteralValue(inferred, left, right) {
   return left === right ? ExtendsTrue(inferred) : ExtendsFalse();
 }
@@ -12720,22 +16440,22 @@ function ExtendsLiteral(inferred, left, right) {
   return guard_exports.IsBigInt(left.const) ? ExtendsLiteralBigInt(inferred, left.const, right) : guard_exports.IsBoolean(left.const) ? ExtendsLiteralBoolean(inferred, left.const, right) : guard_exports.IsNumber(left.const) ? ExtendsLiteralNumber(inferred, left.const, right) : guard_exports.IsString(left.const) ? ExtendsLiteralString(inferred, left.const, right) : Unreachable();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/never.mjs
+// ../main/node_modules/typebox/build/type/extends/never.mjs
 function ExtendsNever(inferred, left, right) {
   return IsInfer(right) ? ExtendsRight(inferred, left, right) : ExtendsTrue(inferred);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/null.mjs
+// ../main/node_modules/typebox/build/type/extends/null.mjs
 function ExtendsNull(inferred, left, right) {
   return IsNull2(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/number.mjs
+// ../main/node_modules/typebox/build/type/extends/number.mjs
 function ExtendsNumber(inferred, left, right) {
   return IsNumber3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/object.mjs
+// ../main/node_modules/typebox/build/type/extends/object.mjs
 function ExtendsPropertyOptional(inferred, left, right) {
   return IsOptional(left) ? IsOptional(right) ? ExtendsTrue(inferred) : ExtendsFalse() : ExtendsTrue(inferred);
 }
@@ -12786,7 +16506,7 @@ function ExtendsObject(inferred, left, right) {
   return IsRecord(right) ? ExtendsObjectToRecord(inferred, left, RecordPattern(right), RecordValue(right)) : IsObject2(right) ? ExtendsObjectToObject(inferred, left, right.properties) : ExtendsRight(inferred, _Object_(left), right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/record.mjs
+// ../main/node_modules/typebox/build/type/extends/record.mjs
 function FromObject2(inferred, properties) {
   return guard_exports.IsEqual(guard_exports.Keys(properties).length, 0) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
@@ -12797,23 +16517,23 @@ function ExtendsRecord(inferred, leftPattern, leftValue, right) {
   return IsRecord(right) ? FromRecord(inferred, RecordPatternToType(leftPattern), leftValue, RecordPatternToType(RecordPattern(right)), RecordValue(right)) : IsObject2(right) ? FromObject2(inferred, right.properties) : IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/string.mjs
+// ../main/node_modules/typebox/build/type/extends/string.mjs
 function ExtendsString(inferred, left, right) {
   return IsString3(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/symbol.mjs
+// ../main/node_modules/typebox/build/type/extends/symbol.mjs
 function ExtendsSymbol(inferred, left, right) {
   return IsSymbol2(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/template_literal.mjs
+// ../main/node_modules/typebox/build/type/extends/template_literal.mjs
 function ExtendsTemplateLiteral(inferred, left, right) {
   const evaluated = EvaluateTemplateLiteral(left);
   return ExtendsLeft(inferred, evaluated, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/inference.mjs
+// ../main/node_modules/typebox/build/type/extends/inference.mjs
 function Inferrable(name, type) {
   return memory_exports.Create({ "~kind": "Inferrable" }, { name, type }, {});
 }
@@ -12838,7 +16558,7 @@ function InferUnionResult(inferred, name, left, right) {
   return guard_exports.IsArray(results) ? ExtendsTrue(memory_exports.Assign(inferred, { [name]: Union(results) })) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/tuple.mjs
+// ../main/node_modules/typebox/build/type/extends/tuple.mjs
 function Reverse(types) {
   return [...types].reverse();
 }
@@ -12880,12 +16600,12 @@ function ExtendsTuple(inferred, left, right) {
   return IsTuple(right) ? ExtendsTupleToTuple(inferred, instantiatedLeft, right.items) : IsArray2(right) ? ExtendsTupleToArray(inferred, instantiatedLeft, right.items) : ExtendsRight(inferred, Tuple(instantiatedLeft), right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/undefined.mjs
+// ../main/node_modules/typebox/build/type/extends/undefined.mjs
 function ExtendsUndefined(inferred, left, right) {
   return IsVoid(right) ? ExtendsTrue(inferred) : IsUndefined2(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/union.mjs
+// ../main/node_modules/typebox/build/type/extends/union.mjs
 function ExtendsUnionSome(inferred, type, unionTypes) {
   return guard_exports.ShiftLeft(unionTypes, (head, tail) => Match3(ExtendsLeft(inferred, type, head), (inferred2) => ExtendsTrue(inferred2), () => ExtendsUnionSome(inferred, type, tail)), () => ExtendsFalse());
 }
@@ -12897,22 +16617,22 @@ function ExtendsUnion2(inferred, left, right) {
   return IsInferable(inferrable) ? InferUnionResult(inferred, inferrable.name, left, inferrable.type) : IsUnion(right) ? ExtendsUnionLeft(inferred, left, right.anyOf) : ExtendsUnionLeft(inferred, left, [right]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/unknown.mjs
+// ../main/node_modules/typebox/build/type/extends/unknown.mjs
 function ExtendsUnknown(inferred, left, right) {
   return IsInfer(right) ? ExtendsRight(inferred, left, right) : IsAny(right) ? ExtendsTrue(inferred) : IsUnknown(right) ? ExtendsTrue(inferred) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/void.mjs
+// ../main/node_modules/typebox/build/type/extends/void.mjs
 function ExtendsVoid(inferred, left, right) {
   return IsVoid(right) ? ExtendsTrue(inferred) : ExtendsRight(inferred, left, right);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/extends_left.mjs
+// ../main/node_modules/typebox/build/type/extends/extends_left.mjs
 function ExtendsLeft(inferred, left, right) {
   return IsAny(left) ? ExtendsAny(inferred, left, right) : IsArray2(left) ? ExtendsArray(inferred, left, left.items, right) : IsBigInt2(left) ? ExtendsBigInt(inferred, left, right) : IsBoolean3(left) ? ExtendsBoolean(inferred, left, right) : IsConstructor2(left) ? ExtendsConstructor(inferred, left.parameters, left.instanceType, right) : IsDependent(left) ? ExtendsDependent(inferred, left.if, left.then, left.else, right) : IsEnum(left) ? ExtendsEnum(inferred, left.enum, right) : IsFunction2(left) ? ExtendsFunction(inferred, left.parameters, left.returnType, right) : IsInteger2(left) ? ExtendsInteger(inferred, left, right) : IsIntersect(left) ? ExtendsIntersect(inferred, left.allOf, right) : IsLiteral(left) ? ExtendsLiteral(inferred, left, right) : IsNever(left) ? ExtendsNever(inferred, left, right) : IsNull2(left) ? ExtendsNull(inferred, left, right) : IsNumber3(left) ? ExtendsNumber(inferred, left, right) : IsObject2(left) ? ExtendsObject(inferred, left.properties, right) : IsRecord(left) ? ExtendsRecord(inferred, RecordPattern(left), RecordValue(left), right) : IsString3(left) ? ExtendsString(inferred, left, right) : IsSymbol2(left) ? ExtendsSymbol(inferred, left, right) : IsTemplateLiteral(left) ? ExtendsTemplateLiteral(inferred, left.pattern, right) : IsTuple(left) ? ExtendsTuple(inferred, left.items, right) : IsUndefined2(left) ? ExtendsUndefined(inferred, left, right) : IsUnion(left) ? ExtendsUnion2(inferred, left.anyOf, right) : IsUnknown(left) ? ExtendsUnknown(inferred, left, right) : IsVoid(left) ? ExtendsVoid(inferred, left, right) : ExtendsFalse();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/interface/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/interface/instantiate.mjs
 function InterfaceOperation(heritage, properties) {
   const result = EvaluateIntersect([...heritage, _Object_(properties)]);
   return result;
@@ -12927,7 +16647,7 @@ function InterfaceInstantiate(context, state, heritage, properties, options) {
   return InterfaceAction(instantiatedHeritage, instantiatedProperties, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/interface.mjs
+// ../main/node_modules/typebox/build/type/action/interface.mjs
 function InterfaceDeferred(heritage, properties, options = {}) {
   return Deferred("Interface", [heritage, properties], options);
 }
@@ -12938,7 +16658,7 @@ function Interface(heritage, properties, options = {}) {
   return InterfaceAction(heritage, properties, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/cyclic/check.mjs
+// ../main/node_modules/typebox/build/type/engine/cyclic/check.mjs
 function FromRef(stack, context, ref) {
   return stack.includes(ref) ? true : FromType3([...stack, ref], context, context[ref]);
 }
@@ -12957,7 +16677,7 @@ function CyclicCheck(stack, context, type) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/cyclic/candidates.mjs
+// ../main/node_modules/typebox/build/type/engine/cyclic/candidates.mjs
 function ResolveCandidateKeys(context, keys) {
   return keys.reduce((result, left) => {
     return CyclicCheck([left], context, context[left]) ? [...result, left] : result;
@@ -12969,7 +16689,7 @@ function CyclicCandidates(context) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/cyclic/dependencies.mjs
+// ../main/node_modules/typebox/build/type/engine/cyclic/dependencies.mjs
 function FromRef2(context, ref, result) {
   return result.includes(ref) ? result : ref in context ? FromType4(context, context[ref], [...result, ref]) : Unreachable();
 }
@@ -12990,7 +16710,7 @@ function CyclicDependencies(context, key, type) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/cyclic/extends.mjs
+// ../main/node_modules/typebox/build/type/engine/cyclic/extends.mjs
 function FromRef3(_ref) {
   return Any();
 }
@@ -13014,7 +16734,7 @@ function CyclicExtends(type) {
   return CyclicAnyFromParameters(type.$defs, type.$ref);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/cyclic/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/cyclic/instantiate.mjs
 function CyclicInterface(context, heritage, properties) {
   const instantiatedHeritage = InstantiateTypes(context, State([], []), heritage);
   const instantiatedProperties = InstantiateProperties({}, State([], []), properties);
@@ -13036,7 +16756,7 @@ function InstantiateCyclic(context, ref, type) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/cyclic/target.mjs
+// ../main/node_modules/typebox/build/type/engine/cyclic/target.mjs
 function Resolve(defs, ref) {
   return ref in defs ? IsRef(defs[ref]) ? Resolve(defs, defs[ref].$ref) : defs[ref] : Never();
 }
@@ -13045,7 +16765,7 @@ function CyclicTarget(defs, ref) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/extends/extends.mjs
+// ../main/node_modules/typebox/build/type/extends/extends.mjs
 function Canonical(type) {
   return IsCyclic(type) ? CyclicExtends(type) : IsUnsafe(type) ? Unknown() : type;
 }
@@ -13055,41 +16775,46 @@ function Extends(inferred, left, right) {
   return ExtendsLeft(inferred, canonicalLeft, canonicalRight);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/compare.mjs
-var CompareResultEqual = 0;
-var CompareResultDisjoint = 1;
-var CompareResultLeftInside = 2;
-var CompareResultRightInside = 3;
+// ../main/node_modules/typebox/build/type/engine/evaluate/compare.mjs
+var ResultEqual = "equal";
+var ResultDisjoint = "disjoint";
+var ResultLeftInside = "left-inside";
+var ResultRightInside = "right-inside";
 function Compare(left, right) {
-  const extendsCheck = [Extends({}, left, right), Extends({}, right, left)];
-  return result_exports.IsExtendsTrueLike(extendsCheck[0]) && result_exports.IsExtendsTrueLike(extendsCheck[1]) ? CompareResultEqual : result_exports.IsExtendsTrueLike(extendsCheck[0]) && result_exports.IsExtendsFalse(extendsCheck[1]) ? CompareResultLeftInside : result_exports.IsExtendsFalse(extendsCheck[0]) && result_exports.IsExtendsTrueLike(extendsCheck[1]) ? CompareResultRightInside : CompareResultDisjoint;
+  const extendsCheck = [
+    IsUnknown(left) ? result_exports.ExtendsFalse() : Extends({}, left, right),
+    IsUnknown(left) ? result_exports.ExtendsTrue({}) : Extends({}, right, left)
+  ];
+  return result_exports.IsExtendsTrueLike(extendsCheck[0]) && result_exports.IsExtendsTrueLike(extendsCheck[1]) ? ResultEqual : result_exports.IsExtendsTrueLike(extendsCheck[0]) && result_exports.IsExtendsFalse(extendsCheck[1]) ? ResultLeftInside : result_exports.IsExtendsFalse(extendsCheck[0]) && result_exports.IsExtendsTrueLike(extendsCheck[1]) ? ResultRightInside : ResultDisjoint;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/broaden.mjs
-function BroadenFilter(type, types, result = [], all = types) {
-  return guard_exports.ShiftLeft(types, (left, right) => {
-    const compare = Compare(type, left);
-    return guard_exports.IsEqual(compare, CompareResultLeftInside) || guard_exports.IsEqual(compare, CompareResultEqual) ? all : guard_exports.IsEqual(compare, CompareResultDisjoint) ? BroadenFilter(type, right, [...result, left], all) : BroadenFilter(type, right, result, all);
-  }, () => [...result, type]);
+// ../main/node_modules/typebox/build/type/engine/evaluate/broaden.mjs
+function BroadFilter(type, types) {
+  return types.filter((left) => {
+    return Compare(type, left) === ResultRightInside ? false : true;
+  });
 }
-function BroadenType(type, types, result) {
+function IsBroadestType(type, types) {
+  const result = types.some((left) => {
+    const result2 = Compare(type, left);
+    return guard_exports.IsEqual(result2, ResultLeftInside) || guard_exports.IsEqual(result2, ResultEqual);
+  });
+  return guard_exports.IsEqual(result, false);
+}
+function BroadenType(type, types) {
   const evaluated = EvaluateType(type);
-  return IsAny(evaluated) ? [evaluated] : (
-    // terminate (always the most broad)
-    IsUnknown(evaluated) ? [evaluated] : (
-      // terminate (always the most broad)
-      IsNever(evaluated) ? BroadenTypes(types, result) : (
-        // ignored: never is dropped
-        IsObject2(evaluated) ? BroadenTypes(types, [...result, evaluated]) : (
-          // objects are always considered (too expensive to compare)
-          BroadenTypes(types, BroadenFilter(evaluated, result))
-        )
-      )
-    )
-  );
+  return IsAny(evaluated) ? [evaluated] : IsBroadestType(evaluated, types) ? [...BroadFilter(evaluated, types), evaluated] : types;
 }
-function BroadenTypes(types, result = []) {
-  return guard_exports.ShiftLeft(types, (left, right) => BroadenType(left, right, result), () => result);
+function BroadenTypes(types) {
+  return types.reduce((result, left) => {
+    return IsObject2(left) ? [...result, left] : (
+      // push
+      IsNever(left) ? result : (
+        // ignore
+        BroadenType(left, result)
+      )
+    );
+  }, []);
 }
 function Broaden(types) {
   const broadened = BroadenTypes(types);
@@ -13097,7 +16822,7 @@ function Broaden(types) {
   return flattened;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/evaluate/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/evaluate/instantiate.mjs
 function EvaluateAction(type, options) {
   const result = memory_exports.Update(EvaluateType(type), {}, options);
   return result;
@@ -13107,7 +16832,7 @@ function EvaluateInstantiate(context, state, type, options) {
   return EvaluateAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/call/distribute_arguments.mjs
+// ../main/node_modules/typebox/build/type/engine/call/distribute_arguments.mjs
 function CollectDistributionNames(expression, result = []) {
   return (
     // Conditional
@@ -13120,12 +16845,8 @@ function BuildDistributionArray(parameters, names) {
 function ZipDistributionArray(arguments_, distributionArray, result = []) {
   return guard_exports.ShiftLeft(arguments_, (argumentLeft, argumentRight) => guard_exports.ShiftLeft(distributionArray, (booleanLeft, booleanRight) => ZipDistributionArray(argumentRight, booleanRight, [...result, [booleanLeft, argumentLeft]]), () => result), () => result);
 }
-function CanonicalArgument(type) {
-  return IsTemplateLiteral(type) ? EvaluateTemplateLiteral(type.pattern) : IsEnum(type) ? EvaluateEnum(type.enum) : type;
-}
 function Expand(type) {
-  const canonicalArgument = CanonicalArgument(type);
-  return IsUnion(canonicalArgument) ? [...canonicalArgument.anyOf] : [canonicalArgument];
+  return IsUnion(type) ? [...type.anyOf] : [type];
 }
 function Append(current, type) {
   return current.reduce((result, left) => [...result, [...left, type]], []);
@@ -13147,7 +16868,7 @@ function DistributeArguments(parameters, arguments_, expression) {
   return IsDeferred(expression) && guard_exports.IsEqual(expression.action, "Conditional") ? Distribute2(zippedArguments) : IsDeferred(expression) && guard_exports.IsEqual(expression.action, "Mapped") ? Distribute2(zippedArguments) : [arguments_];
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/call/resolve_target.mjs
+// ../main/node_modules/typebox/build/type/engine/call/resolve_target.mjs
 function FromNotResolvable() {
   return ["(not-resolvable)", Never()];
 }
@@ -13167,7 +16888,7 @@ function ResolveTarget(context, target, arguments_) {
   return FromType6(context, "(anonymous)", target, arguments_);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/call/resolve_arguments.mjs
+// ../main/node_modules/typebox/build/type/engine/call/resolve_arguments.mjs
 function AssertArgumentExtends(name, type, extends_) {
   if (IsInfer(type) || IsCall(type) || result_exports.IsExtendsTrueLike(Extends({}, type, extends_)))
     return;
@@ -13191,24 +16912,7 @@ function ResolveArgumentsContext(context, state, parameters, arguments_) {
   return BindParameters(context, state, parameters, arguments_);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/call/instantiate.mjs
-var instantiationDepth = 0;
-var instantiationCount = 0;
-function InstantiationAssert() {
-  if (guard_exports.IsLessThan(instantiationCount, settings_exports.Get().maxInstantiationCount))
-    return;
-  throw Error("Type instantiation is excessively deep and possibly infinite");
-}
-function InstantiationIncrement() {
-  InstantiationAssert();
-  instantiationCount++;
-  instantiationDepth++;
-}
-function InstantiationDecrement() {
-  instantiationDepth--;
-  if (guard_exports.IsEqual(instantiationDepth, 0))
-    instantiationCount = 0;
-}
+// ../main/node_modules/typebox/build/type/engine/call/instantiate.mjs
 function Peek(state) {
   const result = guard_exports.IsGreaterThan(state.callstack.length, 0) ? state.callstack[state.callstack.length - 1] : "";
   return result;
@@ -13218,20 +16922,12 @@ function IsTailCall(state, name) {
   return result;
 }
 function CallDispatch(context, state, target, parameters, expression, arguments_) {
-  InstantiationIncrement();
-  try {
-    const argumentsContext = ResolveArgumentsContext(context, state, parameters, arguments_);
-    const returnType = InstantiateType(argumentsContext, State([...state["callstack"], target["$ref"]], state["visited"]), expression);
-    return InstantiateType(argumentsContext, State([], []), returnType);
-  } finally {
-    InstantiationDecrement();
-  }
+  const argumentsContext = ResolveArgumentsContext(context, state, parameters, arguments_);
+  const returnType = InstantiateType(argumentsContext, State([...state["callstack"], target["$ref"]], state["visited"]), expression);
+  return InstantiateType(argumentsContext, State([], []), returnType);
 }
 function CallDistributed(context, state, target, parameters, expression, distributedArguments) {
-  return distributedArguments.reduce((result, arguments_) => {
-    const returnType = CallDispatch(context, state, target, parameters, expression, arguments_);
-    return [...result, returnType];
-  }, []);
+  return distributedArguments.reduce((result, arguments_) => [...result, CallDispatch(context, state, target, parameters, expression, arguments_)], []);
 }
 function CallImmediate(context, state, target, parameters, expression, arguments_) {
   const distributedArguments = DistributeArguments(parameters, arguments_, expression);
@@ -13248,7 +16944,7 @@ function CallInstantiate(context, state, target, arguments_) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/types/call.mjs
+// ../main/node_modules/typebox/build/type/types/call.mjs
 function CallConstruct(target, arguments_) {
   return memory_exports.Create({ ["~kind"]: "Call" }, { type: "call", target, arguments: arguments_ }, {});
 }
@@ -13259,7 +16955,7 @@ function IsCall(value) {
   return IsKind(value, "Call");
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/immutable/instantiate_remove.mjs
+// ../main/node_modules/typebox/build/type/engine/immutable/instantiate_remove.mjs
 function RemoveImmutableOperation(type) {
   return memory_exports.Discard(type, ["~immutable"]);
 }
@@ -13272,35 +16968,35 @@ function RemoveImmutableInstantiate(context, state, type, options) {
   return RemoveImmutableAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/intrinsics/mapping.mjs
+// ../main/node_modules/typebox/build/type/engine/intrinsics/mapping.mjs
 function ApplyMapping(mapping, value) {
   return mapping(value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/intrinsics/from_literal.mjs
+// ../main/node_modules/typebox/build/type/engine/intrinsics/from_literal.mjs
 function FromLiteral3(mapping, value) {
   return guard_exports.IsString(value) ? Literal(ApplyMapping(mapping, value)) : Literal(value);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/intrinsics/from_template_literal.mjs
+// ../main/node_modules/typebox/build/type/engine/intrinsics/from_template_literal.mjs
 function FromTemplateLiteral(mapping, pattern) {
   const evaluated = EvaluateTemplateLiteral(pattern);
   const result = FromType7(mapping, evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/intrinsics/from_union.mjs
+// ../main/node_modules/typebox/build/type/engine/intrinsics/from_union.mjs
 function FromUnion2(mapping, types) {
   const result = types.map((type) => FromType7(mapping, type));
   return Union(result);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/intrinsics/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/intrinsics/from_type.mjs
 function FromType7(mapping, type) {
   return IsLiteral(type) ? FromLiteral3(mapping, type.const) : IsTemplateLiteral(type) ? FromTemplateLiteral(mapping, type.pattern) : IsUnion(type) ? FromUnion2(mapping, type.anyOf) : type;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/capitalize.mjs
+// ../main/node_modules/typebox/build/type/action/capitalize.mjs
 function CapitalizeDeferred(type, options = {}) {
   return Deferred("Capitalize", [type], options);
 }
@@ -13308,7 +17004,7 @@ function Capitalize(type, options = {}) {
   return CapitalizeAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/lowercase.mjs
+// ../main/node_modules/typebox/build/type/action/lowercase.mjs
 function LowercaseDeferred(type, options = {}) {
   return Deferred("Lowercase", [type], options);
 }
@@ -13316,7 +17012,7 @@ function Lowercase(type, options = {}) {
   return LowercaseAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/uncapitalize.mjs
+// ../main/node_modules/typebox/build/type/action/uncapitalize.mjs
 function UncapitalizeDeferred(type, options = {}) {
   return Deferred("Uncapitalize", [type], options);
 }
@@ -13324,7 +17020,7 @@ function Uncapitalize(type, options = {}) {
   return UncapitalizeAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/uppercase.mjs
+// ../main/node_modules/typebox/build/type/action/uppercase.mjs
 function UppercaseDeferred(type, options = {}) {
   return Deferred("Uppercase", [type], options);
 }
@@ -13332,7 +17028,7 @@ function Uppercase(type, options = {}) {
   return UppercaseAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/intrinsics/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/intrinsics/instantiate.mjs
 var CapitalizeMapping = (input) => input[0].toUpperCase() + input.slice(1);
 var LowercaseMapping = (input) => input.toLowerCase();
 var UncapitalizeMapping = (input) => input[0].toLowerCase() + input.slice(1);
@@ -13370,7 +17066,7 @@ function UppercaseInstantiate(context, state, type, options) {
   return UppercaseAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/conditional.mjs
+// ../main/node_modules/typebox/build/type/action/conditional.mjs
 function ConditionalDeferred(left, right, true_, false_, options = {}) {
   return Deferred("Conditional", [left, right, true_, false_], options);
 }
@@ -13378,7 +17074,7 @@ function Conditional(left, right, true_, false_, options = {}) {
   return ConditionalAction({}, State([], []), left, right, true_, false_, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/conditional/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/conditional/instantiate.mjs
 function ConditionalOperation(context, state, left, right, true_, false_) {
   const extendsResult = Extends(context, left, right);
   return result_exports.IsExtendsUnion(extendsResult) ? Union([InstantiateType(extendsResult.inferred, state, true_), InstantiateType(context, state, false_)]) : result_exports.IsExtendsTrue(extendsResult) ? InstantiateType(extendsResult.inferred, state, true_) : InstantiateType(context, state, false_);
@@ -13393,7 +17089,7 @@ function ConditionalInstantiate(context, state, left, right, true_, false_, opti
   return ConditionalAction(context, state, instantiatedLeft, instantiatedRight, true_, false_, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/constructor_parameters.mjs
+// ../main/node_modules/typebox/build/type/action/constructor_parameters.mjs
 function ConstructorParametersDeferred(type, options = {}) {
   return Deferred("ConstructorParameters", [type], options);
 }
@@ -13401,7 +17097,7 @@ function ConstructorParameters(type, options = {}) {
   return ConstructorParametersAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/constructor_parameters/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/constructor_parameters/instantiate.mjs
 function ConstructorParametersOperation(type) {
   const parameters = IsConstructor2(type) ? type["parameters"] : [];
   const instantiatedParameters = InstantiateElements({}, State([], []), parameters);
@@ -13417,7 +17113,7 @@ function ConstructorParametersInstantiate(context, state, type, options) {
   return ConstructorParametersAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/exclude.mjs
+// ../main/node_modules/typebox/build/type/action/exclude.mjs
 function ExcludeDeferred(left, right, options = {}) {
   return Deferred("Exclude", [left, right], options);
 }
@@ -13425,7 +17121,7 @@ function Exclude(left, right, options = {}) {
   return ExcludeAction(left, right, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/exclude/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/exclude/instantiate.mjs
 function ExcludeAction(left, right, options) {
   const result = CanInstantiate([left, right]) ? memory_exports.Update(ExcludeOperation(left, right), {}, options) : ExcludeDeferred(left, right, options);
   return result;
@@ -13436,7 +17132,7 @@ function ExcludeInstantiate(context, state, left, right, options) {
   return ExcludeAction(instantiatedLeft, instantiatedRight, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/extract.mjs
+// ../main/node_modules/typebox/build/type/action/extract.mjs
 function ExtractDeferred(left, right, options = {}) {
   return Deferred("Extract", [left, right], options);
 }
@@ -13444,14 +17140,16 @@ function Extract(left, right, options = {}) {
   return ExtractAction(left, right, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/extract/operation.mjs
+// ../main/node_modules/typebox/build/type/engine/extract/operation.mjs
 function ExtractType(left, right) {
   const check = Extends({}, left, right);
   const result = result_exports.IsExtendsTrueLike(check) ? [left] : [];
   return result;
 }
-function ExtractUnion(left, right, result = []) {
-  return guard_exports.ShiftLeft(left, (head, tail) => ExtractUnion(tail, right, [...result, ...ExtractType(head, right)]), () => result);
+function ExtractUnion(types, right) {
+  return types.reduce((result, head) => {
+    return [...result, ...ExtractType(head, right)];
+  }, []);
 }
 function ExtractOperation(left, right) {
   const evaluated = EvaluateType(left);
@@ -13461,7 +17159,7 @@ function ExtractOperation(left, right) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/extract/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/extract/instantiate.mjs
 function ExtractAction(left, right, options) {
   const result = CanInstantiate([left, right]) ? memory_exports.Update(ExtractOperation(left, right), {}, options) : ExtractDeferred(left, right, options);
   return result;
@@ -13472,7 +17170,7 @@ function ExtractInstantiate(context, state, left, right, options) {
   return ExtractAction(instantiatedLeft, instantiatedRight, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/helpers/keys_to_indexer.mjs
+// ../main/node_modules/typebox/build/type/engine/helpers/keys_to_indexer.mjs
 function KeysToLiterals(keys) {
   return keys.reduce((result, left) => {
     return IsLiteralValue(left) ? [...result, Literal(left)] : result;
@@ -13484,7 +17182,7 @@ function KeysToIndexer(keys) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/indexed.mjs
+// ../main/node_modules/typebox/build/type/action/indexed.mjs
 function IndexDeferred(type, indexer, options = {}) {
   return Deferred("Index", [type, indexer], options);
 }
@@ -13493,21 +17191,21 @@ function Index(type, indexer_or_keys, options = {}) {
   return IndexAction(type, indexer, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_cyclic.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_cyclic.mjs
 function FromCyclic(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const result = FromType8(target);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_dependent.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_dependent.mjs
 function FromDependent(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType8(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_intersect.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_intersect.mjs
 function CollapseIntersectProperties(left, right) {
   const leftKeys = guard_exports.Keys(left).filter((key) => !guard_exports.HasPropertyKey(right, key));
   const rightKeys = guard_exports.Keys(right).filter((key) => !guard_exports.HasPropertyKey(left, key));
@@ -13525,19 +17223,19 @@ function FromIntersect(types) {
   }, {});
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_object.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_object.mjs
 function FromObject3(properties) {
   return properties;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_tuple.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_tuple.mjs
 function FromTuple(types) {
   const object = TupleToObject(Tuple(types));
   const result = FromType8(object);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_union.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_union.mjs
 function CollapseUnionProperties(left, right) {
   const sharedKeys = guard_exports.Keys(left).filter((key) => key in right);
   const result = sharedKeys.reduce((result2, key) => {
@@ -13552,26 +17250,26 @@ function FromUnion3(types) {
   return guard_exports.ShiftLeft(types, (left, right) => ReduceVariants(right, FromType8(left)), () => Unreachable());
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/object/from_type.mjs
 function FromType8(type) {
   return IsCyclic(type) ? FromCyclic(type.$defs, type.$ref) : IsDependent(type) ? FromDependent(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect(type.allOf) : IsUnion(type) ? FromUnion3(type.anyOf) : IsTuple(type) ? FromTuple(type.items) : IsObject2(type) ? FromObject3(type.properties) : {};
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/object/collapse.mjs
+// ../main/node_modules/typebox/build/type/engine/object/collapse.mjs
 function CollapseToObject(type) {
   const properties = FromType8(type);
   const result = _Object_(properties);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/helpers/keys.mjs
+// ../main/node_modules/typebox/build/type/engine/helpers/keys.mjs
 var integerKeyPattern = new RegExp("^(?:0|[1-9][0-9]*)$");
 function ConvertToIntegerKey(value) {
   const normal = `${value}`;
   return integerKeyPattern.test(normal) ? parseInt(normal) : value;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexed/from_array.mjs
+// ../main/node_modules/typebox/build/type/engine/indexed/from_array.mjs
 function NormalizeLiteral(value) {
   return Literal(ConvertToIntegerKey(value));
 }
@@ -13591,66 +17289,66 @@ function FromArray2(type, indexer) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_cyclic.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_cyclic.mjs
 function FromCyclic2(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const result = FromType9(target);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_dependent.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_dependent.mjs
 function FromDependent2(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_enum.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_enum.mjs
 function FromEnum(values) {
   const evaluated = EvaluateEnum(values);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_intersect.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_intersect.mjs
 function FromIntersect2(types) {
   const evaluated = EvaluateIntersect(types);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_literal.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_literal.mjs
 function FromLiteral4(value) {
   const result = [`${value}`];
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_template_literal.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_template_literal.mjs
 function FromTemplateLiteral2(pattern) {
   const evaluated = EvaluateTemplateLiteral(pattern);
   const result = FromType9(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_union.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_union.mjs
 function FromUnion4(types) {
   return types.reduce((result, left) => {
     return [...result, ...FromType9(left)];
   }, []);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/from_type.mjs
 function FromType9(type) {
   return IsCyclic(type) ? FromCyclic2(type.$defs, type.$ref) : IsDependent(type) ? FromDependent2(type.if, type.then, type.else) : IsEnum(type) ? FromEnum(type.enum) : IsIntersect(type) ? FromIntersect2(type.allOf) : IsLiteral(type) ? FromLiteral4(type.const) : IsTemplateLiteral(type) ? FromTemplateLiteral2(type.pattern) : IsUnion(type) ? FromUnion4(type.anyOf) : [];
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/to_indexable_keys.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/to_indexable_keys.mjs
 function ToIndexableKeys(type) {
   const result = FromType9(type);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/this/expand_this.mjs
+// ../main/node_modules/typebox/build/type/engine/this/expand_this.mjs
 function FromTypes5(properties, types) {
   return types.map((type) => FromType10(properties, type));
 }
@@ -13662,7 +17360,7 @@ function ExpandThis(properties, type) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexed/from_object.mjs
+// ../main/node_modules/typebox/build/type/engine/indexed/from_object.mjs
 function IndexProperty(properties, key) {
   const selectedType = key in properties ? properties[key] : Never();
   const result = ExpandThis(properties, selectedType);
@@ -13696,7 +17394,7 @@ function FromObject4(properties, indexer) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexed/array_indexer.mjs
+// ../main/node_modules/typebox/build/type/engine/indexed/array_indexer.mjs
 function ConvertLiteral(value) {
   return Literal(ConvertToIntegerKey(value));
 }
@@ -13707,7 +17405,7 @@ function FormatArrayIndexer(type) {
   return IsIntersect(type) ? Intersect(ArrayIndexerTypes(type.allOf)) : IsUnion(type) ? Union(ArrayIndexerTypes(type.anyOf)) : IsLiteral(type) ? ConvertLiteral(type.const) : type;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexed/from_tuple.mjs
+// ../main/node_modules/typebox/build/type/engine/indexed/from_tuple.mjs
 function IndexElementsWithIndexer(types, indexer) {
   return types.reduceRight((result, right, index) => {
     const check = Extends({}, Literal(index), indexer);
@@ -13729,12 +17427,12 @@ function FromTuple2(types, indexer) {
   );
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexed/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/indexed/from_type.mjs
 function FromType11(type, indexer) {
   return IsArray2(type) ? FromArray2(type.items, indexer) : IsObject2(type) ? FromObject4(type.properties, indexer) : IsTuple(type) ? FromTuple2(type.items, indexer) : Never();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexed/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/indexed/instantiate.mjs
 function NormalizeType(type) {
   const result = IsCyclic(type) || IsDependent(type) || IsIntersect(type) || IsUnion(type) ? CollapseToObject(type) : type;
   return result;
@@ -13749,7 +17447,7 @@ function IndexInstantiate(context, state, type, indexer, options) {
   return IndexAction(instantiatedType, instantiatedIndexer, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/instance_type.mjs
+// ../main/node_modules/typebox/build/type/action/instance_type.mjs
 function InstanceTypeDeferred(type, options = {}) {
   return Deferred("InstanceType", [type], options);
 }
@@ -13757,7 +17455,7 @@ function InstanceType(type, options = {}) {
   return InstanceTypeAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/instance_type/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/instance_type/instantiate.mjs
 function InstanceTypeOperation(type) {
   return IsConstructor2(type) ? type["instanceType"] : Never();
 }
@@ -13770,7 +17468,7 @@ function InstanceTypeInstantiate(context, state, type, options = {}) {
   return InstanceTypeAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/keyof.mjs
+// ../main/node_modules/typebox/build/type/action/keyof.mjs
 function KeyOfDeferred(type, options = {}) {
   return Deferred("KeyOf", [type], options);
 }
@@ -13778,17 +17476,17 @@ function KeyOf2(type, options = {}) {
   return KeyOfAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/from_any.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/from_any.mjs
 function FromAny() {
   return Union([Number2(), String2(), Symbol2()]);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/from_array.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/from_array.mjs
 function FromArray3(_type) {
   return Number2();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/from_object.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/from_object.mjs
 function FromPropertyKeys(keys) {
   const result = keys.reduce((result2, left) => {
     return IsLiteralValue(left) ? [...result2, Literal(ConvertToIntegerKey(left))] : Unreachable();
@@ -13802,23 +17500,23 @@ function FromObject5(properties) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/from_record.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/from_record.mjs
 function FromRecord2(type) {
   return RecordKey(type);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/from_tuple.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/from_tuple.mjs
 function FromTuple3(types) {
-  const result = types.map((_, index) => Literal(index));
+  const result = types.map((_2, index) => Literal(index));
   return EvaluateUnionFast(result);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/from_type.mjs
 function FromType12(type) {
   return IsAny(type) ? FromAny() : IsArray2(type) ? FromArray3(type.items) : IsObject2(type) ? FromObject5(type.properties) : IsRecord(type) ? FromRecord2(type) : IsTuple(type) ? FromTuple3(type.items) : Never();
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/keyof/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/keyof/instantiate.mjs
 function NormalizeType2(type) {
   const result = IsCyclic(type) || IsDependent(type) || IsIntersect(type) || IsUnion(type) ? CollapseToObject(type) : type;
   return result;
@@ -13831,7 +17529,7 @@ function KeyOfInstantiate(context, state, type, options) {
   return KeyOfAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/mapped.mjs
+// ../main/node_modules/typebox/build/type/action/mapped.mjs
 function MappedDeferred(identifier, type, as, property, options = {}) {
   return Deferred("Mapped", [identifier, type, as, property], options);
 }
@@ -13839,7 +17537,7 @@ function Mapped(identifier, type, as, property, options = {}) {
   return MappedAction({}, State([], []), identifier, type, as, property, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/mapped/mapped_variants.mjs
+// ../main/node_modules/typebox/build/type/engine/mapped/mapped_variants.mjs
 function FromTemplateLiteral3(pattern) {
   const evaluated = EvaluateTemplateLiteral(pattern);
   const result = FromType13(evaluated);
@@ -13868,7 +17566,7 @@ function MappedVariants(type) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/mapped/mapped_operation.mjs
+// ../main/node_modules/typebox/build/type/engine/mapped/mapped_operation.mjs
 function CanonicalAs(instantiatedAs) {
   const result = IsTemplateLiteral(instantiatedAs) ? EvaluateTemplateLiteral(instantiatedAs.pattern) : instantiatedAs;
   return result;
@@ -13898,7 +17596,7 @@ function MappedOperation(context, state, identifier, type, as, property) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/mapped/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/mapped/instantiate.mjs
 function MappedAction(context, state, identifier, type, as, property, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(MappedOperation(context, state, identifier, type, as, property), {}, options) : MappedDeferred(identifier, type, as, property, options);
   return result;
@@ -13908,7 +17606,7 @@ function MappedInstantiate(context, state, identifier, type, as, property, optio
   return MappedAction(context, state, identifier, instantiatedType, as, property, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/module/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/module/instantiate.mjs
 function InstantiateCyclics(context, declarations, cyclicKeys) {
   const declarationContext = memory_exports.Assign(context, declarations);
   const declarationKeys = guard_exports.Keys(declarations).filter((key) => cyclicKeys.includes(key));
@@ -13935,7 +17633,7 @@ function ModuleInstantiate(context, _state, declarations, options) {
   return instantiatedModule;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/non_nullable.mjs
+// ../main/node_modules/typebox/build/type/action/non_nullable.mjs
 function NonNullableDeferred(type, options = {}) {
   return Deferred("NonNullable", [type], options);
 }
@@ -13943,7 +17641,7 @@ function NonNullable(type, options = {}) {
   return NonNullableAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/non_nullable/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/non_nullable/instantiate.mjs
 function NonNullableOperation(type) {
   const excluded = Union([Null(), Undefined()]);
   return ExcludeAction(type, excluded, {});
@@ -13957,7 +17655,7 @@ function NonNullableInstantiate(context, state, type, options) {
   return NonNullableAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/omit.mjs
+// ../main/node_modules/typebox/build/type/action/omit.mjs
 function OmitDeferred(type, indexer, options = {}) {
   return Deferred("Omit", [type, indexer], options);
 }
@@ -13966,14 +17664,14 @@ function Omit(type, indexer_or_keys, options = {}) {
   return OmitAction(type, indexer, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/indexable/to_indexable.mjs
+// ../main/node_modules/typebox/build/type/engine/indexable/to_indexable.mjs
 function ToIndexable(type) {
   const collapsed = CollapseToObject(type);
   const result = IsObject2(collapsed) ? collapsed.properties : Unreachable();
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/omit/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/omit/from_type.mjs
 function FromKeys(properties, keys) {
   const result = guard_exports.Keys(properties).reduce((result2, key) => {
     return keys.includes(key) ? result2 : { ...result2, [key]: properties[key] };
@@ -13988,7 +17686,7 @@ function FromType14(type, indexer) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/omit/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/omit/instantiate.mjs
 function OmitAction(type, indexer, options) {
   const result = CanInstantiate([type, indexer]) ? memory_exports.Update(FromType14(type, indexer), {}, options) : OmitDeferred(type, indexer, options);
   return result;
@@ -13999,7 +17697,7 @@ function OmitInstantiate(context, state, type, indexer, options) {
   return OmitAction(instantiatedType, instantiatedIndexer, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/parameters.mjs
+// ../main/node_modules/typebox/build/type/action/parameters.mjs
 function ParametersDeferred(type, options = {}) {
   return Deferred("Parameters", [type], options);
 }
@@ -14007,7 +17705,7 @@ function Parameters(type, options = {}) {
   return ParametersAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/parameters/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/parameters/instantiate.mjs
 function ParametersOperation(type) {
   const parameters = IsFunction2(type) ? type["parameters"] : [];
   const instantiatedParameters = InstantiateElements({}, State([], []), parameters);
@@ -14023,7 +17721,7 @@ function ParametersInstantiate(context, state, type, options) {
   return ParametersAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/partial.mjs
+// ../main/node_modules/typebox/build/type/action/partial.mjs
 function PartialDeferred(type, options = {}) {
   return Deferred("Partial", [type], options);
 }
@@ -14031,7 +17729,7 @@ function Partial(type, options = {}) {
   return PartialAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/from_cyclic.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/from_cyclic.mjs
 function FromCyclic3(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const partial = FromType15(target);
@@ -14039,27 +17737,27 @@ function FromCyclic3(defs, ref) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/from_dependent.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/from_dependent.mjs
 function FromDependent3(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType15(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/from_intersect.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/from_intersect.mjs
 function FromIntersect3(types) {
   const evaluated = EvaluateIntersect(types);
   const result = FromType15(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/from_union.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/from_union.mjs
 function FromUnion6(types) {
   const result = types.map((type) => FromType15(type));
   return Union(result);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/from_object.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/from_object.mjs
 function FromObject6(properties) {
   const mapped = guard_exports.Keys(properties).reduce((result2, left) => {
     return { ...result2, [left]: AddOptional(properties[left]) };
@@ -14068,12 +17766,12 @@ function FromObject6(properties) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/from_type.mjs
 function FromType15(type) {
   return IsCyclic(type) ? FromCyclic3(type.$defs, type.$ref) : IsDependent(type) ? FromDependent3(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect3(type.allOf) : IsUnion(type) ? FromUnion6(type.anyOf) : IsObject2(type) ? FromObject6(type.properties) : _Object_({});
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/partial/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/partial/instantiate.mjs
 function PartialAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(FromType15(type), {}, options) : PartialDeferred(type, options);
   return result;
@@ -14083,7 +17781,7 @@ function PartialInstantiate(context, state, type, options) {
   return PartialAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/pick.mjs
+// ../main/node_modules/typebox/build/type/action/pick.mjs
 function PickDeferred(type, indexer, options = {}) {
   return Deferred("Pick", [type, indexer], options);
 }
@@ -14092,7 +17790,7 @@ function Pick(type, indexer_or_keys, options = {}) {
   return PickAction(type, indexer, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/pick/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/pick/from_type.mjs
 function FromKeys2(properties, keys) {
   const result = guard_exports.Keys(properties).reduce((result2, key) => {
     return keys.includes(key) ? memory_exports.Assign(result2, { [key]: properties[key] }) : result2;
@@ -14107,7 +17805,7 @@ function FromType16(type, indexer) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/pick/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/pick/instantiate.mjs
 function PickAction(type, indexer, options) {
   const result = CanInstantiate([type, indexer]) ? memory_exports.Update(FromType16(type, indexer), {}, options) : PickDeferred(type, indexer, options);
   return result;
@@ -14118,7 +17816,7 @@ function PickInstantiate(context, state, type, indexer, options) {
   return PickAction(instantiatedType, instantiatedIndexer, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/readonly_object.mjs
+// ../main/node_modules/typebox/build/type/action/readonly_object.mjs
 function ReadonlyObjectDeferred(type, options = {}) {
   return Deferred("ReadonlyObject", [type], options);
 }
@@ -14127,13 +17825,13 @@ function ReadonlyObject(type, options = {}) {
 }
 var ReadonlyType = ReadonlyObject;
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_array.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_array.mjs
 function FromArray4(type) {
   const result = AddImmutable(_Array_(type));
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_cyclic.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_cyclic.mjs
 function FromCyclic4(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const partial = FromType17(target);
@@ -14141,21 +17839,21 @@ function FromCyclic4(defs, ref) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_dependent.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_dependent.mjs
 function FromDependent4(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType17(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_intersect.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_intersect.mjs
 function FromIntersect4(types) {
   const evaluated = EvaluateIntersect(types);
   const result = FromType17(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_object.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_object.mjs
 function FromObject7(properties) {
   const mapped = guard_exports.Keys(properties).reduce((result2, left) => {
     return { ...result2, [left]: AddReadonly(properties[left]) };
@@ -14164,24 +17862,24 @@ function FromObject7(properties) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_tuple.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_tuple.mjs
 function FromTuple4(types) {
   const result = AddImmutable(Tuple(types));
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_union.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_union.mjs
 function FromUnion7(types) {
   const result = types.map((type) => FromType17(type));
   return Union(result);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/from_type.mjs
 function FromType17(type) {
   return IsArray2(type) ? FromArray4(type.items) : IsCyclic(type) ? FromCyclic4(type.$defs, type.$ref) : IsDependent(type) ? FromDependent4(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect4(type.allOf) : IsObject2(type) ? FromObject7(type.properties) : IsTuple(type) ? FromTuple4(type.items) : IsUnion(type) ? FromUnion7(type.anyOf) : type;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/readonly_object/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/readonly_object/instantiate.mjs
 function ReadonlyObjectAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(FromType17(type), {}, options) : ReadonlyObjectDeferred(type);
   return result;
@@ -14191,12 +17889,12 @@ function ReadonlyObjectInstantiate(context, state, type, options) {
   return ReadonlyObjectAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/ref/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/ref/instantiate.mjs
 function RefInstantiate(context, state, type, ref) {
   return state.visited.includes(ref) ? type : ref in context ? InstantiateType(context, State(state["callstack"], [...state["visited"], ref]), context[ref]) : type;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/from_cyclic.mjs
+// ../main/node_modules/typebox/build/type/engine/required/from_cyclic.mjs
 function FromCyclic5(defs, ref) {
   const target = CyclicTarget(defs, ref);
   const partial = FromType18(target);
@@ -14204,27 +17902,27 @@ function FromCyclic5(defs, ref) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/from_dependent.mjs
+// ../main/node_modules/typebox/build/type/engine/required/from_dependent.mjs
 function FromDependent5(if_, then_, else_) {
   const evaluated = EvaluateDependent(if_, then_, else_);
   const result = FromType18(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/from_intersect.mjs
+// ../main/node_modules/typebox/build/type/engine/required/from_intersect.mjs
 function FromIntersect5(types) {
   const evaluated = EvaluateIntersect(types);
   const result = FromType18(evaluated);
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/from_union.mjs
+// ../main/node_modules/typebox/build/type/engine/required/from_union.mjs
 function FromUnion8(types) {
   const result = types.map((type) => FromType18(type));
   return Union(result);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/from_object.mjs
+// ../main/node_modules/typebox/build/type/engine/required/from_object.mjs
 function FromObject8(properties) {
   const mapped = guard_exports.Keys(properties).reduce((result2, left) => {
     return { ...result2, [left]: RemoveOptional(properties[left]) };
@@ -14233,12 +17931,12 @@ function FromObject8(properties) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/from_type.mjs
+// ../main/node_modules/typebox/build/type/engine/required/from_type.mjs
 function FromType18(type) {
   return IsCyclic(type) ? FromCyclic5(type.$defs, type.$ref) : IsDependent(type) ? FromDependent5(type.if, type.then, type.else) : IsIntersect(type) ? FromIntersect5(type.allOf) : IsUnion(type) ? FromUnion8(type.anyOf) : IsObject2(type) ? FromObject8(type.properties) : _Object_({});
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/required.mjs
+// ../main/node_modules/typebox/build/type/action/required.mjs
 function RequiredDeferred(type, options = {}) {
   return Deferred("Required", [type], options);
 }
@@ -14246,7 +17944,7 @@ function Required(type, options = {}) {
   return RequiredAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/required/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/required/instantiate.mjs
 function RequiredAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(FromType18(type), {}, options) : RequiredDeferred(type, options);
   return result;
@@ -14256,7 +17954,7 @@ function RequiredInstantiate(context, state, type, options) {
   return RequiredAction(instaniatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/return_type.mjs
+// ../main/node_modules/typebox/build/type/action/return_type.mjs
 function ReturnTypeDeferred(type, options = {}) {
   return Deferred("ReturnType", [type], options);
 }
@@ -14264,7 +17962,7 @@ function ReturnType(type, options = {}) {
   return ReturnTypeAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/return_type/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/return_type/instantiate.mjs
 function ReturnTypeOperation(type) {
   return IsFunction2(type) ? type["returnType"] : Never();
 }
@@ -14277,7 +17975,7 @@ function ReturnTypeInstantiate(context, state, type, options = {}) {
   return ReturnTypeAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/with.mjs
+// ../main/node_modules/typebox/build/type/action/with.mjs
 function WithDeferred(type, options) {
   return Deferred("With", [type, options], {});
 }
@@ -14285,7 +17983,7 @@ function With2(type, options) {
   return WithAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/with/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/with/instantiate.mjs
 function WithAction(type, options) {
   const result = CanInstantiate([type]) ? memory_exports.Update(type, {}, options) : WithDeferred(type, options);
   return result;
@@ -14295,7 +17993,7 @@ function WithInstantiate(context, state, type, options) {
   return WithAction(instaniatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/rest/spread.mjs
+// ../main/node_modules/typebox/build/type/engine/rest/spread.mjs
 function SpreadElement(type) {
   const result = IsRest(type) ? IsTuple(type.items) ? RestSpread(type.items.items) : IsInfer(type.items) ? [type] : IsRef(type.items) ? [type] : [Never()] : [type];
   return result;
@@ -14307,7 +18005,7 @@ function RestSpread(types) {
   return result;
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/instantiate.mjs
+// ../main/node_modules/typebox/build/type/engine/instantiate.mjs
 function State(callstack, visited) {
   return { callstack, visited };
 }
@@ -14355,7 +18053,7 @@ function Instantiate(context, type) {
   return InstantiateType(context, State([], []), type);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/engine/immutable/instantiate_add.mjs
+// ../main/node_modules/typebox/build/type/engine/immutable/instantiate_add.mjs
 function AddImmutableOperation(type) {
   return memory_exports.Update(type, { "~immutable": true }, {});
 }
@@ -14368,7 +18066,7 @@ function AddImmutableInstantiate(context, state, type, options) {
   return AddImmutableAction(instantiatedType, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/_add_immutable.mjs
+// ../main/node_modules/typebox/build/type/action/_add_immutable.mjs
 function AddImmutableDeferred(type, options = {}) {
   return Deferred("AddImmutable", [type], options);
 }
@@ -14376,7 +18074,7 @@ function AddImmutable(type, options = {}) {
   return AddImmutableAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/evaluate.mjs
+// ../main/node_modules/typebox/build/type/action/evaluate.mjs
 function EvaluateDeferred(type, options = {}) {
   return Deferred("Evaluate", [type], options);
 }
@@ -14384,7 +18082,7 @@ function Evaluate(type, options = {}) {
   return EvaluateAction(type, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/action/module.mjs
+// ../main/node_modules/typebox/build/type/action/module.mjs
 function ModuleDeferred(declarations, options = {}) {
   return Deferred("Module", [declarations], options);
 }
@@ -14392,7 +18090,7 @@ function Module2(declarations, options = {}) {
   return ModuleInstantiate({}, State([], []), declarations, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/type/script/script.mjs
+// ../main/node_modules/typebox/build/type/script/script.mjs
 function Script2(...args) {
   const [context, input, options] = arguments_exports.Match(args, {
     2: (script, options2) => guard_exports.IsString(script) ? [{}, script, options2] : [script, options2, {}],
@@ -14404,7 +18102,7 @@ function Script2(...args) {
   return memory_exports.Update(parsed, {}, options);
 }
 
-// ../../../../.npm-global/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/typebox/build/typebox.mjs
+// ../main/node_modules/typebox/build/typebox.mjs
 var typebox_exports = {};
 __export(typebox_exports, {
   Any: () => Any,
@@ -14528,8 +18226,8 @@ __export(typebox_exports, {
 
 // src/host.ts
 function isDeclaredForkHost() {
-  const v = process.env.PI_ACP_FORK_HOST;
-  return v === "1" || v?.toLowerCase() === "true";
+  const v2 = process.env.PI_ACP_FORK_HOST;
+  return v2 === "1" || v2?.toLowerCase() === "true";
 }
 function isUnsupportedHost(sm) {
   return !isPiHost(sm) && !isDeclaredForkHost();
@@ -14538,9 +18236,9 @@ function isUnsupportedHost(sm) {
 // src/tokens.ts
 function collectCoveredMessageIds(state) {
   const ids = /* @__PURE__ */ new Set();
-  for (const b of state.blocks) {
-    if (!b.active) continue;
-    for (const id of b.effectiveMessageIds) ids.add(id);
+  for (const b2 of state.blocks) {
+    if (!b2.active) continue;
+    for (const id of b2.effectiveMessageIds) ids.add(id);
   }
   return ids;
 }
@@ -14561,12 +18259,12 @@ function collectImageTokens(entries, visionCapable) {
 }
 function estimateTokens(messages, coveredIds, imageTokensById) {
   let tokens = 0;
-  for (const m of messages) {
-    if (m.toolName === "compress") continue;
-    if (coveredIds?.has(m.id)) continue;
-    tokens += defaultCountTokens(m.text ?? "");
-    tokens += m.thinkingTokens ?? 0;
-    const img = imageTokensById?.get(m.id);
+  for (const m2 of messages) {
+    if (m2.toolName === "compress") continue;
+    if (coveredIds?.has(m2.id)) continue;
+    tokens += defaultCountTokens(m2.text ?? "");
+    tokens += m2.thinkingTokens ?? 0;
+    const img = imageTokensById?.get(m2.id);
     if (img) tokens += img;
   }
   return tokens;
@@ -14578,17 +18276,9 @@ function sentViewTokenCount(core, messages, state, config, prelim, imageTokensBy
   return { viewTokens, drifted: Math.abs(viewTokens - prelim) > Math.max(1e3, 0.1 * prelim) };
 }
 function adjustedTokenCount(core, messages, state, config, prelim, imageTokensById, systemPromptTokens = 0) {
-  if (!state.blocks.some((b) => b.active && b.effectiveMessageIds.length > 0)) return prelim;
+  if (!state.blocks.some((b2) => b2.active && b2.effectiveMessageIds.length > 0)) return prelim;
   const view = sentViewTokenCount(core, messages, state, config, prelim, imageTokensById, systemPromptTokens);
   return view.drifted ? view.viewTokens : prelim;
-}
-function sentViewMeterMatches(meter, state, config) {
-  if (!meter || !meter.usable) return false;
-  if (meter.limit !== config.modelContextLimit) return false;
-  if (meter.blocksLen !== state.blocks.length) return false;
-  let active = 0;
-  for (const b of state.blocks) if (b.active) active++;
-  return meter.activeBlocks === active;
 }
 
 // src/abort.ts
@@ -14798,8 +18488,8 @@ function jsonParseError(content) {
 }
 function compressPanelBlocks(text) {
   if (!text.trimStart().startsWith("\u25A3 ACP |")) return -1;
-  const m = text.match(/, (\d+) blocks?\)/);
-  if (m) return Number(m[1]);
+  const m2 = text.match(/, (\d+) blocks?\)/);
+  if (m2) return Number(m2[1]);
   const idx = text.indexOf(", blocks: ");
   if (idx === -1) return -1;
   const header = text.slice(idx).split("\n", 1)[0] ?? "";
@@ -14866,14 +18556,14 @@ function hasActiveOwner(state, ownedIds, visibleIds) {
 function refIsDead(ref, state, visibleIds) {
   const trimmed = ref.trim();
   if (/^b\d+$/i.test(trimmed)) {
-    const block = state.blocks.find((b) => b.blockId.toLowerCase() === trimmed.toLowerCase());
+    const block = state.blocks.find((b2) => b2.blockId.toLowerCase() === trimmed.toLowerCase());
     if (!block) return true;
     if (block.active && blockHasVisibleAnchor(block, visibleIds)) return false;
     return !hasActiveOwner(state, block.effectiveMessageIds, visibleIds);
   }
-  const m = trimmed.match(/^m(\d+)$/i);
-  if (!m) return true;
-  const rawId = state.messageRefs.byRef[trimmed] ?? state.messageRefs.byRef[paddedRef(Number(m[1]))];
+  const m2 = trimmed.match(/^m(\d+)$/i);
+  if (!m2) return true;
+  const rawId = state.messageRefs.byRef[trimmed] ?? state.messageRefs.byRef[paddedRef(Number(m2[1]))];
   if (!rawId) return true;
   if (visibleIds.has(rawId)) return false;
   return !hasActiveOwner(state, [rawId], visibleIds);
@@ -14881,9 +18571,9 @@ function refIsDead(ref, state, visibleIds) {
 function refDriftSignal(ref, state, visibleIds) {
   const trimmed = ref.trim();
   if (/^b\d+$/i.test(trimmed)) return "alive";
-  const m = trimmed.match(/^m(\d+)$/i);
-  if (!m) return "unknown";
-  const rawId = state.messageRefs.byRef[trimmed] ?? state.messageRefs.byRef[paddedRef(Number(m[1]))];
+  const m2 = trimmed.match(/^m(\d+)$/i);
+  if (!m2) return "unknown";
+  const rawId = state.messageRefs.byRef[trimmed] ?? state.messageRefs.byRef[paddedRef(Number(m2[1]))];
   if (!rawId) return "unknown";
   if (rawId.startsWith("live-")) return "live";
   if (!visibleIds.has(rawId) && !hasActiveOwner(state, [rawId], visibleIds)) return "persistent-dangling";
@@ -14920,27 +18610,27 @@ function cappedRejectionText(snapshot) {
 }
 function tier3OnlyRewrite(newBlocks, allBlocks) {
   if (newBlocks.length === 0) return null;
-  const byId = new Map(allBlocks.map((b) => [b.blockId, b]));
+  const byId = new Map(allBlocks.map((b2) => [b2.blockId, b2]));
   const spans = [];
-  for (const b of newBlocks) {
-    const consumed = b.directBlockIds.map((id) => byId.get(id));
-    if (b.tier !== 3 || b.directMessageIds.length > 0 || b.directBlockIds.length === 0 || consumed.some((c) => !c || c.tier !== 3)) {
+  for (const b2 of newBlocks) {
+    const consumed = b2.directBlockIds.map((id) => byId.get(id));
+    if (b2.tier !== 3 || b2.directMessageIds.length > 0 || b2.directBlockIds.length === 0 || consumed.some((c) => !c || c.tier !== 3)) {
       return null;
     }
-    spans.push(`${b.startRef ?? "?"}..${b.endRef ?? "?"}`);
+    spans.push(`${b2.startRef ?? "?"}..${b2.endRef ?? "?"}`);
   }
   return spans;
 }
 function tierReadyHint(state, config) {
   if (!config.tiers.enabled) return "";
-  const active = state.blocks.filter((b) => b.active);
+  const active = state.blocks.filter((b2) => b2.active);
   const first = (bs) => bs[0]?.blockId ?? "";
   const last = (bs) => bs[bs.length - 1]?.blockId ?? "";
-  const t2 = active.filter((b) => b.tier === 2);
+  const t2 = active.filter((b2) => b2.tier === 2);
   if (t2.length >= config.tiers.tier3Trigger) {
     return `Actionable now: condense tier-2 blocks ${first(t2)}..${last(t2)} into a single tier-3 block (compress({ content: [{ startId: "${first(t2)}", endId: "${last(t2)}", summary: "..." }] })).`;
   }
-  const t1 = active.filter((b) => b.tier === 1);
+  const t1 = active.filter((b2) => b2.tier === 1);
   if (t1.length >= config.tiers.tier2Trigger) {
     return `Actionable now: distill tier-1 blocks ${first(t1)}..${last(t1)} into a single tier-2 block (compress({ content: [{ startId: "${first(t1)}", endId: "${last(t1)}", summary: "..." }] })).`;
   }
@@ -14988,7 +18678,7 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
     logWarn("compress", { sid, event: "capped-reject", turnKey });
     return cappedRejectionText(snapshot);
   }
-  const visibleIds = new Set(messages.map((m) => m.id));
+  const visibleIds = new Set(messages.map((m2) => m2.id));
   const deadSpans = ranges.filter((r) => refIsDead(r.startId, state, visibleIds) || refIsDead(r.endId, state, visibleIds)).map((r) => `${r.startId}..${r.endId}`);
   const allDead = deadSpans.length === ranges.length;
   const beforeTokens = estimateTokens(messages, collectCoveredMessageIds(state), imageTokens);
@@ -15000,11 +18690,11 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
     ranges: ranges.length,
     spans: ranges.map((r) => ({ span: `${r.startId}..${r.endId}`, summaryLen: r.summary.length, summary: r.summary, topic: r.topic ?? topLevelTopic ?? null })),
     blocksBefore: state.blocks.length,
-    activeBefore: state.blocks.filter((b) => b.active).length,
+    activeBefore: state.blocks.filter((b2) => b2.active).length,
     beforeMsgCount: messages.length,
     beforeTokens
   });
-  const beforeRunIds = new Map(state.blocks.map((b) => [b.blockId, b.runId]));
+  const beforeRunIds = new Map(state.blocks.map((b2) => [b2.blockId, b2.runId]));
   const applied = runtime.core.applyCompression({
     ranges: sanitizedRanges.map((r) => ({ startRef: r.startId, endRef: r.endId, summary: r.summary, topic: r.topic ?? topLevelTopic, summaryMaxChars, compressCallId: toolCallId })),
     messages,
@@ -15012,7 +18702,7 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
     config
   });
   assertNotAborted(signal);
-  const changedBlocks = applied.state.blocks.filter((b) => beforeRunIds.get(b.blockId) !== b.runId);
+  const changedBlocks = applied.state.blocks.filter((b2) => beforeRunIds.get(b2.blockId) !== b2.runId);
   const rewriteSpans = applied.result.blocksCreated > 0 ? tier3OnlyRewrite(changedBlocks, applied.state.blocks) : null;
   if (rewriteSpans) {
     await runtime.save(state, ctx);
@@ -15057,8 +18747,8 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
     errors: errors.length,
     errorDetails: errors.slice(0, 3),
     blocksAfter: applied.state.blocks.length,
-    activeAfter: applied.state.blocks.filter((b) => b.active).length,
-    newBlocks: newBlocks.map((b) => ({ blockId: b.blockId, tier: b.tier, summaryLen: b.summary.length, directMsgCount: b.directMessageIds.length, effectiveMsgCount: b.effectiveMessageIds.length, summary: b.summary }))
+    activeAfter: applied.state.blocks.filter((b2) => b2.active).length,
+    newBlocks: newBlocks.map((b2) => ({ blockId: b2.blockId, tier: b2.tier, summaryLen: b2.summary.length, directMsgCount: b2.directMessageIds.length, effectiveMsgCount: b2.effectiveMessageIds.length, summary: b2.summary }))
   });
   logInfo("compress", {
     sid: ctx.sessionManager.getSessionId(),
@@ -15070,7 +18760,7 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
     afterTokens,
     warnings: warnings.length,
     errors: errors.length,
-    newBlockIds: newBlocks.map((b) => b.blockId)
+    newBlockIds: newBlocks.map((b2) => b2.blockId)
   });
   if (errors.length > 0) {
     logError("compress", { sid: ctx.sessionManager.getSessionId(), event: "errors", count: errors.length, errors: errors.slice(0, 5) });
@@ -15089,10 +18779,10 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
   if (warnings.length > 0) {
     logWarn("compress", { sid: ctx.sessionManager.getSessionId(), event: "warnings", count: warnings.length, warnings: warnings.slice(0, 5) });
   }
-  const spanClause = blocksCreated > 0 ? `blocks: ${newBlocks.map((b) => blockSpanLabel(b, applied.state)).join(", ")}` : "0 blocks";
+  const spanClause = blocksCreated > 0 ? `blocks: ${newBlocks.map((b2) => blockSpanLabel(b2, applied.state)).join(", ")}` : "0 blocks";
   const lines = [`\u25A3 ACP | ${formatK2(beforeTokens)} \u2192 ${formatK2(afterTokens)} tokens (~${formatK2(reclaimed)} reclaimed, ${spanClause})`];
   if (blocksCreated > 0) {
-    for (const b of newBlocks) lines.push(summaryFingerprintLine(b.blockId, b.summary));
+    for (const b2 of newBlocks) lines.push(summaryFingerprintLine(b2.blockId, b2.summary));
   }
   if (warnings.length > 0) lines.push("\u26A0\uFE0F " + warnings.join("; "));
   if (errors.length > 0) lines.push("Errors: " + errors.join("; "));
@@ -15106,7 +18796,7 @@ async function handleCompress(args, runtime, ctx, toolCallId, signal) {
 }
 
 // src/session-log.ts
-import { promises as fs3 } from "node:fs";
+import { promises as fs5 } from "fs";
 var MAX_CHAIN_DEPTH = 8;
 function parseSessionLog(text) {
   const out = [];
@@ -15130,7 +18820,7 @@ async function loadAncestorEntries(sessionFile, wantedBaseIds) {
     seen.add(parent);
     let text;
     try {
-      text = await fs3.readFile(parent, "utf8");
+      text = await fs5.readFile(parent, "utf8");
     } catch {
       logWarn("session-log", { event: "ancestor-read-failed", file: parent, depth });
       break;
@@ -15154,7 +18844,7 @@ async function loadLiveRefEntries(sessionFile, wantedRawIds) {
     const file = current;
     const identities = /* @__PURE__ */ new Map();
     try {
-      const raw = await fs3.readFile(`${file}${STATE_SUFFIX}`, "utf8");
+      const raw = await fs5.readFile(`${file}${STATE_SUFFIX}`, "utf8");
       const parsed = JSON.parse(raw);
       for (const origin of parseLiveRefOrigins(parsed.liveRefOrigins)) {
         if (!wanted.has(origin.rawId)) continue;
@@ -15169,7 +18859,7 @@ async function loadLiveRefEntries(sessionFile, wantedRawIds) {
     if (identities.size > 0) {
       let text;
       try {
-        text = await fs3.readFile(file, "utf8");
+        text = await fs5.readFile(file, "utf8");
       } catch (e) {
         const code = e.code;
         if (code !== "ENOENT") logWarn("session-log", { event: "live-ref-log-failed", file, error: e instanceof Error ? e.message : String(e) });
@@ -15192,11 +18882,11 @@ async function loadLiveRefEntries(sessionFile, wantedRawIds) {
 }
 
 // src/decompress-tool.ts
-import { writeFile, mkdir } from "node:fs/promises";
-import { existsSync as existsSync3, lstatSync, readlinkSync, realpathSync } from "node:fs";
-import { resolve as resolve2, relative, isAbsolute, join as join5, basename as basename3, dirname as dirname4 } from "node:path";
-import { tmpdir, homedir as homedir3 } from "node:os";
-var AUTO_DIR = join5(homedir3() || tmpdir(), ".cache", "pi", "acp-decompress");
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync as existsSync3, lstatSync, readlinkSync, realpathSync } from "fs";
+import { resolve as resolve2, relative, isAbsolute as isAbsolute2, join as join8, basename as basename3, dirname as dirname7 } from "path";
+import { tmpdir, homedir as homedir5 } from "os";
+var AUTO_DIR = join8(homedir5() || tmpdir(), ".cache", "pi", "acp-decompress");
 var PREVIEW_CHARS = 600;
 var MESSAGE_INLINE_THRESHOLD = 2e3;
 var DecompressParams = typebox_exports.Object({
@@ -15239,40 +18929,40 @@ function refoldHint(blockId, result) {
 }
 var ALLOWED_DIRS = [
   tmpdir(),
-  join5(homedir3(), ".cache", "opencode"),
-  join5(homedir3(), ".cache", "pi")
+  join8(homedir5(), ".cache", "opencode"),
+  join8(homedir5(), ".cache", "pi")
 ];
 function resolveToFilePath(targetPath) {
-  const expanded = targetPath.startsWith("~/") ? join5(homedir3(), targetPath.slice(2)) : targetPath;
+  const expanded = targetPath.startsWith("~/") ? join8(homedir5(), targetPath.slice(2)) : targetPath;
   const resolved = resolve2(expanded);
   let probe = resolved;
   const suffix = [];
-  while (!existsSync3(probe) && probe !== dirname4(probe)) {
+  while (!existsSync3(probe) && probe !== dirname7(probe)) {
     suffix.unshift(basename3(probe));
-    probe = dirname4(probe);
+    probe = dirname7(probe);
   }
   const real = existsSync3(probe) ? realpathSync(probe) : probe;
   let checked = real;
   for (const part of suffix) {
-    checked = join5(checked, part);
+    checked = join8(checked, part);
     try {
       if (lstatSync(checked).isSymbolicLink()) {
         const target = readlinkSync(checked);
-        checked = isAbsolute(target) ? resolve2(target) : resolve2(dirname4(checked), target);
+        checked = isAbsolute2(target) ? resolve2(target) : resolve2(dirname7(checked), target);
       }
     } catch {
     }
   }
-  const allowed = ALLOWED_DIRS.map((d) => {
+  const allowed = ALLOWED_DIRS.map((d2) => {
     try {
-      return realpathSync(d);
+      return realpathSync(d2);
     } catch {
-      return d;
+      return d2;
     }
   });
   const isAllowed = allowed.some((dir) => {
     const rel = relative(dir, checked);
-    return rel === "" || !rel.startsWith("..") && !isAbsolute(rel);
+    return rel === "" || !rel.startsWith("..") && !isAbsolute2(rel);
   });
   if (!isAllowed) {
     return { error: `Error: toFile path must be under ${tmpdir()}, ~/.cache/opencode, or ~/.cache/pi. Got: ${targetPath}` };
@@ -15280,7 +18970,7 @@ function resolveToFilePath(targetPath) {
   return checked;
 }
 function autoFilePath(blockId) {
-  return join5(AUTO_DIR, `${blockId}-${Date.now()}.txt`);
+  return join8(AUTO_DIR, `${blockId}-${Date.now()}.txt`);
 }
 function headPreview(text) {
   if (text.length <= PREVIEW_CHARS) return text;
@@ -15299,7 +18989,7 @@ function findMessageContent(ref, ctx) {
 }
 async function resolveBlockMessages(block, coreMessages, ctx) {
   const neededBaseIds = new Set(block.effectiveMessageIds.map((id) => id.split("#")[0]));
-  const presentBaseIds = new Set(coreMessages.map((m) => m.id.split("#")[0]));
+  const presentBaseIds = new Set(coreMessages.map((m2) => m2.id.split("#")[0]));
   const missingBaseIds = [...neededBaseIds].filter((id) => !presentBaseIds.has(id));
   if (missingBaseIds.length === 0) return coreMessages;
   const extra = [];
@@ -15307,7 +18997,7 @@ async function resolveBlockMessages(block, coreMessages, ctx) {
     const entry = ctx.sessionManager.getEntry(baseId);
     if (entry) extra.push(...entriesToCoreMessages([entry]));
   }
-  const coveredBaseIds = new Set([...coreMessages, ...extra].map((m) => m.id.split("#")[0]));
+  const coveredBaseIds = new Set([...coreMessages, ...extra].map((m2) => m2.id.split("#")[0]));
   const stillMissing = [...neededBaseIds].filter((id) => !coveredBaseIds.has(id));
   if (stillMissing.length > 0) {
     const ancestorMissing = stillMissing.filter((id) => !id.startsWith("live-"));
@@ -15395,15 +19085,15 @@ async function handleDecompress(args, runtime, ctx, signal) {
   const { state, coreMessages } = await runtime.stateFor(ctx);
   assertNotAborted(signal);
   const arg = (args.blockId ?? "").trim();
-  const owner = state.blocks.find((b) => b.effectiveMessageIds.includes(arg));
+  const owner = state.blocks.find((b2) => b2.effectiveMessageIds.includes(arg));
   if (owner) {
     return handleMessageRef(arg, owner.blockId, args, ctx);
   }
   const blockId = parseBlockIdArg(arg);
   if (!blockId) return `Invalid blockId: ${args.blockId}. Expected format like "b5", "5", or a message ref (UUID) from search_context results.`;
-  const block = state.blocks.find((b) => b.blockId === blockId);
+  const block = state.blocks.find((b2) => b2.blockId === blockId);
   if (!block) {
-    const active = state.blocks.filter((b) => b.active).map((b) => b.blockId).join(", ");
+    const active = state.blocks.filter((b2) => b2.active).map((b2) => b2.blockId).join(", ");
     return `Block ${blockId} not found. Active blocks: ${active || "(none)"}.`;
   }
   const full = args.full ?? false;
@@ -15444,19 +19134,19 @@ ${refoldHint(blockId, marked.result)}`;
 // src/search-index.ts
 function buildCoveredRefs(state) {
   const s = /* @__PURE__ */ new Set();
-  for (const b of state.blocks) {
-    for (const id of b.effectiveMessageIds) s.add(id);
+  for (const b2 of state.blocks) {
+    for (const id of b2.effectiveMessageIds) s.add(id);
   }
   return s;
 }
 function buildMessageOwnerMap(state) {
-  const m = /* @__PURE__ */ new Map();
-  for (const b of state.blocks) {
-    for (const id of b.effectiveMessageIds) {
-      if (!m.has(id)) m.set(id, b.blockId);
+  const m2 = /* @__PURE__ */ new Map();
+  for (const b2 of state.blocks) {
+    for (const id of b2.effectiveMessageIds) {
+      if (!m2.has(id)) m2.set(id, b2.blockId);
     }
   }
-  return m;
+  return m2;
 }
 function estimateTokens2(text) {
   if (typeof text !== "string" || !text) return 0;
@@ -15477,7 +19167,7 @@ function buildSearchDocs(ctx, state) {
   const covered = buildCoveredRefs(state);
   const ownerMap = buildMessageOwnerMap(state);
   const blockTier = /* @__PURE__ */ new Map();
-  for (const b of state.blocks) blockTier.set(b.blockId, b.tier ?? 1);
+  for (const b2 of state.blocks) blockTier.set(b2.blockId, b2.tier ?? 1);
   const msgs = [];
   for (const entry of allEntries) {
     if (entry.type !== "message") continue;
@@ -15536,8 +19226,8 @@ function makeSearchTool(runtime, overrides) {
 async function handleSearch(args, runtime, ctx) {
   const { state } = await runtime.stateFor(ctx);
   const docs = buildSearchDocs(ctx, state);
-  const msgCount = docs.filter((d) => d.kind === "message").length;
-  const blockCount = docs.filter((d) => d.kind === "block").length;
+  const msgCount = docs.filter((d2) => d2.kind === "message").length;
+  const blockCount = docs.filter((d2) => d2.kind === "block").length;
   const results = searchBlocks(docs, args.query, { limit: args.limit });
   if (results.length === 0) {
     const blocks = state.blocks.length;
@@ -15573,12 +19263,12 @@ function formatSize(tokens) {
 }
 
 // src/prompt-pack.ts
-import { readFileSync as readFileSync3 } from "node:fs";
-import { homedir as homedir4 } from "node:os";
+import { readFileSync as readFileSync4 } from "fs";
+import { homedir as homedir6 } from "os";
 function defaultPackSources2(cwd) {
   return defaultPackSources({
     projectDir: userConfigPath(cwd, "acp", "packs"),
-    userDirs: [userConfigPath(homedir4(), "acp", "packs")]
+    userDirs: [userConfigPath(homedir6(), "acp", "packs")]
   });
 }
 function packResolver(cwd) {
@@ -15626,7 +19316,7 @@ function piAdapterSurface(pack) {
       if (typeof src.promptGuidelines === "string") {
         entry.promptGuidelines = [src.promptGuidelines];
       } else if (Array.isArray(src.promptGuidelines)) {
-        const guidelines = src.promptGuidelines.filter((g) => typeof g === "string");
+        const guidelines = src.promptGuidelines.filter((g2) => typeof g2 === "string");
         if (guidelines.length === src.promptGuidelines.length) entry.promptGuidelines = guidelines;
       }
       if (Object.keys(entry).length > 0) toolExtras[tool] = entry;
@@ -15695,7 +19385,7 @@ function readToolSurfaceWithPacks(cwd) {
   let packName = "default";
   for (const file of acpJsonFiles(cwd)) {
     try {
-      const parsed = JSON.parse(readFileSync3(file, "utf8"));
+      const parsed = JSON.parse(readFileSync4(file, "utf8"));
       if (parsed && typeof parsed === "object") {
         const rec = parsed;
         if (rec.toolPrompts) inline = sanitizeToolPrompts(rec.toolPrompts);
@@ -15712,33 +19402,48 @@ function readToolSurfaceWithPacks(cwd) {
 }
 
 // src/floor-stale.ts
-function validAnchorUsage(u) {
-  if (!u) return false;
-  const total = (u.totalTokens ?? 0) || (u.input ?? 0) + (u.output ?? 0) + (u.cacheRead ?? 0) + (u.cacheWrite ?? 0);
-  return total > 0;
+function usageTotal(u) {
+  if (!u) return 0;
+  return (u.totalTokens ?? 0) || (u.input ?? 0) + (u.output ?? 0) + (u.cacheRead ?? 0) + (u.cacheWrite ?? 0);
 }
-function scanEntries(entries) {
+function validAnchorUsage(u) {
+  const total = usageTotal(u);
+  return Number.isFinite(total) && total > 0;
+}
+function isFreshAnchor(m2) {
+  return m2.role === "assistant" && m2.stopReason !== "aborted" && m2.stopReason !== "error" && validAnchorUsage(m2.usage);
+}
+function scanEntries(entries, model) {
   let lastUsageIdx = -1;
   let lastCompressIdx = -1;
+  let lastAssistantIdx = -1;
+  let lastUsageTotal = 0;
   const compressIdxByCallId = /* @__PURE__ */ new Map();
   for (let i = 0; i < entries.length; i++) {
-    const m = entries[i].message;
-    if (!m) continue;
-    if (m.role === "assistant" && m.stopReason !== "aborted" && m.stopReason !== "error" && validAnchorUsage(m.usage)) {
-      lastUsageIdx = i;
-    } else if (m.role === "toolResult" && m.toolName === "compress" && m.toolCallId !== void 0 && m.isError !== true && isCompressSuccessText(extractText(m.content))) {
+    if (entries[i].type === "compaction") {
+      lastUsageIdx = -1;
+      lastUsageTotal = 0;
+      lastAssistantIdx = -1;
+      lastCompressIdx = -1;
+      compressIdxByCallId.clear();
+    }
+    const m2 = entries[i].message;
+    if (!m2) continue;
+    if (m2.role === "assistant") {
+      lastAssistantIdx = i;
+      if (isFreshAnchor(m2) && (!model?.id || !m2.model || m2.model === model.id) && (!model?.provider || !m2.provider || m2.provider === model.provider)) {
+        lastUsageIdx = i;
+        lastUsageTotal = usageTotal(m2.usage);
+      }
+    } else if (m2.role === "toolResult" && m2.toolName === "compress" && m2.toolCallId !== void 0 && m2.isError !== true && isCompressSuccessText(extractText(m2.content))) {
       lastCompressIdx = i;
-      compressIdxByCallId.set(m.toolCallId, i);
+      compressIdxByCallId.set(m2.toolCallId, i);
     }
   }
-  return { lastUsageIdx, lastCompressIdx, compressIdxByCallId };
+  return { lastUsageIdx, lastCompressIdx, compressIdxByCallId, lastAssistantIdx, lastUsageTotal };
 }
-function usageAnchorPredatesCompression(entries) {
-  const scan = scanEntries(entries);
-  return scan.lastCompressIdx > scan.lastUsageIdx;
-}
-function compressionAnchorStaleness(entries, blocks, countTokens) {
-  const scan = scanEntries(entries);
+function compressionAnchorStaleness(entries, blocks, countTokens, model) {
+  const scan = scanEntries(entries, model);
   let netReclaimed = 0;
   for (const block of blocks) {
     if (!block.active || block.compressCallId == null) continue;
@@ -15747,17 +19452,19 @@ function compressionAnchorStaleness(entries, blocks, countTokens) {
     const saved = (block.compressedTokens ?? 0) - countTokens(block.summary ?? "");
     netReclaimed += saved > 0 ? saved : 0;
   }
-  return { predates: scan.lastCompressIdx > scan.lastUsageIdx, netReclaimed };
+  const lastAssistant = scan.lastAssistantIdx >= 0 ? entries[scan.lastAssistantIdx] : void 0;
+  const fresh = !!lastAssistant?.message && scan.lastAssistantIdx === scan.lastUsageIdx && isFreshAnchor(lastAssistant.message);
+  return { predates: scan.lastCompressIdx > scan.lastUsageIdx, netReclaimed, fresh, lastRealTokens: scan.lastUsageTotal, lastUsageIdx: scan.lastUsageIdx };
 }
 
 // src/delegate-tool.ts
 import {
   spawn
-} from "node:child_process";
-import { createWriteStream, existsSync as existsSync4 } from "node:fs";
-import { mkdir as mkdir2, mkdtemp, writeFile as writeFile2, rm, appendFile, readFile, copyFile } from "node:fs/promises";
-import { tmpdir as tmpdir2 } from "node:os";
-import { dirname as dirname5, join as join6, resolve as resolvePath } from "node:path";
+} from "child_process";
+import { createWriteStream, existsSync as existsSync4 } from "fs";
+import { mkdir as mkdir2, mkdtemp, writeFile as writeFile2, rm, appendFile, readFile, copyFile } from "fs/promises";
+import { tmpdir as tmpdir2 } from "os";
+import { dirname as dirname8, join as join9, resolve as resolvePath } from "path";
 
 // src/footer-status.ts
 var FOOTER_STATUS_KEY = "billion-context-pi";
@@ -15863,7 +19570,7 @@ function refresh() {
     stopTimer();
     return;
   }
-  const sorted = [...runs2].sort((a, b) => a.startedAt - b.startedAt);
+  const sorted = [...runs2].sort((a, b2) => a.startedAt - b2.startedAt);
   const renderKey = renderKeyFor(sorted);
   if (renderKey === lastRenderKey) return;
   lastRenderKey = renderKey;
@@ -15981,8 +19688,8 @@ function attachWatchdogs(child, hooks, opts) {
 }
 
 // src/delegate-events.ts
-function safeNumber(v) {
-  return typeof v === "number" && Number.isFinite(v) ? v : void 0;
+function safeNumber(v2) {
+  return typeof v2 === "number" && Number.isFinite(v2) ? v2 : void 0;
 }
 function handleMessageEnd(event) {
   const msg = event.message;
@@ -16176,7 +19883,7 @@ var EOF_GRACE_MS = 1e4;
 var SETTLED_GRACE_MS = 1e4;
 var KILL_GRACE_MS = 1e4;
 var RESULT_SUMMARY_CHARS = 500;
-var OUT_DIR = join6(tmpdir2(), "acp-delegate");
+var OUT_DIR = join9(tmpdir2(), "acp-delegate");
 var NOTIFY_COALESCE_MS = 2e3;
 var NOTIFY_COALESCE_MAX_MS = 1e4;
 var SESSION_EXT = ".session.jsonl";
@@ -16206,13 +19913,13 @@ function delegateChildEnv(parentDepth, maxDepth) {
   };
 }
 var PI_CLI_ENTRY_RE = /[\\/]pi-coding-agent[\\/]dist[\\/]cli\.js$/;
-var PI_PACKAGE_REL = join6("@earendil-works", "pi-coding-agent", "dist", "cli.js");
+var PI_PACKAGE_REL = join9("@earendil-works", "pi-coding-agent", "dist", "cli.js");
 function probeUpFromArgv(argv1) {
-  let dir = resolvePath(dirname5(argv1) || process.cwd());
+  let dir = resolvePath(dirname8(argv1) || process.cwd());
   for (; ; ) {
-    const candidate = join6(dir, "node_modules", PI_PACKAGE_REL);
+    const candidate = join9(dir, "node_modules", PI_PACKAGE_REL);
     if (existsSync4(candidate)) return candidate;
-    const parent = dirname5(dir);
+    const parent = dirname8(dir);
     if (parent === dir) return null;
     dir = parent;
   }
@@ -16220,12 +19927,12 @@ function probeUpFromArgv(argv1) {
 function piCliGlobalCandidates(env) {
   const candidates = [];
   if (process.platform === "win32") {
-    if (env.APPDATA) candidates.push(join6(env.APPDATA, "npm", "node_modules", PI_PACKAGE_REL));
+    if (env.APPDATA) candidates.push(join9(env.APPDATA, "npm", "node_modules", PI_PACKAGE_REL));
   } else {
     const home = env.HOME ?? env.USERPROFILE;
-    if (home) candidates.push(join6(home, ".local", "lib", "node_modules", PI_PACKAGE_REL));
-    candidates.push(join6("/usr/local", "lib", "node_modules", PI_PACKAGE_REL));
-    candidates.push(join6("/usr", "lib", "node_modules", PI_PACKAGE_REL));
+    if (home) candidates.push(join9(home, ".local", "lib", "node_modules", PI_PACKAGE_REL));
+    candidates.push(join9("/usr/local", "lib", "node_modules", PI_PACKAGE_REL));
+    candidates.push(join9("/usr", "lib", "node_modules", PI_PACKAGE_REL));
   }
   return candidates;
 }
@@ -16318,7 +20025,7 @@ var ConcurrencyGate = class {
   }
   get queuedCount() {
     let n = 0;
-    for (const q of this.queue) if (!q.cancelled) n++;
+    for (const q2 of this.queue) if (!q2.cancelled) n++;
     return n;
   }
   /** Start `launch` immediately when a slot is free and nothing waits ahead;
@@ -16337,7 +20044,7 @@ var ConcurrencyGate = class {
     return false;
   }
   cancelQueued(runId) {
-    const e = this.queue.find((q) => q.runId === runId && !q.cancelled);
+    const e = this.queue.find((q2) => q2.runId === runId && !q2.cancelled);
     if (!e) return false;
     e.cancelled = true;
     return true;
@@ -16358,22 +20065,22 @@ var ConcurrencyGate = class {
 };
 var delegateGate = new ConcurrencyGate(() => delegatePolicy.maxConcurrent);
 var delegateDefaults = {};
-function setDelegateDefaults(d) {
-  delegateDefaults = d ?? {};
+function setDelegateDefaults(d2) {
+  delegateDefaults = d2 ?? {};
 }
 var VALID_THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
-function isValidThinkingLevel(v) {
-  return typeof v === "string" && VALID_THINKING_LEVELS.includes(v);
+function isValidThinkingLevel(v2) {
+  return typeof v2 === "string" && VALID_THINKING_LEVELS.includes(v2);
 }
 function pickFirstDefined(values) {
-  for (const v of values) {
-    if (typeof v === "string" && v.trim() !== "") return v;
+  for (const v2 of values) {
+    if (typeof v2 === "string" && v2.trim() !== "") return v2;
   }
   return void 0;
 }
-function normalizeModelRef(m) {
-  if (!m) return void 0;
-  const s = m.trim();
+function normalizeModelRef(m2) {
+  if (!m2) return void 0;
+  const s = m2.trim();
   return s.includes("/") ? s : void 0;
 }
 var delegateNotifyIfRead = "skip";
@@ -16385,7 +20092,7 @@ function markDelegateResultRead(filePath) {
   const abs = resolvePath(filePath);
   let matched = false;
   for (const run of runs.values()) {
-    if (join6(OUT_DIR, `${run.runId}.out`) === abs) {
+    if (join9(OUT_DIR, `${run.runId}.out`) === abs) {
       run.readAt = Date.now();
       suppressIfReadNow(run);
       matched = true;
@@ -16418,8 +20125,8 @@ function runningRunsSnapshot() {
 }
 var MAX_FLEET_FINISHED = 12;
 function orderRunsForFleet(all) {
-  const running = all.filter((r) => r.status === "running").sort((a, b) => a.startedAt - b.startedAt);
-  const finished = all.filter((r) => r.status !== "running").sort((a, b) => (b.finishedAt ?? 0) - (a.finishedAt ?? 0)).slice(0, MAX_FLEET_FINISHED);
+  const running = all.filter((r) => r.status === "running").sort((a, b2) => a.startedAt - b2.startedAt);
+  const finished = all.filter((r) => r.status !== "running").sort((a, b2) => (b2.finishedAt ?? 0) - (a.finishedAt ?? 0)).slice(0, MAX_FLEET_FINISHED);
   return [...running, ...finished];
 }
 function toFleetRunView(r) {
@@ -16434,9 +20141,9 @@ function toFleetRunView(r) {
     exitLabel: exitLabel(r.exitCode ?? null, r.exitSignal),
     timedOut: r.timedOut,
     resumedFrom: r.resumedFrom,
-    replyFile: r.result?.file ?? join6(OUT_DIR, `${r.runId}.out`),
+    replyFile: r.result?.file ?? join9(OUT_DIR, `${r.runId}.out`),
     activityFile: r.activityFile,
-    sessionFile: join6(OUT_DIR, `${r.runId}${SESSION_EXT}`),
+    sessionFile: join9(OUT_DIR, `${r.runId}${SESSION_EXT}`),
     usage: r.usage
   };
 }
@@ -16589,22 +20296,22 @@ function safeCost(u) {
   }
   return void 0;
 }
-function accumulateUsage(a, b) {
-  if (!a) return b;
+function accumulateUsage(a, b2) {
+  if (!a) return b2;
   return {
-    input: a.input + b.input,
-    output: a.output + b.output,
-    cacheRead: a.cacheRead + b.cacheRead,
-    cacheWrite: a.cacheWrite + b.cacheWrite,
-    cacheWrite1h: (a.cacheWrite1h ?? 0) + (b.cacheWrite1h ?? 0),
-    reasoning: (a.reasoning ?? 0) + (b.reasoning ?? 0),
-    totalTokens: a.totalTokens + b.totalTokens,
+    input: a.input + b2.input,
+    output: a.output + b2.output,
+    cacheRead: a.cacheRead + b2.cacheRead,
+    cacheWrite: a.cacheWrite + b2.cacheWrite,
+    cacheWrite1h: (a.cacheWrite1h ?? 0) + (b2.cacheWrite1h ?? 0),
+    reasoning: (a.reasoning ?? 0) + (b2.reasoning ?? 0),
+    totalTokens: a.totalTokens + b2.totalTokens,
     cost: {
-      input: a.cost.input + b.cost.input,
-      output: a.cost.output + b.cost.output,
-      cacheRead: a.cost.cacheRead + b.cost.cacheRead,
-      cacheWrite: a.cost.cacheWrite + b.cost.cacheWrite,
-      total: a.cost.total + b.cost.total
+      input: a.cost.input + b2.cost.input,
+      output: a.cost.output + b2.cost.output,
+      cacheRead: a.cost.cacheRead + b2.cost.cacheRead,
+      cacheWrite: a.cost.cacheWrite + b2.cost.cacheWrite,
+      total: a.cost.total + b2.cost.total
     }
   };
 }
@@ -16895,7 +20602,7 @@ function makeDelegateWaitTool(_pi) {
     const displayMode = delegateDisplayUsage;
     if (run.status === "cancelled") {
       run.consumed = true;
-      const file = run.result?.file || join6(OUT_DIR, `${args.runId}.out`);
+      const file = run.result?.file || join9(OUT_DIR, `${args.runId}.out`);
       return buildWaitResult(run, `Delegate \`${args.runId}\` was cancelled. ${cancelledFileNote(args.runId, file)}${remainingLineForWait(args.runId)}`, displayMode);
     }
     if (run.status === "completed" || run.status === "failed") {
@@ -16931,7 +20638,7 @@ function makeDelegateWaitTool(_pi) {
       run.waiter = () => {
         run.consumed = true;
         if (run.status === "cancelled") {
-          const file = run.result?.file || join6(OUT_DIR, `${run.runId}.out`);
+          const file = run.result?.file || join9(OUT_DIR, `${run.runId}.out`);
           finish2(buildWaitResult(run, `Delegate \`${run.runId}\` was cancelled. ${cancelledFileNote(run.runId, file)}${remainingLineForWait(run.runId)}`, displayMode));
           return;
         }
@@ -16985,7 +20692,7 @@ function makeDelegateCancelTool(_pi) {
     }
     delegateStatusWidget.poke();
     const displayMode = delegateDisplayUsage;
-    const file = join6(OUT_DIR, `${runId}.out`);
+    const file = join9(OUT_DIR, `${runId}.out`);
     return buildCancelResult(run, `Cancelled ${runId} (${run.agent}). ${cancelledFileNote(runId, file)}`, displayMode);
   };
   return {
@@ -17037,7 +20744,7 @@ async function runDelegate(pi, args, ctx, signal) {
     if (prev && (prev.status === "running" || prev.status === "queued")) {
       return `Cannot resume from run \`${args.resumeFrom}\`: it has not finished yet (${prev.status}). Wait for it to finish first, then resume from its final session.`;
     }
-    prevSession = join6(OUT_DIR, `${args.resumeFrom}${SESSION_EXT}`);
+    prevSession = join9(OUT_DIR, `${args.resumeFrom}${SESSION_EXT}`);
     if (!existsSync4(prevSession)) {
       return `Cannot resume ${args.resumeFrom}: no session file at ${prevSession} (the run produced no assistant output, or the file was cleaned up). Re-dispatch the task fresh instead.`;
     }
@@ -17061,8 +20768,8 @@ async function runDelegate(pi, args, ctx, signal) {
     await copyFile(prevSession, sessionFile);
   }
   if (isAsync) {
-    const replyFile = join6(OUT_DIR, `${runId}.out`);
-    const activityFile = join6(OUT_DIR, `${runId}.activity`);
+    const replyFile = join9(OUT_DIR, `${runId}.out`);
+    const activityFile = join9(OUT_DIR, `${runId}.activity`);
     const run = {
       runId,
       agent: args.agent,
@@ -17320,8 +21027,8 @@ ${err}` : NO_FINAL_OUTPUT_BODY;
   return formatSyncResult(args.agent, runId, taskText, result, file);
 }
 async function buildChildArgs(args, rolePrompt, ctx, runId) {
-  const tmpDir = await mkdtemp(join6(tmpdir2(), "acp-delegate-"));
-  const promptFile = join6(tmpDir, "role.md");
+  const tmpDir = await mkdtemp(join9(tmpdir2(), "acp-delegate-"));
+  const promptFile = join9(tmpDir, "role.md");
   await writeFile2(promptFile, `${rolePrompt}
 
 ---
@@ -17330,7 +21037,7 @@ Complete the task below.`, "utf8");
   const isAsync = args.async !== false && ctx.mode !== "print" && ctx.mode !== "json";
   const useJsonStream = isAsync && isPiHost(ctx.sessionManager);
   const useSession = isPiHost(ctx.sessionManager);
-  const sessionFile = useSession ? join6(OUT_DIR, `${runId}${SESSION_EXT}`) : null;
+  const sessionFile = useSession ? join9(OUT_DIR, `${runId}${SESSION_EXT}`) : null;
   const sessionArgs = sessionFile ? ["--session", sessionFile, "--session-dir", OUT_DIR] : ["--no-session"];
   const cliArgs = useJsonStream ? ["--mode", "json", ...sessionArgs, "--append-system-prompt", promptFile] : ["-p", ...sessionArgs, "--append-system-prompt", promptFile];
   const agentDef = AGENTS[args.agent];
@@ -17361,8 +21068,8 @@ Complete the task below.`, "utf8");
     modelId = parentModelId;
   }
   if (source === "role" && provider !== void 0 && modelId !== void 0) {
-    const registry3 = ctx.modelRegistry;
-    const found = registry3 ? registry3.find(provider, modelId) : void 0;
+    const registry4 = ctx.modelRegistry;
+    const found = registry4 ? registry4.find(provider, modelId) : void 0;
     if (!found) {
       logWarn("delegate", {
         event: "role-model-missing",
@@ -17430,8 +21137,8 @@ function waitForChild(child, signal, timeoutMs) {
   });
 }
 function fmtMinutes(ms) {
-  const m = ms / 6e4;
-  return Number.isInteger(m) ? `${m}m` : `${m.toFixed(1)}m`;
+  const m2 = ms / 6e4;
+  return Number.isInteger(m2) ? `${m2}m` : `${m2.toFixed(1)}m`;
 }
 function asyncWatchdogDescription(overrideAsyncMs) {
   const parts = [];
@@ -17572,7 +21279,7 @@ async function persistResult(runId, body) {
     await mkdir2(OUT_DIR, { recursive: true });
   } catch {
   }
-  const file = join6(OUT_DIR, `${runId}.out`);
+  const file = join9(OUT_DIR, `${runId}.out`);
   try {
     await writeFile2(file, body, "utf8");
     return file;
@@ -17637,12 +21344,13 @@ async function handleStatus(args, runtime, ctx) {
   const sentTokens = estimateTokens(coreMessages, coveredIds, imageTokens) + systemPromptTokens;
   const viewSentTokens = adjustedTokenCount(runtime.core, coreMessages, state, config, sentTokens, imageTokens, systemPromptTokens);
   const providerReal = ctx.getContextUsage?.()?.tokens ?? 0;
-  const anchorStale = usageAnchorPredatesCompression(entries);
+  const { predates, fresh, lastRealTokens, netReclaimed } = compressionAnchorStaleness(ctx.sessionManager.getBranch?.() ?? entries, state.blocks, defaultCountTokens, ctx.model);
+  const trustedHost = Math.max(0, lastRealTokens - (predates ? netReclaimed : 0));
   const turn = runtime.core.processTurn({
     messages: coreMessages,
     state,
     config,
-    tokenCount: anchorStale ? viewSentTokens : Math.max(viewSentTokens, providerReal)
+    tokenCount: Math.max(viewSentTokens, trustedHost)
   });
   const processed = turn.messages;
   const modelInfo = ctx.model;
@@ -17660,13 +21368,14 @@ async function handleStatus(args, runtime, ctx) {
   const ranges = viableRanges(nudge?.compressibleRanges ?? []);
   const protectedRanges = nudge?.protectedRanges ?? [];
   const extra = [];
-  if (providerReal > 0 && config.modelContextLimit > 0) {
+  if (trustedHost > 0 && config.modelContextLimit > 0) {
     const fmtK = (n) => n >= 1e3 ? `${(n / 1e3).toFixed(1)}k` : String(n);
     const estPct = Math.round(viewSentTokens / config.modelContextLimit * 100);
-    const realPct = Math.round(providerReal / config.modelContextLimit * 100);
+    const realPct = Math.round(trustedHost / config.modelContextLimit * 100);
+    const realLabel = !fresh && lastRealTokens > 0 ? "Last valid usage" : "Provider-reported";
     extra.push("");
     extra.push(
-      `Estimate: ${fmtK(viewSentTokens)} (${estPct}%)   |   Provider-reported: ${fmtK(providerReal)} (${realPct}%)`
+      `Estimate: ${fmtK(viewSentTokens)} (${estPct}%)   |   ${realLabel}: ${fmtK(trustedHost)} (${realPct}%)`
     );
   }
   if (nudge) {
@@ -17701,19 +21410,19 @@ ${extra.join("\n")}` : base;
 var CacheParams = typebox_exports.Object({
   detail: typebox_exports.Optional(typebox_exports.Union([typebox_exports.Literal("summary"), typebox_exports.Literal("full")], { description: '"summary" (default): totals, verdicts, notable folds, anomalous requests only. "full": every retained fold and line item.' }))
 });
-var num = (v) => typeof v === "number" && Number.isFinite(v) && v > 0 ? v : 0;
+var num = (v2) => typeof v2 === "number" && Number.isFinite(v2) && v2 > 0 ? v2 : 0;
 var refNum2 = (ref) => Number(ref.replace(/\D/g, "")) || 0;
 function cacheSamples(entries) {
   const out = [];
   for (const e of entries) {
     if (e.type !== "message") continue;
-    const m = e.message;
-    if (m?.role !== "assistant" || !m.usage) continue;
-    const read = num(m.usage.cacheRead);
-    const write = num(m.usage.cacheWrite);
-    const fresh = num(m.usage.input);
+    const m2 = e.message;
+    if (m2?.role !== "assistant" || !m2.usage) continue;
+    const read = num(m2.usage.cacheRead);
+    const write = num(m2.usage.cacheWrite);
+    const fresh = num(m2.usage.input);
     if (fresh + read + write <= 0) continue;
-    out.push({ at: Date.parse(e.timestamp) || 0, input: fresh + read + write, cached: read, output: num(m.usage.output) });
+    out.push({ at: Date.parse(e.timestamp) || 0, input: fresh + read + write, cached: read, output: num(m2.usage.output) });
   }
   return out;
 }
@@ -17728,11 +21437,11 @@ function foldEvents(state) {
     }
     return n;
   };
-  return [...state.blocks].sort((a, b) => a.createdAt - b.createdAt).map((b) => ({
-    at: b.createdAt,
-    tokensCompressed: b.compressedTokens,
-    summaryTokens: defaultCountTokens(b.summary || ""),
-    firstFoldStartTokens: prefixBefore(b.startRef)
+  return [...state.blocks].sort((a, b2) => a.createdAt - b2.createdAt).map((b2) => ({
+    at: b2.createdAt,
+    tokensCompressed: b2.compressedTokens,
+    summaryTokens: defaultCountTokens(b2.summary || ""),
+    firstFoldStartTokens: prefixBefore(b2.startRef)
   }));
 }
 async function cacheReportText(runtime, ctx, detail = "summary") {
@@ -17802,12 +21511,12 @@ async function handleRule(rule, runtime, ctx) {
 }
 
 // src/commands.ts
-import * as path7 from "node:path";
+import * as path10 from "path";
 
 // src/export.ts
-import { mkdirSync as mkdirSync2, writeFileSync } from "node:fs";
-import { promises as fs4 } from "node:fs";
-import * as path5 from "node:path";
+import { mkdirSync as mkdirSync3, writeFileSync as writeFileSync2 } from "fs";
+import { promises as fs6 } from "fs";
+import * as path8 from "path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 var ACP_STATE_SUFFIX = ".acp.json";
 function truncate3(text, max) {
@@ -17816,15 +21525,15 @@ function truncate3(text, max) {
 }
 function latestBlockTime(state) {
   let latest = 0;
-  for (const b of state.blocks) if (b.createdAt > latest) latest = b.createdAt;
+  for (const b2 of state.blocks) if (b2.createdAt > latest) latest = b2.createdAt;
   return latest;
 }
 function firstUserText(entries) {
   for (const e of entries) {
     if (e.type !== "message") continue;
-    const m = e.message;
-    if (m?.role !== "user") continue;
-    const text = extractText(m.content);
+    const m2 = e.message;
+    if (m2?.role !== "user") continue;
+    const text = extractText(m2.content);
     if (text.trim()) return text;
   }
   return void 0;
@@ -17835,13 +21544,13 @@ async function loadSession(jsonlPath, store) {
   const entries = sm.buildContextEntries();
   const state = await store.load(jsonlPath, id);
   const coreMessages = entriesToCoreMessages(entries);
-  const contextTokens = coreMessages.reduce((sum, m) => sum + defaultCountTokens(m.text ?? ""), 0);
+  const contextTokens = coreMessages.reduce((sum, m2) => sum + defaultCountTokens(m2.text ?? ""), 0);
   return { id, name: sm.getSessionName(), title: firstUserText(entries), entries, state, contextTokens };
 }
 async function loadAllSessions(sessionDir) {
   let names;
   try {
-    names = await fs4.readdir(sessionDir);
+    names = await fs6.readdir(sessionDir);
   } catch {
     return [];
   }
@@ -17851,11 +21560,11 @@ async function loadAllSessions(sessionDir) {
     if (!name.endsWith(ACP_STATE_SUFFIX)) continue;
     const jsonl = name.slice(0, -ACP_STATE_SUFFIX.length);
     try {
-      sessions.push(await loadSession(path5.join(sessionDir, jsonl), store));
+      sessions.push(await loadSession(path8.join(sessionDir, jsonl), store));
     } catch {
     }
   }
-  sessions.sort((a, b) => latestBlockTime(b.state) - latestBlockTime(a.state));
+  sessions.sort((a, b2) => latestBlockTime(b2.state) - latestBlockTime(a.state));
   return sessions;
 }
 async function exportSession(selector, opts, sessionDir) {
@@ -17891,8 +21600,8 @@ async function exportSession(selector, opts, sessionDir) {
     }
   });
   if (opts.output) {
-    mkdirSync2(path5.dirname(path5.resolve(opts.output)), { recursive: true });
-    writeFileSync(opts.output, markdown, "utf8");
+    mkdirSync3(path8.dirname(path8.resolve(opts.output)), { recursive: true });
+    writeFileSync2(opts.output, markdown, "utf8");
     return `written to ${opts.output}`;
   }
   return markdown;
@@ -17924,7 +21633,7 @@ function parseExportArgs(args) {
   return { selector, full, output, error };
 }
 
-// ../../../../../../tmp/billion-context-profile-validation/acp-kernel/dist/panel/index.js
+// ../main/node_modules/acp-kernel/dist/panel/index.js
 function topicFallback(summary) {
   const first = summary.split(/[.\n]/)[0] ?? "";
   const t = first.trim().replace(/^["'`]+/, "").trim();
@@ -17937,8 +21646,8 @@ function formatCompactTokens2(count) {
   if (count < 1e7) return `${(count / 1e6).toFixed(1)}M`;
   return `${Math.round(count / 1e6)}M`;
 }
-function num2(v) {
-  return typeof v === "number" && Number.isFinite(v) && v > 0 ? v : 0;
+function num2(v2) {
+  return typeof v2 === "number" && Number.isFinite(v2) && v2 > 0 ? v2 : 0;
 }
 function cacheHitStats(usages) {
   let cacheRead = 0;
@@ -17988,7 +21697,7 @@ function buildStatusPanel(input) {
   const displayTotal = tokenCount;
   const displayPct = limit > 0 ? Math.round(displayTotal / limit * 100) : 0;
   const sentPct = limit > 0 ? Math.round(sentTotal / limit * 100) : 0;
-  const activeBlocksList = state.blocks.filter((b) => b.active);
+  const activeBlocksList = state.blocks.filter((b2) => b2.active);
   const totalBlocksList = state.blocks;
   const lines = [];
   lines.push("\u256D\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256E");
@@ -18025,9 +21734,9 @@ function buildStatusPanel(input) {
     for (const cat of categories) {
       if (cat.value <= 0) continue;
       const pct2 = sentTotal > 0 ? Math.round(cat.value / sentTotal * 100) : 0;
-      const b = bar(cat.value, sentTotal);
+      const b2 = bar(cat.value, sentTotal);
       lines.push(
-        `  ${cat.label.padEnd(10)} ${b} ${String(pct2).padStart(3)}%  ${fmt2(cat.value)}`
+        `  ${cat.label.padEnd(10)} ${b2} ${String(pct2).padStart(3)}%  ${fmt2(cat.value)}`
       );
     }
   }
@@ -18060,12 +21769,12 @@ function buildStatusPanel(input) {
     lines.push(
       `Blocks: ${activeBlocksList.length} active / ${totalBlocksList.length} total (${fmt2(state.stats.tokensCompressed)} tokens compressed, cumulative)`
     );
-    for (const b of activeBlocksList) {
-      const topic = b.topic ? `: ${b.topic}` : `: ${topicFallback(b.summary || "")}`;
-      const summaryTok = defaultCountTokens(b.summary || "");
-      const origTok = b.compressedTokens > 0 ? b.compressedTokens : summaryTok;
+    for (const b2 of activeBlocksList) {
+      const topic = b2.topic ? `: ${b2.topic}` : `: ${topicFallback(b2.summary || "")}`;
+      const summaryTok = defaultCountTokens(b2.summary || "");
+      const origTok = b2.compressedTokens > 0 ? b2.compressedTokens : summaryTok;
       lines.push(
-        `  [${b.blockId}] T${b.tier} ${fmt2(origTok)}\u2192${fmt2(summaryTok)}${topic}`
+        `  [${b2.blockId}] T${b2.tier} ${fmt2(origTok)}\u2192${fmt2(summaryTok)}${topic}`
       );
     }
   } else if (totalBlocksList.length > 0) {
@@ -18085,8 +21794,7 @@ function buildStatusPanel(input) {
 }
 
 // src/fleet-inspector.ts
-import { openSync, fstatSync, readSync, closeSync } from "node:fs";
-import { Key, Markdown, matchesKey, truncateToWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
+import { openSync, fstatSync, readSync, closeSync } from "fs";
 var REFRESH_MS2 = 500;
 var MAX_TASK_LEN2 = 48;
 var SNAPSHOT_TAIL_BYTES = 4096;
@@ -18104,10 +21812,10 @@ function truncateText(s, max) {
 function formatDuration(ms) {
   const s = Math.max(0, Math.floor(ms / 1e3));
   if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m${String(s % 60).padStart(2, "0")}s`;
-  const h = Math.floor(m / 60);
-  return `${h}h${String(m % 60).padStart(2, "0")}m`;
+  const m2 = Math.floor(s / 60);
+  if (m2 < 60) return `${m2}m${String(s % 60).padStart(2, "0")}s`;
+  const h = Math.floor(m2 / 60);
+  return `${h}h${String(m2 % 60).padStart(2, "0")}m`;
 }
 function statusIcon(status) {
   switch (status) {
@@ -18162,13 +21870,13 @@ function readTailSync(file, maxBytes) {
 }
 function formatToolLabel(name, args) {
   const a = args && typeof args === "object" ? args : {};
-  const s = (v) => String(v ?? "");
+  const s = (v2) => String(v2 ?? "");
   switch (name) {
     case "read": {
-      const path8 = s(a.path ?? a.file_path);
+      const path11 = s(a.path ?? a.file_path);
       const offset = typeof a.offset === "number" ? a.offset : void 0;
       const limit = typeof a.limit === "number" ? a.limit : void 0;
-      let display = path8;
+      let display = path11;
       if (offset !== void 0 || limit !== void 0) {
         const start = offset ?? 1;
         const end = limit !== void 0 ? start + limit - 1 : "";
@@ -18191,13 +21899,13 @@ function formatToolLabel(name, args) {
     case "ls":
       return `ls ${s(a.path ?? ".")}`;
     default: {
-      let j = "";
+      let j2 = "";
       try {
-        j = JSON.stringify(args ?? {});
+        j2 = JSON.stringify(args ?? {});
       } catch {
-        j = String(args);
+        j2 = String(args);
       }
-      return `${name} ${j.length > 60 ? `${j.slice(0, 60)}\u2026` : j}`;
+      return `${name} ${j2.length > 60 ? `${j2.slice(0, 60)}\u2026` : j2}`;
     }
   }
 }
@@ -18216,34 +21924,34 @@ function parseSessionJsonl(raw) {
       continue;
     }
     if (obj.type !== "message") continue;
-    const m = obj.message;
-    if (!m) continue;
-    if (m.role === "user") {
-      for (const c of m.content ?? []) {
+    const m2 = obj.message;
+    if (!m2) continue;
+    if (m2.role === "user") {
+      for (const c of m2.content ?? []) {
         if (c.type === "text" && c.text?.trim()) blocks.push({ kind: "user", text: c.text });
       }
-    } else if (m.role === "assistant") {
-      for (const c of m.content ?? []) {
+    } else if (m2.role === "assistant") {
+      for (const c of m2.content ?? []) {
         if (c.type === "thinking" && c.thinking?.trim()) blocks.push({ kind: "thinking", text: c.thinking });
         else if (c.type === "text" && c.text?.trim()) blocks.push({ kind: "text", text: c.text });
         else if (c.type === "toolCall") blocks.push({ kind: "toolCall", name: c.name, text: "", args: c.arguments });
       }
-    } else if (m.role === "toolResult") {
-      const text = (m.content ?? []).map((c) => c.text ?? "").join("");
-      blocks.push({ kind: "toolResult", name: m.toolName, text, isError: !!m.isError });
+    } else if (m2.role === "toolResult") {
+      const text = (m2.content ?? []).map((c) => c.text ?? "").join("");
+      blocks.push({ kind: "toolResult", name: m2.toolName, text, isError: !!m2.isError });
     }
   }
   return blocks;
 }
-function padTo(line, w) {
-  return truncateToWidth(line, w, void 0, true);
+function padTo(line, w2) {
+  return truncateToWidth(line, w2, void 0, true);
 }
 function frame(body, width, theme) {
   const innerW = Math.max(0, width - 4);
   const bar2 = "\u2500".repeat(Math.max(0, width - 2));
   const top = theme.fg("border", `\u250C${bar2}\u2510`);
   const bottom = theme.fg("border", `\u2514${bar2}\u2518`);
-  const mid = body.map((l) => `${theme.fg("border", "\u2502")} ${padTo(l, innerW)} ${theme.fg("border", "\u2502")}`);
+  const mid = body.map((l3) => `${theme.fg("border", "\u2502")} ${padTo(l3, innerW)} ${theme.fg("border", "\u2502")}`);
   return [top, ...mid, bottom];
 }
 function renderListBody(rows, selIdx, theme, innerW) {
@@ -18282,45 +21990,45 @@ function renderTranscriptBlocks(blocks, theme, innerW) {
   const bar2 = (bgColor, content) => theme.bg(bgColor, truncateToWidth(content, innerW, void 0, true));
   let i = 0;
   while (i < blocks.length) {
-    const b = blocks[i];
-    if (!b) break;
-    switch (b.kind) {
+    const b2 = blocks[i];
+    if (!b2) break;
+    switch (b2.kind) {
       case "meta":
-        out.push(truncateToWidth(theme.fg("dim", `\xB7 ${b.text}`), innerW));
+        out.push(truncateToWidth(theme.fg("dim", `\xB7 ${b2.text}`), innerW));
         i++;
         break;
       case "user":
-        for (const l of wrapTextWithAnsi(b.text, wrapW)) out.push(bar2("userMessageBg", theme.fg("userMessageText", l)));
+        for (const l3 of wrapTextWithAnsi(b2.text, wrapW)) out.push(bar2("userMessageBg", theme.fg("userMessageText", l3)));
         i++;
         break;
       case "thinking": {
         try {
-          const md = new Markdown(b.text, 0, 0, buildMarkdownTheme(theme), { color: (t) => theme.fg("thinkingText", t), italic: true });
-          for (const l of md.render(wrapW)) out.push(truncateToWidth(l, innerW));
+          const md = new Markdown(b2.text, 0, 0, buildMarkdownTheme(theme), { color: (t) => theme.fg("thinkingText", t), italic: true });
+          for (const l3 of md.render(wrapW)) out.push(truncateToWidth(l3, innerW));
         } catch {
-          for (const l of wrapTextWithAnsi(b.text, wrapW)) out.push(truncateToWidth(theme.fg("thinkingText", l), innerW));
+          for (const l3 of wrapTextWithAnsi(b2.text, wrapW)) out.push(truncateToWidth(theme.fg("thinkingText", l3), innerW));
         }
         i++;
         break;
       }
       case "text": {
         try {
-          const md = new Markdown(b.text.trim(), 0, 0, buildMarkdownTheme(theme));
-          for (const l of md.render(wrapW)) out.push(truncateToWidth(l, innerW));
+          const md = new Markdown(b2.text.trim(), 0, 0, buildMarkdownTheme(theme));
+          for (const l3 of md.render(wrapW)) out.push(truncateToWidth(l3, innerW));
         } catch {
-          for (const l of wrapTextWithAnsi(b.text, wrapW)) out.push(truncateToWidth(theme.fg("text", l), innerW));
+          for (const l3 of wrapTextWithAnsi(b2.text, wrapW)) out.push(truncateToWidth(theme.fg("text", l3), innerW));
         }
         i++;
         break;
       }
       case "toolCall": {
         const res = blocks[i + 1]?.kind === "toolResult" ? blocks[i + 1] : void 0;
-        pushToolGroup(out, bar2, theme, b.name ?? "?", b.args, res);
+        pushToolGroup(out, bar2, theme, b2.name ?? "?", b2.args, res);
         i += res ? 2 : 1;
         break;
       }
       case "toolResult":
-        pushToolGroup(out, bar2, theme, b.name ?? "?", void 0, b);
+        pushToolGroup(out, bar2, theme, b2.name ?? "?", void 0, b2);
         i++;
         break;
     }
@@ -18338,7 +22046,7 @@ function pushToolGroup(out, bar2, theme, name, args, result) {
   if (result) {
     const rawLines = result.text.replace(/\n+$/, "").split("\n");
     const shown = rawLines.slice(0, MAX_RESULT_LINES);
-    for (const l of shown) out.push(bar2(bgc, theme.fg("toolOutput", l)));
+    for (const l3 of shown) out.push(bar2(bgc, theme.fg("toolOutput", l3)));
     if (rawLines.length > shown.length) out.push(bar2(bgc, theme.fg("dim", `\u2026 +${rawLines.length - shown.length} more`)));
   }
 }
@@ -18350,7 +22058,7 @@ function buildSnapshotText(runs2, now) {
     if (row.run.status === "running") {
       const tail = readTailSync(row.run.activityFile, SNAPSHOT_TAIL_BYTES).trimEnd();
       if (tail) {
-        for (const l of tail.split("\n").slice(-8)) parts.push(`    ${l}`);
+        for (const l3 of tail.split("\n").slice(-8)) parts.push(`    ${l3}`);
       }
     }
   }
@@ -18593,9 +22301,9 @@ async function openFleetInspector(ctx) {
 }
 
 // src/setup-subagent-tools.ts
-import * as fs5 from "node:fs";
-import * as os from "node:os";
-import * as path6 from "node:path";
+import * as fs7 from "fs";
+import * as os2 from "os";
+import * as path9 from "path";
 var ACP_TOOLS3 = ["compress", "decompress", "search_context", "acp_status"];
 var DELEGATE_STAND_DOWN_MESSAGE = [
   "[billion-context-pi] pi-subagents detected \u2014 acp_delegate has been automatically disabled to avoid two overlapping sub-agent systems.",
@@ -18605,11 +22313,11 @@ var DELEGATE_STAND_DOWN_MESSAGE = [
 function resolveAgentDir() {
   const envDir = process.env.PI_CODING_AGENT_DIR;
   if (envDir) {
-    if (envDir === "~") return os.homedir();
-    if (envDir.startsWith("~/")) return path6.join(os.homedir(), envDir.slice(2));
+    if (envDir === "~") return os2.homedir();
+    if (envDir.startsWith("~/")) return path9.join(os2.homedir(), envDir.slice(2));
     return envDir;
   }
-  return path6.join(os.homedir(), CONFIG_DIR_NAME, "agent");
+  return path9.join(os2.homedir(), CONFIG_DIR_NAME, "agent");
 }
 function parseFrontmatterTools(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -18633,22 +22341,22 @@ function parseFrontmatterTools(content) {
   return tools ? { name, tools } : { name };
 }
 function npmInstallAt(base) {
-  const dir = path6.join(base, "npm", "node_modules", "pi-subagents");
-  return fs5.existsSync(path6.join(dir, "package.json")) ? dir : null;
+  const dir = path9.join(base, "npm", "node_modules", "pi-subagents");
+  return fs7.existsSync(path9.join(dir, "package.json")) ? dir : null;
 }
 function extensionInstallUnder(root) {
   let entries;
   try {
-    entries = fs5.readdirSync(root, { withFileTypes: true });
+    entries = fs7.readdirSync(root, { withFileTypes: true });
   } catch {
     return null;
   }
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const pkgPath = path6.join(root, entry.name, "package.json");
+    const pkgPath = path9.join(root, entry.name, "package.json");
     try {
-      if (JSON.parse(fs5.readFileSync(pkgPath, "utf-8")).name === "pi-subagents") {
-        return path6.join(root, entry.name);
+      if (JSON.parse(fs7.readFileSync(pkgPath, "utf-8")).name === "pi-subagents") {
+        return path9.join(root, entry.name);
       }
     } catch {
     }
@@ -18656,20 +22364,20 @@ function extensionInstallUnder(root) {
   return null;
 }
 function findPiSubagentsInstall(agentDir, cwd) {
-  return npmInstallAt(agentDir) ?? npmInstallAt(path6.join(cwd, CONFIG_DIR_NAME)) ?? extensionInstallUnder(path6.join(agentDir, "extensions")) ?? extensionInstallUnder(path6.join(cwd, CONFIG_DIR_NAME, "extensions"));
+  return npmInstallAt(agentDir) ?? npmInstallAt(path9.join(cwd, CONFIG_DIR_NAME)) ?? extensionInstallUnder(path9.join(agentDir, "extensions")) ?? extensionInstallUnder(path9.join(cwd, CONFIG_DIR_NAME, "extensions"));
 }
 function findPiSubagentsInstalls(agentDir, cwd) {
   const pick = (paths) => paths.filter((p) => p !== null);
   return {
-    user: pick([npmInstallAt(agentDir), extensionInstallUnder(path6.join(agentDir, "extensions"))]),
-    project: pick([npmInstallAt(path6.join(cwd, CONFIG_DIR_NAME)), extensionInstallUnder(path6.join(cwd, CONFIG_DIR_NAME, "extensions"))])
+    user: pick([npmInstallAt(agentDir), extensionInstallUnder(path9.join(agentDir, "extensions"))]),
+    project: pick([npmInstallAt(path9.join(cwd, CONFIG_DIR_NAME)), extensionInstallUnder(path9.join(cwd, CONFIG_DIR_NAME, "extensions"))])
   };
 }
 function discoverBuiltinAgents(installDir) {
-  const agentsDir = path6.join(installDir, "agents");
+  const agentsDir = path9.join(installDir, "agents");
   let entries;
   try {
-    entries = fs5.readdirSync(agentsDir, { withFileTypes: true });
+    entries = fs7.readdirSync(agentsDir, { withFileTypes: true });
   } catch {
     return [];
   }
@@ -18677,7 +22385,7 @@ function discoverBuiltinAgents(installDir) {
   for (const entry of entries) {
     if (!entry.isFile() || !entry.name.endsWith(".md")) continue;
     try {
-      const result = parseFrontmatterTools(fs5.readFileSync(path6.join(agentsDir, entry.name), "utf-8"));
+      const result = parseFrontmatterTools(fs7.readFileSync(path9.join(agentsDir, entry.name), "utf-8"));
       if (result) parsed.push(result);
     } catch {
     }
@@ -18694,11 +22402,11 @@ function desiredTools(baseTools) {
 function ensureSubagentAcpTools(settingsPath, options) {
   const agentDir = options?.agentDir ?? resolveAgentDir();
   const cwd = options?.cwd ?? process.cwd();
-  const path_ = settingsPath ?? path6.join(agentDir, "settings.json");
+  const path_ = settingsPath ?? path9.join(agentDir, "settings.json");
   let installDir;
   if (options?.installDir) {
-    installDir = path6.resolve(options.installDir);
-    if (!fs5.existsSync(path6.join(installDir, "package.json"))) {
+    installDir = path9.resolve(options.installDir);
+    if (!fs7.existsSync(path9.join(installDir, "package.json"))) {
       return { path: path_, action: "failed", reason: `not a package: ${installDir}` };
     }
   } else {
@@ -18714,7 +22422,7 @@ function ensureSubagentAcpTools(settingsPath, options) {
   }
   let settingsRaw;
   try {
-    settingsRaw = fs5.readFileSync(path_, "utf-8");
+    settingsRaw = fs7.readFileSync(path_, "utf-8");
   } catch {
     return { path: path_, action: "skipped", reason: "not found" };
   }
@@ -18732,8 +22440,8 @@ function ensureSubagentAcpTools(settingsPath, options) {
   let changed = false;
   const overrides = {};
   for (const [name, existing] of Object.entries(existingOverrides)) overrides[name] = existing ?? {};
-  const frontmatterByName = new Map(builtins.map((b) => [b.name, b.tools]));
-  for (const name of builtins.map((b) => b.name)) {
+  const frontmatterByName = new Map(builtins.map((b2) => [b2.name, b2.tools]));
+  for (const name of builtins.map((b2) => b2.name)) {
     const existing = overrides[name];
     const baseTools = existing?.tools && Array.isArray(existing.tools) && existing.tools.length > 0 ? existing.tools : frontmatterByName.get(name);
     if (baseTools === void 0) continue;
@@ -18752,37 +22460,37 @@ function ensureSubagentAcpTools(settingsPath, options) {
   settings2.subagents = subagents;
   const backupPath = `${path_}.acp-bak`;
   try {
-    if (!fs5.existsSync(backupPath)) fs5.copyFileSync(path_, backupPath);
+    if (!fs7.existsSync(backupPath)) fs7.copyFileSync(path_, backupPath);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { path: path_, action: "failed", reason: `backup failed: ${message}` };
   }
-  const expectedMtimeMs = fs5.statSync(path_).mtimeMs;
+  const expectedMtimeMs = fs7.statSync(path_).mtimeMs;
   const tmpPath = `${path_}.tmp-${process.pid}`;
   try {
-    fs5.writeFileSync(tmpPath, JSON.stringify(settings2, null, 2) + "\n", "utf-8");
-    if (fs5.statSync(path_).mtimeMs !== expectedMtimeMs) {
-      fs5.unlinkSync(tmpPath);
+    fs7.writeFileSync(tmpPath, JSON.stringify(settings2, null, 2) + "\n", "utf-8");
+    if (fs7.statSync(path_).mtimeMs !== expectedMtimeMs) {
+      fs7.unlinkSync(tmpPath);
       return { path: path_, action: "failed", reason: "settings.json changed during write" };
     }
-    fs5.renameSync(tmpPath, path_);
-    const written = JSON.parse(fs5.readFileSync(path_, "utf-8"));
+    fs7.renameSync(tmpPath, path_);
+    const written = JSON.parse(fs7.readFileSync(path_, "utf-8"));
     const writtenSub = written.subagents;
     const writtenOverrides = writtenSub?.agentOverrides ?? {};
-    for (const b of builtins) {
-      const entry = writtenOverrides[b.name];
+    for (const b2 of builtins) {
+      const entry = writtenOverrides[b2.name];
       const tools = entry?.tools ?? [];
-      if (frontmatterByName.get(b.name) !== void 0 && !ACP_TOOLS3.every((t) => tools.includes(t))) {
-        fs5.copyFileSync(backupPath, path_);
+      if (frontmatterByName.get(b2.name) !== void 0 && !ACP_TOOLS3.every((t) => tools.includes(t))) {
+        fs7.copyFileSync(backupPath, path_);
         return { path: path_, action: "failed", reason: "post-write verification failed" };
       }
     }
     return { path: path_, action: "updated" };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    if (fs5.existsSync(backupPath)) {
+    if (fs7.existsSync(backupPath)) {
       try {
-        fs5.copyFileSync(backupPath, path_);
+        fs7.copyFileSync(backupPath, path_);
       } catch {
       }
     }
@@ -18795,9 +22503,9 @@ function cacheUsageSamples(entries) {
   const out = [];
   for (const e of entries) {
     if (e.type !== "message") continue;
-    const m = e.message;
-    if (m?.role !== "assistant" || !m.usage) continue;
-    out.push({ input: m.usage.input ?? 0, cacheRead: m.usage.cacheRead ?? 0, cacheWrite: m.usage.cacheWrite ?? 0 });
+    const m2 = e.message;
+    if (m2?.role !== "assistant" || !m2.usage) continue;
+    out.push({ input: m2.usage.input ?? 0, cacheRead: m2.usage.cacheRead ?? 0, cacheWrite: m2.usage.cacheWrite ?? 0 });
   }
   return out;
 }
@@ -18968,7 +22676,7 @@ function makeCommands(runtime, pi) {
             return;
           }
           const { state, coreMessages } = await runtime.stateFor(ctx);
-          const block = state.blocks.find((b) => b.blockId === blockId);
+          const block = state.blocks.find((b2) => b2.blockId === blockId);
           if (!block) {
             ctx.ui.notify(`Block ${blockId} not found.`);
             return;
@@ -19000,7 +22708,7 @@ ${text}`);
             ctx.ui.notify("No matching blocks.");
             return;
           }
-          const lines = hits.map((b) => `[${b.blockId}] (t${b.tier}) ${b.topic ?? ""}`.trim());
+          const lines = hits.map((b2) => `[${b2.blockId}] (t${b2.tier}) ${b2.topic ?? ""}`.trim());
           ctx.ui.notify(lines.join("\n"));
         }
       }
@@ -19043,23 +22751,24 @@ function resolveSessionDir(sm) {
   const dir = typeof sm.getSessionDir === "function" ? sm.getSessionDir() : void 0;
   if (dir) return dir;
   const file = sm.getSessionFile();
-  return file ? path7.dirname(file) : void 0;
+  return file ? path10.dirname(file) : void 0;
 }
 async function statusReport(runtime, ctx) {
   const { state, coreMessages, entries } = await runtime.stateFor(ctx);
   const config = applyOutputHeadroom(runtime.configFor(ctx), ctx.model, resolveOutputHeadroomCap(runtime.adapter.outputHeadroomMaxPct));
   const realUsage = ctx.getContextUsage?.();
-  const anchorStale = usageAnchorPredatesCompression(entries ?? []);
+  const { predates, fresh, lastRealTokens, netReclaimed } = compressionAnchorStaleness(ctx.sessionManager.getBranch?.() ?? entries ?? [], state.blocks, defaultCountTokens, ctx.model);
+  const trustedHost = Math.max(0, lastRealTokens - (predates ? netReclaimed : 0));
   const systemPromptText = getSystemPromptText(ctx);
   const systemPromptTokens = systemPromptText ? defaultCountTokens(systemPromptText) : 0;
   const imageTokens = collectImageTokens(entries, modelSupportsImages(ctx.model));
-  const imageTokensTotal = [...imageTokens.values()].reduce((a, b) => a + b, 0);
-  const thinkingTokensTotal = coreMessages.reduce((sum, m) => sum + (m.thinkingTokens ?? 0), 0);
-  const sessionTokens = !anchorStale && realUsage?.tokens && realUsage.tokens > 0 ? realUsage.tokens : defaultCountTokens(coreMessages.map((m) => m.text ?? "").join("\n")) + imageTokensTotal + thinkingTokensTotal;
+  const imageTokensTotal = [...imageTokens.values()].reduce((a, b2) => a + b2, 0);
+  const thinkingTokensTotal = coreMessages.reduce((sum, m2) => sum + (m2.thinkingTokens ?? 0), 0);
+  const sessionTokens = !predates && trustedHost > 0 ? trustedHost : defaultCountTokens(coreMessages.map((m2) => m2.text ?? "").join("\n")) + imageTokensTotal + thinkingTokensTotal;
   const coveredIds = collectCoveredMessageIds(state);
   const sentTokens = estimateTokens(coreMessages, coveredIds, imageTokens) + systemPromptTokens;
   const viewSentTokens = adjustedTokenCount(runtime.core, coreMessages, state, config, sentTokens, imageTokens, systemPromptTokens);
-  const turn = runtime.core.processTurn({ messages: coreMessages, state, config, tokenCount: anchorStale ? viewSentTokens : Math.max(viewSentTokens, realUsage?.tokens ?? 0) });
+  const turn = runtime.core.processTurn({ messages: coreMessages, state, config, tokenCount: Math.max(viewSentTokens, trustedHost) });
   const versionStr = "0.1.83" ? `billion-context-pi@${"0.1.83"} \xB7 pack: ${resolveSurfaceMeta(runtime.adapter, ctx?.cwd ?? process.cwd(), ctx?.model?.provider, ctx?.model?.id).pack}` : void 0;
   let text = buildStatusPanel({
     version: versionStr,
@@ -19068,7 +22777,7 @@ async function statusReport(runtime, ctx) {
     state: turn.state,
     nudge: turn.nudge,
     modelContextLimit: config.modelContextLimit,
-    unprunedTokens: coreMessages.reduce((sum, m) => sum + defaultCountTokens(m.text ?? "") + (m.thinkingTokens ?? 0) + (imageTokens.get(m.id) ?? 0), 0),
+    unprunedTokens: coreMessages.reduce((sum, m2) => sum + defaultCountTokens(m2.text ?? "") + (m2.thinkingTokens ?? 0) + (imageTokens.get(m2.id) ?? 0), 0),
     cacheUsages: cacheUsageSamples(entries ?? [])
   });
   const delegateUsage = getDelegateUsage();
@@ -19088,17 +22797,17 @@ function sigText(content) {
   if (!Array.isArray(content)) return "";
   const parts = [];
   for (const block of content) {
-    const b = block;
-    if (b?.type === "text" && typeof b.text === "string") parts.push(b.text);
+    const b2 = block;
+    if (b2?.type === "text" && typeof b2.text === "string") parts.push(b2.text);
   }
   return parts.join("\n");
 }
 function weakMessageSig(message) {
-  const m = message ?? {};
-  const role = typeof m.role === "string" ? m.role : "";
-  const customType = typeof m.customType === "string" ? m.customType : "";
-  const toolCallId = typeof m.toolCallId === "string" ? m.toolCallId : "";
-  const text = sigText(m.content);
+  const m2 = message ?? {};
+  const role = typeof m2.role === "string" ? m2.role : "";
+  const customType = typeof m2.customType === "string" ? m2.customType : "";
+  const toolCallId = typeof m2.toolCallId === "string" ? m2.toolCallId : "";
+  const text = sigText(m2.content);
   return [role, customType, toolCallId, String(text.length), text.slice(0, 32), text.length > 32 ? text.slice(-32) : ""].join("\0");
 }
 function entryAsLiveShape(entry) {
@@ -19240,8 +22949,8 @@ function sanitizeToolPairing(messages) {
     for (const raw of messages) {
       const msg = raw;
       if (!msg || typeof msg !== "object" || msg.role !== "assistant" || !Array.isArray(msg.content)) continue;
-      for (const b of msg.content) {
-        if (b && b.type === "toolCall" && typeof b.id === "string" && b.id.length > 0) callIds.add(b.id);
+      for (const b2 of msg.content) {
+        if (b2 && b2.type === "toolCall" && typeof b2.id === "string" && b2.id.length > 0) callIds.add(b2.id);
       }
     }
     let changed = false;
@@ -19302,12 +23011,12 @@ function findDegenerateRuns(text, minRun) {
   let k = 0;
   while (k < chars.length) {
     const ch = chars[k];
-    let m = k + 1;
-    while (m < chars.length && chars[m] === ch) m++;
-    const count = m - k;
+    let m2 = k + 1;
+    while (m2 < chars.length && chars[m2] === ch) m2++;
+    const count = m2 - k;
     if (count >= minRun) runs2.push({ char: ch, count, index: utf16 });
     utf16 += count * ch.length;
-    k = m;
+    k = m2;
   }
   return runs2;
 }
@@ -19357,24 +23066,24 @@ function collapseAssistantDegeneration(messages, cfg) {
       const runs2 = [];
       let blockChanged = false;
       const nc = c.map((p) => {
-        const b = p;
-        if (b?.type === "text" && typeof b.text === "string") {
-          const r = findDegenerateRuns(b.text, minRun);
+        const b2 = p;
+        if (b2?.type === "text" && typeof b2.text === "string") {
+          const r = findDegenerateRuns(b2.text, minRun);
           if (r.length > 0) {
             blockChanged = true;
             blocks.push("text");
             runs2.push(...r);
-            return { ...b, text: applyRuns(b.text, r, minRun) };
+            return { ...b2, text: applyRuns(b2.text, r, minRun) };
           }
           return p;
         }
-        if (b?.type === "thinking" && typeof b.thinking === "string") {
-          const r = findDegenerateRuns(b.thinking, minRun);
+        if (b2?.type === "thinking" && typeof b2.thinking === "string") {
+          const r = findDegenerateRuns(b2.thinking, minRun);
           if (r.length > 0) {
             blockChanged = true;
             blocks.push("thinking");
             runs2.push(...r);
-            return { ...b, thinking: applyRuns(b.thinking, r, minRun) };
+            return { ...b2, thinking: applyRuns(b2.thinking, r, minRun) };
           }
           return p;
         }
@@ -19402,9 +23111,9 @@ function lastAssistantRuns(messages, minRun) {
         runs2.push(...findDegenerateRuns(c, minRun));
       } else if (Array.isArray(c)) {
         for (const p of c) {
-          const b = p;
-          if (b?.type === "text" && typeof b.text === "string") runs2.push(...findDegenerateRuns(b.text, minRun));
-          else if (b?.type === "thinking" && typeof b.thinking === "string") runs2.push(...findDegenerateRuns(b.thinking, minRun));
+          const b2 = p;
+          if (b2?.type === "text" && typeof b2.text === "string") runs2.push(...findDegenerateRuns(b2.text, minRun));
+          else if (b2?.type === "thinking" && typeof b2.thinking === "string") runs2.push(...findDegenerateRuns(b2.thinking, minRun));
         }
       }
       return runs2.length > 0 ? runs2 : null;
@@ -19415,7 +23124,7 @@ function lastAssistantRuns(messages, minRun) {
   }
 }
 function degenerationNotice(runs2) {
-  const sorted = [...runs2].sort((a, b) => b.count - a.count);
+  const sorted = [...runs2].sort((a, b2) => b2.count - a.count);
   const top = sorted[0];
   const extra = sorted.length > 1 ? ` and ${sorted.length - 1} other repeated segment(s)` : "";
   return {
@@ -19430,7 +23139,7 @@ function degenerationNotice(runs2) {
   };
 }
 
-// ../../../../../../tmp/billion-context-profile-validation/acp-kernel/dist/wire/index.js
+// ../main/node_modules/acp-kernel/dist/wire/index.js
 import { createHash as createHash3 } from "crypto";
 function hashId(s) {
   return createHash3("sha256").update(s, "utf8").digest("hex").slice(0, 16);
@@ -19453,8 +23162,8 @@ function createSubagentNamespaces() {
 }
 var defaultNamespaces = createSubagentNamespaces();
 var IMAGE_PLACEHOLDER = "[image]";
-function isObj(v) {
-  return typeof v === "object" && v !== null;
+function isObj(v2) {
+  return typeof v2 === "object" && v2 !== null;
 }
 function isImagePart(protocol, part) {
   if (!isObj(part)) return false;
@@ -19497,7 +23206,7 @@ function stripNestedImages(protocol, part) {
     const kept = inner.filter((p) => !isGoogleNestedImage(p));
     const removed = inner.length - kept.length;
     if (removed === 0) return { part, removed: 0 };
-    const { parts: _, ...rest } = fr;
+    const { parts: _2, ...rest } = fr;
     return {
       part: {
         ...part,
@@ -19573,16 +23282,16 @@ function stripHistoricalImages(body, protocol, keepRecent) {
   const cutoff = messages.length - recentCount;
   let removed = 0;
   let touched = false;
-  const nextMessages = messages.map((m, i) => {
-    if (i < cutoff && isObj(m) && Array.isArray(m.content)) {
-      const r = stripParts(protocol, m.content);
+  const nextMessages = messages.map((m2, i) => {
+    if (i < cutoff && isObj(m2) && Array.isArray(m2.content)) {
+      const r = stripParts(protocol, m2.content);
       if (r) {
         removed += r.removed;
         touched = true;
-        return { ...m, content: r.parts };
+        return { ...m2, content: r.parts };
       }
     }
-    return m;
+    return m2;
   });
   if (!touched) return { body, removed: 0 };
   return { body: { ...body, messages: nextMessages }, removed };
@@ -19613,7 +23322,7 @@ function applyStripImages(body, api, settings2) {
 }
 
 // src/tool-guardrails.ts
-import { createHash as createHash4 } from "node:crypto";
+import { createHash as createHash4 } from "crypto";
 function isBashToolResult(e) {
   return e.toolName === "bash";
 }
@@ -19622,9 +23331,9 @@ function isBashToolCall(event) {
 }
 function resolveBashTimeout(input, defaultTimeout) {
   if (input.timeout !== void 0) return void 0;
-  const d = defaultTimeout ?? DEFAULT_TOOL_BASH_TIMEOUT;
-  if (!Number.isFinite(d) || d <= 0) return void 0;
-  return d;
+  const d2 = defaultTimeout ?? DEFAULT_TOOL_BASH_TIMEOUT;
+  if (!Number.isFinite(d2) || d2 <= 0) return void 0;
+  return d2;
 }
 function capToolOutput(content, maxBytes, fullPath) {
   const max = maxBytes ?? DEFAULT_TOOL_OUTPUT_MAX_BYTES;
@@ -19648,8 +23357,8 @@ var TIMEOUT_RE = /Command timed out after (\d+) seconds/;
 function detectBashTimeout(content) {
   for (const c of content) {
     if (c.type !== "text") continue;
-    const m = c.text.match(TIMEOUT_RE);
-    if (m) return Number(m[1]);
+    const m2 = c.text.match(TIMEOUT_RE);
+    if (m2) return Number(m2[1]);
   }
   return void 0;
 }
@@ -19673,8 +23382,8 @@ function keepHead(str, maxBytes) {
   if (buf.length <= maxBytes) return str;
   let end = maxBytes;
   while (end > 0) {
-    const b = buf[end];
-    if (b === void 0 || (b & 192) !== 128) break;
+    const b2 = buf[end];
+    if (b2 === void 0 || (b2 & 192) !== 128) break;
     end--;
   }
   let head = buf.subarray(0, end).toString("utf8");
@@ -19706,10 +23415,10 @@ function canonicalStringify(value) {
     }
   }
   if (Array.isArray(value)) {
-    return `[${value.map((v) => canonicalStringify(v)).join(",")}]`;
+    return `[${value.map((v2) => canonicalStringify(v2)).join(",")}]`;
   }
-  const entries = Object.entries(value).filter(([, v]) => v !== void 0).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0);
-  return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${canonicalStringify(v)}`).join(",")}}`;
+  const entries = Object.entries(value).filter(([, v2]) => v2 !== void 0).sort(([a], [b2]) => a < b2 ? -1 : a > b2 ? 1 : 0);
+  return `{${entries.map(([k, v2]) => `${JSON.stringify(k)}:${canonicalStringify(v2)}`).join(",")}}`;
 }
 function repetitionFingerprint(toolName, input) {
   const payload = `${toolName}\0${canonicalStringify(input ?? {})}`;
@@ -19816,18 +23525,18 @@ function wireToolGuardrails(pi, runtime) {
     if (event.source === "extension") return;
     trackers.get(ctx.sessionManager.getSessionId())?.reset();
   });
-  pi.on("session_shutdown", (_e, ctx) => {
+  pi.on("session_shutdown", (_e2, ctx) => {
     trackers.delete(ctx.sessionManager.getSessionId());
   });
 }
 
 // src/update.ts
-import { readFile as readFile2, writeFile as writeFile3, mkdir as mkdir3, access } from "node:fs/promises";
-import { join as join9, dirname as dirname8 } from "node:path";
-import { fileURLToPath } from "node:url";
-import { execFile } from "node:child_process";
-import { homedir as homedir6 } from "node:os";
-import { createHash as createHash5 } from "node:crypto";
+import { readFile as readFile2, writeFile as writeFile3, mkdir as mkdir3, access } from "fs/promises";
+import { join as join12, dirname as dirname11 } from "path";
+import { fileURLToPath as fileURLToPath3 } from "url";
+import { execFile } from "child_process";
+import { homedir as homedir8 } from "os";
+import { createHash as createHash5 } from "crypto";
 var PACKAGE_NAME = "billion-context-pi";
 var registryUrl = (tag) => `https://registry.npmjs.org/${PACKAGE_NAME}/${encodeURIComponent(tag)}`;
 var SEMVER_RE = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z-.]+)?$/;
@@ -19837,10 +23546,10 @@ function locationKey(location) {
 }
 var throttleFileFor = (extDir) => {
   if (process.env.ACP_UPDATE_THROTTLE_FILE) return process.env.ACP_UPDATE_THROTTLE_FILE;
-  const base = join9(homedir6(), CONFIG_DIR_NAME, "agent");
-  return extDir ? join9(base, `.billion-context-pi-update-check-${locationKey(extDir)}`) : join9(base, ".billion-context-pi-update-check");
+  const base = join12(homedir8(), CONFIG_DIR_NAME, "agent");
+  return extDir ? join12(base, `.billion-context-pi-update-check-${locationKey(extDir)}`) : join12(base, ".billion-context-pi-update-check");
 };
-var readOnlyMarkerFile = (extDir) => join9(homedir6(), CONFIG_DIR_NAME, "agent", `.billion-context-pi-readonly-${locationKey(extDir)}`);
+var readOnlyMarkerFile = (extDir) => join12(homedir8(), CONFIG_DIR_NAME, "agent", `.billion-context-pi-readonly-${locationKey(extDir)}`);
 var updateInFlight = false;
 var runNpm = async (args, opts) => {
   return new Promise((resolve5) => {
@@ -19905,23 +23614,23 @@ function isVersionNewer(latest, current) {
   if (!next || !prev) return false;
   for (let i = 0; i < 3; i++) {
     const a = next.parts[i] ?? 0;
-    const b = prev.parts[i] ?? 0;
-    if (a !== b) return a > b;
+    const b2 = prev.parts[i] ?? 0;
+    if (a !== b2) return a > b2;
   }
   if (!next.pre.length && prev.pre.length) return true;
   if (next.pre.length && !prev.pre.length) return false;
   for (let i = 0; i < Math.max(next.pre.length, prev.pre.length); i++) {
     const a = next.pre[i];
-    const b = prev.pre[i];
+    const b2 = prev.pre[i];
     if (a === void 0) return false;
-    if (b === void 0) return true;
-    if (a === b) continue;
+    if (b2 === void 0) return true;
+    if (a === b2) continue;
     const aNumber = /^\d+$/.test(a) ? Number(a) : void 0;
-    const bNumber = /^\d+$/.test(b) ? Number(b) : void 0;
+    const bNumber = /^\d+$/.test(b2) ? Number(b2) : void 0;
     if (aNumber !== void 0 && bNumber !== void 0) return aNumber > bNumber;
     if (aNumber !== void 0) return false;
     if (bNumber !== void 0) return true;
-    return a > b;
+    return a > b2;
   }
   return false;
 }
@@ -19943,7 +23652,7 @@ async function readLastCheck(throttle) {
 }
 async function writeLastCheck(timestamp, throttle) {
   try {
-    await mkdir3(dirname8(throttle), { recursive: true });
+    await mkdir3(dirname11(throttle), { recursive: true });
     await writeFile3(throttle, String(timestamp), "utf-8");
   } catch {
   }
@@ -19958,34 +23667,34 @@ async function isReadOnlyLocation(extDir) {
 }
 async function markReadOnlyLocation(extDir) {
   try {
-    await mkdir3(dirname8(readOnlyMarkerFile(extDir)), { recursive: true });
+    await mkdir3(dirname11(readOnlyMarkerFile(extDir)), { recursive: true });
     await writeFile3(readOnlyMarkerFile(extDir), String(Date.now()), "utf-8");
   } catch {
   }
 }
-async function readPackageJson(path8) {
+async function readPackageJson(path11) {
   try {
-    const data = JSON.parse(await readFile2(path8, "utf-8"));
+    const data = JSON.parse(await readFile2(path11, "utf-8"));
     return data && typeof data === "object" ? data : void 0;
   } catch {
     return void 0;
   }
 }
 function findNpmRoot(extDir) {
-  let dir = dirname8(extDir);
+  let dir = dirname11(extDir);
   for (; ; ) {
-    if (dir.endsWith("node_modules")) return dirname8(dir);
-    const parent = dirname8(dir);
+    if (dir.endsWith("node_modules")) return dirname11(dir);
+    const parent = dirname11(dir);
     if (parent === dir) return void 0;
     dir = parent;
   }
 }
 async function findExtensionDir() {
-  let dir = dirname8(fileURLToPath(import.meta.url));
+  let dir = dirname11(fileURLToPath3(import.meta.url));
   for (; ; ) {
-    const pkg = await readPackageJson(join9(dir, "package.json"));
+    const pkg = await readPackageJson(join12(dir, "package.json"));
     if (pkg?.name === PACKAGE_NAME) return dir;
-    const parent = dirname8(dir);
+    const parent = dirname11(dir);
     if (parent === dir) return void 0;
     dir = parent;
   }
@@ -19994,25 +23703,25 @@ var PERMISSION_ERROR_RE = /EACCES|EPERM|permission denied|operation not permitte
 function declaredEntries(pkg) {
   const dot = pkg.exports?.["."];
   const exportEntry = typeof dot === "string" ? dot : dot?.import;
-  return [.../* @__PURE__ */ new Set([pkg.pi?.extensions?.[0], exportEntry, pkg.main])].filter((v) => typeof v === "string" && v.length > 0);
+  return [.../* @__PURE__ */ new Set([pkg.pi?.extensions?.[0], exportEntry, pkg.main])].filter((v2) => typeof v2 === "string" && v2.length > 0);
 }
 async function verifyInstall(npmDir, latest) {
-  const dir = join9(npmDir, "node_modules", PACKAGE_NAME);
-  const pkg = await readPackageJson(join9(dir, "package.json"));
+  const dir = join12(npmDir, "node_modules", PACKAGE_NAME);
+  const pkg = await readPackageJson(join12(dir, "package.json"));
   if (!pkg?.version) return { ok: false, reason: "package-json-missing" };
   if (pkg.version !== latest) return { ok: false, reason: `version-mismatch:${pkg.version}` };
   const entries = declaredEntries(pkg);
   if (entries.length === 0) return { ok: false, reason: "no-entry-declared" };
   for (const rel of entries) {
     try {
-      await access(join9(dir, rel));
+      await access(join12(dir, rel));
     } catch {
       return { ok: false, reason: `entry-missing:${rel}` };
     }
   }
   const smokeEntry = pkg.pi?.extensions?.[0] ?? entries[0];
   if (!smokeEntry) return { ok: false, reason: "no-entry-declared" };
-  const entry = join9(dir, smokeEntry);
+  const entry = join12(dir, smokeEntry);
   const SMOKE = "const{pathToFileURL}=require('node:url');import(pathToFileURL(process.argv[1]).href).then(()=>{},(e)=>{console.error(e&&e.stack||e);process.exit(1)})";
   const { code, stderr } = await runNodeImpl(["-e", SMOKE, entry], { timeout: 15e3 });
   if (code !== 0) return { ok: false, reason: `entry-import-failed:${stderr.trim().slice(-500)}` };
@@ -20031,15 +23740,15 @@ async function autoInstallLatest(latest, extDirOverride) {
     return "failed";
   }
   try {
-    const installArgs = (v) => [
+    const installArgs = (v2) => [
       "install",
-      `${PACKAGE_NAME}@${v}`,
+      `${PACKAGE_NAME}@${v2}`,
       "--silent",
       "--no-audit",
       "--no-fund",
       "--no-save"
     ];
-    const prevVersion = (await readPackageJson(join9(extDir, "package.json")))?.version ?? "0.1.83";
+    const prevVersion = (await readPackageJson(join12(extDir, "package.json")))?.version ?? "0.1.83";
     const { code, stderr } = await runNpmImpl(installArgs(latest), { cwd: npmDir, timeout: 6e4 });
     if (code !== 0) {
       logWarn("update", {
@@ -20081,8 +23790,8 @@ async function fetchLatestVersion(tag) {
       timeout: 2e4
     });
     if (code === 0) {
-      const v = stdout.trim().split("\n").map((s) => s.trim()).filter(Boolean).pop();
-      if (v && SEMVER_RE.test(v)) return v;
+      const v2 = stdout.trim().split("\n").map((s) => s.trim()).filter(Boolean).pop();
+      if (v2 && SEMVER_RE.test(v2)) return v2;
     }
   } catch {
   }
@@ -20177,7 +23886,7 @@ function notifyReadOnly(notify) {
 async function getRuntimeVersion() {
   const extDir = await findExtensionDir();
   if (!extDir) return void 0;
-  const pkg = await readPackageJson(join9(extDir, "package.json"));
+  const pkg = await readPackageJson(join12(extDir, "package.json"));
   return pkg?.version;
 }
 async function getInstalledSpec() {
@@ -20186,7 +23895,7 @@ async function getInstalledSpec() {
   if (!extDir) return void 0;
   const npmRoot = findNpmRoot(extDir);
   if (!npmRoot) return void 0;
-  const hostPkg = await readPackageJson(join9(npmRoot, "package.json"));
+  const hostPkg = await readPackageJson(join12(npmRoot, "package.json"));
   return hostPkg?.dependencies?.[PACKAGE_NAME];
 }
 
@@ -20218,6 +23927,41 @@ function nativeStandDownMessage(host) {
   ].join("\n");
 }
 
+// src/outbound-usage.ts
+function activeToolDefinitions(pi) {
+  if (typeof pi.getAllTools !== "function" || typeof pi.getActiveTools !== "function") return [];
+  const active = new Set(pi.getActiveTools());
+  return pi.getAllTools().filter((tool) => active.has(tool.name));
+}
+function toolDefinitionTokens(tools) {
+  return tools.reduce((sum, tool) => sum + defaultCountTokens(JSON.stringify({ name: tool.name, description: tool.description, parameters: tool.parameters })), 0);
+}
+function contentTokens(content, vision) {
+  if (typeof content === "string") return defaultCountTokens(content);
+  if (!Array.isArray(content)) return 0;
+  return content.reduce((sum, block) => {
+    if (block.type === "image") return sum + (vision ? IMAGE_TOKEN_COST : 0);
+    if (block.type === "toolCall") return sum + defaultCountTokens(JSON.stringify({ name: block.name, arguments: block.arguments }));
+    return sum + defaultCountTokens(block.text ?? block.thinking ?? "");
+  }, 0);
+}
+function estimateOutboundTokens(messages, systemPrompt, model, tools) {
+  const vision = modelSupportsImages(model);
+  const systems = messages.filter((message) => message.role === "system");
+  let tokens = 0;
+  for (const message of messages) {
+    const payload = message;
+    tokens += contentTokens(payload.content ?? payload.output ?? payload.summary, vision);
+    if (message.role === "system") {
+      const system = message;
+      for (const section of Object.values(system.sections ?? {})) tokens += defaultCountTokens(section ?? "");
+      tokens += toolDefinitionTokens(system.toolsAdded ?? []);
+    }
+  }
+  if (systems.length === 0) tokens += defaultCountTokens(systemPrompt) + toolDefinitionTokens(tools);
+  return tokens;
+}
+
 // src/index.ts
 function createAcpExtension(adapter = {}) {
   return (pi) => {
@@ -20236,6 +23980,7 @@ function createAcpExtension(adapter = {}) {
       if (nativeHost === void 0 && !process.env.BILLION_CONTEXT_PROXY && !isBiliProxyBaseUrl(ctx.model?.baseUrl)) return false;
       const message = nativeHost !== void 0 ? nativeStandDownMessage(nativeHost) : PROXY_STAND_DOWN_MESSAGE;
       runtime.refused = true;
+      clearLiveContextUsage(ctx.sessionManager.getSessionId());
       runtime.refusalMessage = message;
       if (!standDownWarned) {
         standDownWarned = true;
@@ -20245,7 +23990,7 @@ function createAcpExtension(adapter = {}) {
       }
       return true;
     };
-    wireCompactionDisable(pi, runtime);
+    wireCompactionGuard(pi, runtime, standDownIfProxied);
     wireDelegateReadTracking(pi);
     wireSessionLifecycle(pi, runtime, standDownIfProxied);
     wireContextTransform(pi, runtime, standDownIfProxied);
@@ -20272,7 +24017,7 @@ function userConfigDisabled(cwd) {
   for (const file of acpJsonFiles(cwd)) {
     let text;
     try {
-      text = readFileSync5(file, "utf8");
+      text = readFileSync6(file, "utf8");
     } catch {
       continue;
     }
@@ -20285,18 +24030,19 @@ function userConfigDisabled(cwd) {
       console.warn(`[bcp] ${r.reason}`);
     }
     if (r.value) {
-      const v = r.value.enabled;
-      if (v === true || v === false) disabled = v;
-      else if (v !== void 0) {
-        console.warn(`[bcp] ${file}: enabled must be the literal boolean true/false, got ${JSON.stringify(v)} \u2014 ignoring. ACP stays enabled.`);
+      const v2 = r.value.enabled;
+      if (v2 === true || v2 === false) disabled = v2;
+      else if (v2 !== void 0) {
+        console.warn(`[bcp] ${file}: enabled must be the literal boolean true/false, got ${JSON.stringify(v2)} \u2014 ignoring. ACP stays enabled.`);
       }
     }
   }
   return disabled === false;
 }
-function wireCompactionDisable(pi, runtime) {
-  pi.on("session_before_compact", () => {
-    if (runtime.refused) return;
+function wireCompactionGuard(pi, runtime, standDownIfProxied) {
+  pi.on("session_before_compact", (event, ctx) => {
+    if (runtime.refused || standDownIfProxied(ctx)) return;
+    if (event?.reason === "overflow") return;
     return { cancel: true };
   });
 }
@@ -20316,7 +24062,11 @@ function wireSessionLifecycle(pi, runtime, standDownIfProxied) {
   let ompWarned = false;
   let forkWarned = false;
   let subagentStandDownWarned = false;
+  pi.on("model_select", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
+  pi.on("session_tree", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
+  pi.on("session_before_switch", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
   pi.on("session_start", async (_event, ctx) => {
+    clearLiveContextUsage(ctx.sessionManager.getSessionId());
     if (isUnsupportedHost(ctx.sessionManager)) {
       runtime.refused = true;
       if (!ompWarned) {
@@ -20412,6 +24162,7 @@ function wireSessionLifecycle(pi, runtime, standDownIfProxied) {
   });
   pi.on("session_shutdown", (_event, ctx) => {
     const sid = ctx.sessionManager.getSessionId();
+    clearLiveContextUsage(sid);
     runtime.clearDeadCompress(sid);
     runtime.dropTokenScale(sid);
     runtime.clearNudgeTracking(sid);
@@ -20448,10 +24199,42 @@ function wireBeforeProviderRequest(pi, runtime, standDownIfProxied) {
   });
 }
 function wireContextTransform(pi, runtime, standDownIfProxied) {
+  const scopedFloors = /* @__PURE__ */ new Map();
+  const withSystem = pi;
+  withSystem.on("context_with_system", (event, ctx) => {
+    const sid = ctx.sessionManager.getSessionId();
+    if (runtime.refused || standDownIfProxied(ctx)) {
+      clearLiveContextUsage(sid);
+      return;
+    }
+    const model = ctx.model;
+    if (!model?.id || !(model.contextWindow > 0)) {
+      clearLiveContextUsage(sid);
+      return;
+    }
+    const tokens = Math.max(estimateOutboundTokens(event.messages, getSystemPromptText(ctx), model, activeToolDefinitions(pi)), scopedFloors.get(sid) ?? 0);
+    publishLiveContextUsage({ sessionId: sid, provider: model.provider, modelId: model.id, tokens, contextWindow: model.contextWindow, percent: tokens / model.contextWindow * 100, source: "sent-view-estimate", updatedAt: Date.now() });
+  });
+  const clearFloor = (_event, ctx) => {
+    const sid = ctx.sessionManager.getSessionId();
+    scopedFloors.delete(sid);
+    clearLiveContextUsage(sid);
+  };
+  pi.on("session_start", clearFloor);
+  pi.on("session_shutdown", clearFloor);
+  pi.on("model_select", clearFloor);
+  pi.on("session_tree", clearFloor);
   pi.on("context", async (event, ctx) => {
-    if (runtime.refused) return;
+    if (runtime.refused) {
+      clearLiveContextUsage(ctx.sessionManager.getSessionId());
+      return;
+    }
     if (standDownIfProxied(ctx)) return;
     const sid = ctx.sessionManager.getSessionId();
+    clearLiveContextUsage(sid);
+    scopedFloors.delete(sid);
+    const revision = liveContextUsageRevision(sid);
+    const requestedModel = ctx.model;
     const release = await runtime.acquireLock(sid);
     try {
       await runtime.reloadConfig(ctx.cwd);
@@ -20474,7 +24257,7 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
       const coveredIds = collectCoveredMessageIds(state);
       const realUsage = ctx.getContextUsage?.();
       const systemPromptText = getSystemPromptText(ctx);
-      const systemPromptTokens = systemPromptText ? defaultCountTokens(systemPromptText) : 0;
+      const systemPromptTokens = defaultCountTokens(systemPromptText) + toolDefinitionTokens(activeToolDefinitions(pi));
       const imageTokens = collectImageTokens(entries, modelSupportsImages(ctx.model));
       const sentTokens = estimateTokens(coreMessages, coveredIds, imageTokens) + systemPromptTokens;
       let armedFloor = 0;
@@ -20483,34 +24266,29 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
         armedFloor = Math.floor(config.modelContextLimit * 0.95);
         logWarn("overflow-selfheal", { sid, event: "armed-emergency", floor: armedFloor, limit: config.modelContextLimit });
       }
-      const { predates, netReclaimed } = compressionAnchorStaleness(entries, state.blocks, defaultCountTokens);
-      const realPromptTokens = realUsage?.tokens ?? 0;
+      const anchorEntries = ctx.sessionManager.getBranch?.() ?? entries;
+      const { predates, netReclaimed, fresh, lastRealTokens, lastUsageIdx } = compressionAnchorStaleness(anchorEntries, state.blocks, defaultCountTokens, ctx.model);
+      const reportedHost = realUsage?.tokens ?? 0;
+      const realPromptTokens = lastRealTokens;
+      if (reportedHost > 0 && reportedHost !== lastRealTokens) {
+        logInfo("turn", { sid, event: "host-tree-sum-rejected", reported: reportedHost, providerAnchor: lastRealTokens });
+      }
       const hostFloor = realPromptTokens > 0 ? Math.max(0, realPromptTokens - (predates ? netReclaimed : 0)) : 0;
-      const hostUsageStable = !predates && realPromptTokens > 0 ? runtime.noteHostUsage(sid, realPromptTokens) : false;
-      const calibrate = (base) => hostUsageStable ? Math.min(base, Math.ceil(realPromptTokens * 1.2)) : base;
+      if (!fresh || predates) runtime.dropHostUsageSamples(sid);
+      const hostUsageStable = fresh && !predates && realPromptTokens > 0 ? runtime.noteHostUsage(sid, realPromptTokens) : false;
+      const pendingGrowth = lastUsageIdx >= 0 ? estimateTokens(entriesToCoreMessages(anchorEntries.slice(lastUsageIdx + 1)), coveredIds, imageTokens) : 0;
+      const calibrate = (base) => hostUsageStable ? Math.min(base, Math.ceil(realPromptTokens * 1.2) + pendingGrowth) : base;
       const applyFloors = (base) => Math.max(calibrate(base), hostFloor, armedFloor);
       const guardBasis = (base) => Math.max(calibrate(base), hostFloor);
       let tokenCount = applyFloors(sentTokens);
       let guardTokens = guardBasis(sentTokens);
-      if (state.blocks.some((b) => b.active && b.effectiveMessageIds.length > 0)) {
-        const meter = runtime.peekSentViewCount(sid);
-        if (meter && sentViewMeterMatches(meter, state, config)) {
-          if (Math.abs(meter.viewTokens - sentTokens) > Math.max(1e3, 0.1 * sentTokens)) {
-            tokenCount = applyFloors(meter.viewTokens);
-            guardTokens = guardBasis(meter.viewTokens);
-            logInfo("turn", { sid, event: "view-recount", source: "prev-turn", prelim: sentTokens, viewTokens: meter.viewTokens, tokenCount });
-          }
-        } else {
-          const view = sentViewTokenCount(runtime.core, coreMessages, state, config, tokenCount, imageTokens, systemPromptTokens);
-          if (view.drifted) {
-            tokenCount = applyFloors(view.viewTokens);
-            guardTokens = guardBasis(view.viewTokens);
-            logInfo("turn", { sid, event: "view-recount", source: "probe", prelim: sentTokens, viewTokens: view.viewTokens, tokenCount });
-          }
-        }
+      if (state.blocks.some((b2) => b2.active && b2.effectiveMessageIds.length > 0)) {
+        const view = sentViewTokenCount(runtime.core, coreMessages, state, config, sentTokens, imageTokens, systemPromptTokens);
+        tokenCount = applyFloors(view.viewTokens);
+        guardTokens = guardBasis(view.viewTokens);
       }
       ov.noteSentView(guardTokens, config.modelContextLimit);
-      const sizeDivergent = !predates && realPromptTokens > 0 && Math.abs(tokenCount - realPromptTokens) / realPromptTokens > 0.5;
+      const sizeDivergent = fresh && !predates && realPromptTokens > 0 && Math.abs(tokenCount - realPromptTokens) / realPromptTokens > 0.5;
       if (runtime.noteSizeDivergence(sid, sizeDivergent)) {
         logWarn("turn", { sid, event: "size-divergence", est: tokenCount, host: realPromptTokens, ratio: Number((tokenCount / realPromptTokens).toFixed(2)), stable: hostUsageStable });
       }
@@ -20535,7 +24313,7 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
         sessionTokens: realUsage?.tokens ?? null,
         limit: config.modelContextLimit,
         blocksBefore: state.blocks.length,
-        activeBefore: state.blocks.filter((b) => b.active).length
+        activeBefore: state.blocks.filter((b2) => b2.active).length
       });
       const turn = runtime.core.processTurn({ messages: coreMessages, state, config, tokenCount });
       await runtime.save(turn.state, ctx);
@@ -20543,7 +24321,7 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
       runtime.noteSentViewCount(sid, {
         viewTokens: estimateTokens(turn.messages, collectCoveredMessageIds(turn.state), imageTokens) + systemPromptTokens,
         blocksLen: turn.state.blocks.length,
-        activeBlocks: turn.state.blocks.filter((b) => b.active).length,
+        activeBlocks: turn.state.blocks.filter((b2) => b2.active).length,
         limit: config.modelContextLimit,
         usable: tokenCount < truncateBand
       });
@@ -20583,7 +24361,7 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
         nudge: turn.nudge?.shouldInject ? turn.nudge.breakdown?.emergencyOverride === 1 ? "emergency" : "active" : "idle",
         nudgeReason: turn.nudge?.reason ?? null,
         blocks: turn.state.blocks.length,
-        activeBlocks: turn.state.blocks.filter((b) => b.active).length,
+        activeBlocks: turn.state.blocks.filter((b2) => b2.active).length,
         // #289: host-reported usage (Pi window scale) logged separately so
         // tokens/pct above stay on one scale; field order after activeBlocks
         // keeps the pre-existing [turn] layout stable for log consumers.
@@ -20593,8 +24371,8 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
       debug.event("processTurn", {
         modelId,
         outMsgs: turn.messages.length,
-        summaryMsgs: turn.messages.filter((m) => m.id.startsWith("acp_summary")).length,
-        prunedMsgs: coreMessages.length - turn.messages.length + turn.messages.filter((m) => m.id.startsWith("acp_summary")).length,
+        summaryMsgs: turn.messages.filter((m2) => m2.id.startsWith("acp_summary")).length,
+        prunedMsgs: coreMessages.length - turn.messages.length + turn.messages.filter((m2) => m2.id.startsWith("acp_summary")).length,
         nudgeShouldInject: turn.nudge?.shouldInject ?? false,
         nudgeReason: turn.nudge?.reason ?? null,
         nudgeVoice: turn.nudge ? renderNudgeText(turn.nudge, runtime.prompts, activeNudgeSections(runtime, ctx)).voice : null,
@@ -20604,7 +24382,7 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
         nudgeProtectedCount: turn.nudge?.protectedRanges?.length ?? 0,
         nothingToCompress: turn.nudge?.reason?.includes("nothing to compress") ?? false,
         blocksAfter: turn.state.blocks.length,
-        activeAfter: turn.state.blocks.filter((b) => b.active).length
+        activeAfter: turn.state.blocks.filter((b2) => b2.active).length
       });
       const originalById = collectOriginals(entries);
       let rebuilt = coreOutToAgentMessages(turn.messages, originalById);
@@ -20620,13 +24398,13 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
       const deg = collapseAssistantDegeneration(rebuilt, degCfg);
       if (deg.messages !== rebuilt) {
         rebuilt = deg.messages;
-        const maxRun = deg.evidence.reduce((m, e) => e.runs.reduce((x, r) => Math.max(x, r.count), m), 0);
+        const maxRun = deg.evidence.reduce((m2, e) => e.runs.reduce((x2, r) => Math.max(x2, r.count), m2), 0);
         logWarn("degeneration", { sid, event: "runs-collapsed", msgs: deg.evidence.length, maxRun, minRun: degCfg.minRun });
         debug.event("degeneration-collapsed", { sid, msgs: deg.evidence.length, maxRun });
       }
       if (tailRuns) {
         rebuilt.push(degenerationNotice(tailRuns));
-        const top = [...tailRuns].sort((a, b) => b.count - a.count)[0];
+        const top = [...tailRuns].sort((a, b2) => b2.count - a.count)[0];
         logInfo("degeneration", { sid, event: "recovery-notice", maxRun: top.count });
         if (ctx.hasUI && lastDegNoticeKey !== `${sid}:${top.count}:${top.char.codePointAt(0)}`) {
           lastDegNoticeKey = `${sid}:${top.count}:${top.char.codePointAt(0)}`;
@@ -20657,9 +24435,9 @@ function wireContextTransform(pi, runtime, standDownIfProxied) {
         const reInjectReady = shownAt === void 0 || tokenCount - shownAt >= reInjectFloor;
         const alreadyShown = retryCapped || !emergency && runtime.nudgeShownFor(sid, turnKey) && !reInjectReady;
         if (!alreadyShown) {
-          rebuilt.push(nudgeMessage(turn.nudge, turn.state.blocks.filter((b) => b.active), runtime.prompts, activeNudgeSections(runtime, ctx)));
+          rebuilt.push(nudgeMessage(turn.nudge, turn.state.blocks.filter((b2) => b2.active), runtime.prompts, activeNudgeSections(runtime, ctx)));
           const rendered = renderNudgeText(turn.nudge, runtime.prompts, activeNudgeSections(runtime, ctx));
-          const top = [...turn.nudge.compressibleRanges].sort((a, b) => b.tokens - a.tokens)[0];
+          const top = [...turn.nudge.compressibleRanges].sort((a, b2) => b2.tokens - a.tokens)[0];
           const example = top ? `
 
 Example: compress({ content: [{ startId: "${top.startRef}", endId: "${top.endRef}", summary: "..." }] })` : "";
@@ -20699,7 +24477,7 @@ ${rendered.text}${example}`);
       const withHostSystem = carryHostSystemMessages(rebuilt, event.messages);
       if (withHostSystem !== rebuilt) {
         rebuilt = withHostSystem;
-        logInfo("system-passthrough", { sid, event: "carried", systems: event.messages.filter((m) => m.role === "system").length, outMsgs: rebuilt.length });
+        logInfo("system-passthrough", { sid, event: "carried", systems: event.messages.filter((m2) => m2.role === "system").length, outMsgs: rebuilt.length });
       }
       if (turn.state.blocks.length > 0) {
         const sanitized = sanitizeToolPairing(rebuilt);
@@ -20713,8 +24491,24 @@ ${rendered.text}${example}`);
         if (ctx.hasUI) ctx.ui.notify(msg);
       });
       if (!ctx.hasUI) await updateCheck;
+      const model = requestedModel;
+      if (model?.id && fullWindow > 0 && revision === liveContextUsageRevision(sid) && ctx.sessionManager.getSessionId() === sid && ctx.model?.id === model.id && ctx.model?.provider === model.provider) {
+        scopedFloors.set(sid, fresh && !predates && tokenCount < truncateBand ? hostFloor : 0);
+        const outboundTokens = Math.max(estimateOutboundTokens(rebuilt, systemPromptText, ctx.model, activeToolDefinitions(pi)), fresh && !predates && tokenCount < truncateBand ? hostFloor : 0);
+        publishLiveContextUsage({
+          sessionId: sid,
+          modelId: model.id,
+          ...model.provider ? { provider: model.provider } : {},
+          tokens: outboundTokens,
+          contextWindow: fullWindow,
+          percent: outboundTokens / fullWindow * 100,
+          source: "sent-view-estimate",
+          updatedAt: Date.now()
+        }, revision);
+      }
       return { messages: rebuilt };
     } catch (e) {
+      if (revision === liveContextUsageRevision(sid)) clearLiveContextUsage(sid);
       logThrow("context", e, { sid, phase: "transform" });
       throw e;
     } finally {
@@ -20726,10 +24520,10 @@ var lastPackPromptGateKeys = null;
 function wireSystemPrompt(pi, runtime) {
   pi.on("before_agent_start", (event, ctx) => {
     if (runtime.refused) return;
-    const m = ctx?.model;
+    const m2 = ctx?.model;
     const cwd = ctx?.cwd ?? process.cwd();
-    const requested = resolvePackName(runtime.adapter, m?.provider, m?.id);
-    const activePack = resolveActivePack(runtime.adapter, cwd, m?.provider, m?.id);
+    const requested = resolvePackName(runtime.adapter, m2?.provider, m2?.id);
+    const activePack = resolveActivePack(runtime.adapter, cwd, m2?.provider, m2?.id);
     const merged = mergeSurface(activePack, runtime.adapter);
     try {
       const sid = ctx?.sessionManager?.getSessionId();
@@ -20755,9 +24549,9 @@ ${delegateText}` : acp;
   });
 }
 function activeNudgeSections(runtime, ctx) {
-  const m = ctx?.model;
+  const m2 = ctx?.model;
   const cwd = ctx?.cwd ?? process.cwd();
-  const pack = resolveActivePack(runtime.adapter, cwd, m?.provider, m?.id);
+  const pack = resolveActivePack(runtime.adapter, cwd, m2?.provider, m2?.id);
   return mergeSurface(pack, runtime.adapter).nudgeSections;
 }
 function wireOverflowSelfHeal(pi, runtime) {
@@ -20869,10 +24663,10 @@ function collectCompressOutcomes(entries, startIndex) {
   for (let i = Math.max(startIndex, -1) + 1; i < entries.length; i++) {
     const entry = entries[i];
     if (entry.type !== "message" || !entry.message) continue;
-    const m = entry.message;
-    if (m.role !== "toolResult" || m.toolName !== "compress" || !m.toolCallId) continue;
-    const text = extractText(m.content);
-    out.push({ toolCallId: m.toolCallId, isError: m.isError === true, success: m.isError !== true && isCompressSuccessText(text), noop: m.isError !== true && isCompressNoopText(text), text });
+    const m2 = entry.message;
+    if (m2.role !== "toolResult" || m2.toolName !== "compress" || !m2.toolCallId) continue;
+    const text = extractText(m2.content);
+    out.push({ toolCallId: m2.toolCallId, isError: m2.isError === true, success: m2.isError !== true && isCompressSuccessText(text), noop: m2.isError !== true && isCompressNoopText(text), text });
   }
   return out;
 }
@@ -20880,16 +24674,16 @@ function nudgeMessage(nudge, blocks, prompts, sections) {
   const rendered = renderNudgeText(nudge, prompts, sections);
   const lines = [rendered.text];
   if (blocks.length > 0) {
-    const totalSummary = blocks.reduce((s, b) => s + Math.ceil((b.summary || "").length / 4), 0);
-    const totalCompressed = blocks.reduce((s, b) => s + (b.compressedTokens || 0), 0);
+    const totalSummary = blocks.reduce((s, b2) => s + Math.ceil((b2.summary || "").length / 4), 0);
+    const totalCompressed = blocks.reduce((s, b2) => s + (b2.compressedTokens || 0), 0);
     const fmt2 = (n) => n >= 1e3 ? `${(n / 1e3).toFixed(1)}K` : `${n}`;
     const tierCounts = {};
-    for (const b of blocks) {
-      const t = b.tier ?? 1;
+    for (const b2 of blocks) {
+      const t = b2.tier ?? 1;
       tierCounts[t] = (tierCounts[t] || 0) + 1;
     }
     const tierStr = Object.keys(tierCounts).map(Number).sort().map((t) => `T${t}:${tierCounts[t]}`).join(" ");
-    const ids = blocks.slice(0, 10).map((b) => b.blockId).join(", ");
+    const ids = blocks.slice(0, 10).map((b2) => b2.blockId).join(", ");
     const extra = blocks.length > 10 ? ` (+${blocks.length - 10} more)` : "";
     lines.push("");
     lines.push(`Compressed blocks: ${blocks.length} active (${tierStr}) \u2014 ${fmt2(totalSummary)} summary, ${fmt2(totalCompressed)} original compressed. Blocks: ${ids}${extra}.`);
@@ -20913,7 +24707,7 @@ function wireNudgeRecords(pi) {
 function formatNudgeRecord(nudge, emergency) {
   const pct2 = Math.round(nudge.contextUsage * 100);
   const tier = `T${nudge.tier ?? 1}`;
-  const top = [...nudge.compressibleRanges].sort((a, b) => b.tokens - a.tokens)[0];
+  const top = [...nudge.compressibleRanges].sort((a, b2) => b2.tokens - a.tokens)[0];
   const range = top ? ` \xB7 top range ${top.startRef}\u2013${top.endRef}` : "";
   return `[ACP nudge]${emergency ? " EMERGENCY" : ""} ${pct2}% \xB7 ${tier}${range}`;
 }
@@ -20924,3 +24718,4 @@ export {
   deriveChildState,
   formatNudgeRecord
 };
+//# sourceMappingURL=index.js.map

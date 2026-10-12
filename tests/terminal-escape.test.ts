@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile, rm, mkdir } from "node:fs/promises";
+import { readFile, mkdir } from "node:fs/promises";
 import * as path from "node:path";
+import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 
 // issue #464: the kernel (acp-kernel#302) fires terminalEscape /
@@ -38,6 +39,8 @@ test("terminal-escape and truncation-skipped are logged once per stuck episode",
     type: "message", id: `e${i}`, parentId: null, timestamp: "",
     message: { role: "user", content: `small message ${i} — nothing big enough to truncate or compress`, timestamp: Date.now() },
   }));
+  const anchor = { type: "message", id: "provider-anchor", parentId: null, timestamp: "", message: { role: "assistant", model: "test-model", stopReason: "stop", content: "done", timestamp: Date.now(), usage: { input: 9_800, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 9_800 } } };
+  entries.push(anchor);
   let usage: { tokens: number; percent: number } | null = null;
   const ctx = {
     mode: "rpc",
@@ -64,5 +67,5 @@ test("terminal-escape and truncation-skipped are logged once per stuck episode",
   assert.ok(skips.length >= 1, `truncation-skipped must be logged: ${log.slice(-800)}`);
   assert.equal(skips.length, 1, `one skip log per episode, got ${skips.length}`);
   assert.match(escapes[0]!, /stuckEvents=/);
-  await rm(dir, { recursive: true, force: true });
+  execFileSync("trash", [dir]);
 });

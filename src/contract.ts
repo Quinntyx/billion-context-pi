@@ -55,4 +55,89 @@ export function sidecarProducer(): string {
   return `billion-context-pi@${typeof CURRENT_VERSION !== "undefined" ? CURRENT_VERSION : "dev"}`;
 }
 
+export const LIVE_CONTEXT_USAGE_SYMBOL = Symbol.for("billion-context-pi.live-context-usage.v1");
+
+export interface LiveContextUsageQuery {
+  sessionId: string;
+  modelId: string;
+  provider?: string;
+}
+
+export interface LiveContextUsage extends LiveContextUsageQuery {
+  tokens: number;
+  contextWindow: number;
+  percent: number;
+  source: "sent-view-estimate";
+  updatedAt: number;
+}
+
+export interface LiveContextUsageRegistry {
+  version: 1;
+  get(query: LiveContextUsageQuery): LiveContextUsage | undefined;
+}
+
+interface MutableLiveContextUsageRegistry extends LiveContextUsageRegistry {
+  publish(usage: LiveContextUsage): void;
+  clear(sessionId: string): void;
+  revision(sessionId: string): number;
+}
+
+function usageKey(query: LiveContextUsageQuery): string {
+  return JSON.stringify([query.sessionId, query.provider ?? "", query.modelId]);
+}
+
+function isRegistry(value: unknown): value is MutableLiveContextUsageRegistry {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<MutableLiveContextUsageRegistry>;
+  return candidate.version === 1 && typeof candidate.get === "function" && typeof candidate.publish === "function" && typeof candidate.clear === "function" && typeof candidate.revision === "function";
+}
+
+function registry(): MutableLiveContextUsageRegistry {
+  const current = Reflect.get(globalThis, LIVE_CONTEXT_USAGE_SYMBOL);
+  if (isRegistry(current)) return current;
+  const records = new Map<string, LiveContextUsage>();
+  const revisions = new Map<string, number>();
+  const created: MutableLiveContextUsageRegistry = {
+    version: 1,
+    get(query) {
+      const record = records.get(usageKey(query));
+      return record ? { ...record } : undefined;
+    },
+    publish(usage) {
+      for (const [key, record] of records) if (record.sessionId === usage.sessionId) records.delete(key);
+      records.set(usageKey(usage), { ...usage });
+    },
+    clear(sessionId) {
+      for (const [key, record] of records) if (record.sessionId === sessionId) records.delete(key);
+      revisions.set(sessionId, (revisions.get(sessionId) ?? 0) + 1);
+    },
+    revision(sessionId) {
+      return revisions.get(sessionId) ?? 0;
+    },
+  };
+  Reflect.set(globalThis, LIVE_CONTEXT_USAGE_SYMBOL, created);
+  return created;
+}
+
+export function getLiveContextUsage(query: LiveContextUsageQuery): LiveContextUsage | undefined {
+  return registry().get(query);
+}
+
+export function publishLiveContextUsage(usage: LiveContextUsage, revision?: number): void {
+  if (revision !== undefined && revision !== liveContextUsageRevision(usage.sessionId)) return;
+  if (!Number.isFinite(usage.tokens) || usage.tokens < 0 || !Number.isFinite(usage.contextWindow) || usage.contextWindow <= 0) {
+    clearLiveContextUsage(usage.sessionId);
+    return;
+  }
+  registry().publish({ ...usage, percent: usage.tokens / usage.contextWindow * 100 });
+}
+
+export function liveContextUsageRevision(sessionId: string): number {
+  return registry().revision(sessionId);
+}
+
+export function clearLiveContextUsage(sessionId: string): void {
+  registry().clear(sessionId);
+}
+
 declare const CURRENT_VERSION: string;

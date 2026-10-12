@@ -15,6 +15,7 @@ function fakeRuntime(): AcpRuntime {
     stateFor: async () => ({
       state: { blocks: [], stats: { tokensCompressed: 0 }, messageRefs: { byRaw: {}, byRef: {} } },
       coreMessages: [],
+      entries: [{ type: "message", id: "usage-anchor", message: { role: "assistant", content: [], stopReason: "stop", usage: { input: 430_000, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 430_000 } } }],
     }),
     // Stub processTurn: we only exercise the panel's rendering of the
     // breakdown, not the kernel's classification logic.

@@ -118,6 +118,9 @@ export class EntryProjectionCache {
       this.count > 0 &&
       entries.length >= this.count &&
       entries.length - this.count <= MAX_INCREMENTAL_ENTRIES &&
+      // A new context edit changes an existing canonical message without
+      // changing its ID. An append-only cache must not resurrect its old body.
+      !entries.slice(this.count).some((entry) => String(entry.type) === "context_edit") &&
       this.firstId !== null &&
       this.lastId !== null &&
       entries[0]?.id === this.firstId &&
@@ -482,6 +485,11 @@ function coreBodyOf(coreText: string, tag: string): string {
 
 function patchRefTag(original: AgentMessage, core: CoreMessage): AgentMessage {
   const base = original as AnyMessage;
+  // Native summaries use `summary`, not `content`. Preserve their role so the
+  // host emits its canonical wrapper, with our stable ref inside the summary.
+  if (base.role === "compactionSummary" || base.role === "branchSummary") {
+    return { ...original, summary: core.text } as AgentMessage;
+  }
   // Skip tag injection for assistant messages — the model sees tags on its own
   // previous responses and echoes them, causing visible tag fragments in the terminal.
   // The model can still reference assistant messages by inferring refs from context.

@@ -26,6 +26,7 @@ import { lastTurnBoundaryId, type TurnBoundaryPolicy } from "./turn-boundary.js"
 // `getBranch()`. Both return chronological SessionEntry[]; feature-detect so
 // the adapter runs under either host (omp's runner silently swallows the TypeError).
 type SessionEntrySource = {
+  buildSessionProjection?: () => { entries: { sourceEntry: SessionEntry; messages: AgentMessage[] }[] };
   buildContextEntries?: () => SessionEntry[];
   getBranch?: () => SessionEntry[];
 };
@@ -34,6 +35,27 @@ type AgentMessage = SessionMessageEntry["message"];
 
 export function readContextEntries(sm: ExtensionContext["sessionManager"]): SessionEntry[] {
   const source = sm as unknown as SessionEntrySource;
+  if (typeof source.buildSessionProjection === "function") {
+    // Use the host's canonical view: context edits and native compaction have
+    // already been applied. Raw entries alone discard recovery summaries and
+    // can resurrect messages that the host removed from the request.
+    return source.buildSessionProjection().entries.flatMap<SessionEntry>(({ sourceEntry: entry, messages }) => {
+      if (entry.type === "custom_message") {
+        const message = messages[0];
+        return message?.role === "custom" ? [{ ...entry, content: message.content }] : [];
+      }
+      if (entry.type === "message" || entry.type === "compaction" || entry.type === "branch_summary") {
+        return messages.map((message, index): SessionMessageEntry => ({
+          type: "message",
+          id: String(message.role) === "system" && entry.type !== "message" ? `${entry.id}#system` : index === 0 || "summary" in message ? entry.id : `${entry.id}#projection-${index}`,
+          parentId: entry.parentId,
+          timestamp: entry.timestamp,
+          message,
+        }));
+      }
+      return [entry];
+    });
+  }
   if (typeof source.buildContextEntries === "function") return source.buildContextEntries();
   if (typeof source.getBranch === "function") return source.getBranch();
   return [];
@@ -41,7 +63,7 @@ export function readContextEntries(sm: ExtensionContext["sessionManager"]): Sess
 
 export function isPiHost(sm: ExtensionContext["sessionManager"]): boolean {
   const source = sm as unknown as SessionEntrySource;
-  return typeof source.buildContextEntries === "function";
+  return typeof source.buildSessionProjection === "function" || typeof source.buildContextEntries === "function";
 }
 
 /** #453: key for the compress-retry circuit breaker, derived from PERSISTED
@@ -703,8 +725,11 @@ export function createRuntime(adapter: AdapterConfig): AcpRuntime {
     // after the sidecar and parent-session inheritance both miss: replay the
     // successful compress calls recorded in the session log itself. Uses only
     // persisted entries — the omp live tail is not part of history yet.
-    if (sessionFile && state.blocks.length === 0 && hasCompressHistory(entries)) {
-      const rebuilt = rebuildStateFromLog({ entries, state, config: configFor(ctx), core });
+    // Recovery may hide old compress calls from the live projection. Replay the
+    // durable log, not just the kept view, to preserve blocks and ref numbering.
+    const durableEntries = sm.getBranch?.() ?? entries;
+    if (sessionFile && state.blocks.length === 0 && hasCompressHistory(durableEntries)) {
+      const rebuilt = rebuildStateFromLog({ entries: durableEntries, state, config: configFor(ctx), core });
       if (rebuilt.report.blocks > 0) {
         state = rebuilt.state;
         await store.save(state, sessionFile, sessionId);
