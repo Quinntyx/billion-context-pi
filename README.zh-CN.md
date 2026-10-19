@@ -140,6 +140,8 @@ billion-context-pi 面向 **Pi** 编码代理(`@earendil-works/pi-coding-agent`)
 
 `acp_delegate*` 四个工具是可选的:如果你自带子代理扩展,一个 `acp.json` 键即可关闭 —— 见下文*改用你自己的子代理*。`acp_rule` 同样是可选项 —— 默认关闭,在 `acp.json` 中设置 `"rules": true` 启用。
 
+`decompress` 与 `search_context` 会延迟到会话有可操作内容后才暴露:至少存在一个压缩块之前不会向模型声明(首次成功 `compress` 后立即启用;恢复已有块的会话则在 session start 时启用)。也可以按模型整体关闭:`compress.providers.<provider>.models.<model>.enabled: false` —— 见 [CONFIGURATION.zh-CN.md](./CONFIGURATION.zh-CN.md#compressenabled)。
+
 ### acp_delegate — 干净上下文委派
 
 把一个自包含的任务交给一个运行在干净上下文中的新 pi 进程。五个内置角色,各自有系统提示和**软工具护栏**:

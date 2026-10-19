@@ -15,6 +15,7 @@ import { createRuntime, isPiHost, retryBreakerKey, type AcpRuntime } from "./run
 import { makeCompressTool, isCompressSuccessText, isCompressNoopText } from "./compress-tool.js";
 import { makeDecompressTool } from "./decompress-tool.js";
 import { makeSearchTool } from "./search-tool.js";
+import { createToolActivation } from "./tool-activation.js";
 import { makeStatusTool } from "./status-tool.js";
 import { makeCacheTool } from "./cache-tool.js";
 import { makeRuleTool } from "./rule-tool.js";
@@ -80,6 +81,7 @@ export function createAcpExtension(adapter: AdapterConfig = {}): ExtensionFactor
       return;
     }
     const runtime = createRuntime(adapter);
+    const toolActivation = createToolActivation(pi);
     // Double-compression guards (#296, #461): exactly one side may own
     // compression. Three signals, ALL checked lazily on every event because
     // none can be trusted at factory time:
@@ -121,15 +123,19 @@ export function createAcpExtension(adapter: AdapterConfig = {}): ExtensionFactor
     };
     wireCompactionGuard(pi, runtime, standDownIfProxied);
     wireDelegateReadTracking(pi);
-    wireSessionLifecycle(pi, runtime, standDownIfProxied);
-    wireContextTransform(pi, runtime, standDownIfProxied);
+    wireSessionLifecycle(pi, runtime, standDownIfProxied, toolActivation);
+    wireToolActivationEvents(pi, runtime, toolActivation);
+    wireContextTransform(pi, runtime, standDownIfProxied, toolActivation);
     wireBeforeProviderRequest(pi, runtime, standDownIfProxied);
-    wireSystemPrompt(pi, runtime);
+    wireSystemPrompt(pi, runtime, toolActivation);
     wireToolGuardrails(pi, runtime);
     wireOverflowSelfHeal(pi, runtime);
     wireThrottleRetry(pi, runtime);
     const toolSurface = readToolSurfaceWithPacks(process.cwd());
     pi.registerTool(makeCompressTool(runtime, toolSurface.compress));
+    // Pi 0.83 cannot mark a tool inactive at registration (registerTool has no
+    // defaultActive), so the deferred gate runs on session_start instead —
+    // before the first model request.
     pi.registerTool(makeDecompressTool(runtime, toolSurface.decompress));
     pi.registerTool(makeSearchTool(runtime, toolSurface.search_context));
     pi.registerTool(makeStatusTool(runtime, toolSurface.acp_status));
@@ -189,7 +195,7 @@ function userConfigDisabled(cwd: string): boolean {
 // continue using native compaction unchanged.
 function wireCompactionGuard(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean): void {
   pi.on("session_before_compact", (event, ctx) => {
-    if (runtime.refused || standDownIfProxied(ctx)) return;
+    if (runtime.refused || !runtime.enabledFor(ctx) || standDownIfProxied(ctx)) return;
     // Keep genuine provider-overflow recovery; never abort a quota-pending
     // agent to cancel compaction. Pi 1.1.0 already suppresses canceled retries.
     if (event?.reason === "overflow") return;
@@ -219,11 +225,28 @@ function wireDelegateReadTracking(pi: ExtensionAPI): void {
   });
 }
 
-function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean): void {
+// Once the first compression lands, decompress/search_context have something
+// to operate on. Activate them in the tool_result hook (before the follow-up
+// model request) instead of waiting for the next user turn.
+function wireToolActivationEvents(pi: ExtensionAPI, runtime: AcpRuntime, toolActivation: ReturnType<typeof createToolActivation>): void {
+  pi.on("tool_result", (event, ctx) => {
+    if (event.isError || event.toolName !== "compress") return;
+    if (!isCompressSuccessText(extractText(event.content))) return;
+    const sid = ctx.sessionManager.getSessionId();
+    toolActivation.noteBlocks(sid, 1);
+    toolActivation.sync(sid, runtime.enabledFor(ctx));
+  });
+}
+
+function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean, toolActivation: ReturnType<typeof createToolActivation>): void {
   let ompWarned = false;
   let forkWarned = false;
   let subagentStandDownWarned = false;
-  pi.on("model_select", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
+  pi.on("model_select", (_event, ctx) => {
+    const sid = ctx.sessionManager.getSessionId();
+    clearLiveContextUsage(sid);
+    toolActivation.sync(sid, runtime.enabledFor(ctx));
+  });
   pi.on("session_tree", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
   pi.on("session_before_switch", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
   pi.on("session_start", async (_event, ctx) => {
@@ -279,6 +302,7 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
     setDelegateDisplayUsage("separate");
     setDelegatePolicy(DEFAULT_DELEGATE_POLICY);
     const sid = ctx.sessionManager.getSessionId();
+    toolActivation.reset(sid);
     // Model identity on every session start: diagnosing "which model loops
     // on compress rejections" from user logs required cwd forensics — the log
     // never said which model it was. id + contextWindow also catch window
@@ -288,6 +312,13 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
     let delegateStoodDown = false;
     try {
       await runtime.reloadConfig(ctx.cwd);
+      try {
+        const loaded = await runtime.store.load(ctx.sessionManager.getSessionFile() ?? undefined, sid);
+        toolActivation.noteBlocks(sid, loaded.blocks.length);
+      } catch (e) {
+        logWarn("tools", { sid, event: "activation-state-load-failed", error: e instanceof Error ? e.message : String(e) });
+      }
+      toolActivation.sync(sid, runtime.enabledFor(ctx));
       const delegateCfg = resolveDelegate(runtime.adapter);
       setDelegateDisplayUsage(delegateCfg.displayUsage);
       setDelegatePolicy(delegateCfg);
@@ -346,6 +377,9 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
     if (runtime.adapter.rules === true) {
       pi.registerTool(makeRuleTool(runtime));
     }
+    // Delegate/rule tools register after the first gate sync; re-apply it so a
+    // model with compress.enabled:false also hides the rest of the ACP surface.
+    toolActivation.sync(sid, runtime.enabledFor(ctx));
     // Headless hosts exit as soon as the turn ends; awaiting the check keeps
     // the process alive until a running install finishes. TUI stays
     // fire-and-forget so interactive startup is never blocked by npm.
@@ -394,7 +428,7 @@ let lastDegNoticeKey: string | null = null;
 // removed; returning undefined keeps pi's payload reference untouched.
 function wireBeforeProviderRequest(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean): void {
   pi.on("before_provider_request", async (event, ctx) => {
-    if (runtime.refused) return;
+    if (runtime.refused || !runtime.enabledFor(ctx)) return;
     if (standDownIfProxied(ctx)) return;
     const settings = runtime.stripImagesFor(ctx);
     if (!settings.enabled) return;
@@ -415,12 +449,14 @@ function wireBeforeProviderRequest(pi: ExtensionAPI, runtime: AcpRuntime, standD
 // The core integration: Pi's `context` event fires before every LLM call with the
 // messages about to be sent. We run acp-kernel's processTurn (prune + ref-tag +
 // nudge decision) and return the transformed AgentMessage[].
-function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean): void {
+function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIfProxied: (ctx: ExtensionContext) => boolean, toolActivation: ReturnType<typeof createToolActivation>): void {
   const scopedFloors = new Map<string, number>();
   const withSystem = pi as unknown as { on(name: "context_with_system", handler: (event: { messages: AgentMessage[] }, ctx: ExtensionContext) => void): void };
   withSystem.on("context_with_system", (event, ctx) => {
     const sid = ctx.sessionManager.getSessionId();
-    if (runtime.refused || standDownIfProxied(ctx)) {
+    const acpEnabled = runtime.enabledFor(ctx);
+    toolActivation.sync(sid, acpEnabled);
+    if (runtime.refused || !acpEnabled || standDownIfProxied(ctx)) {
       clearLiveContextUsage(sid);
       return;
     }
@@ -452,13 +488,21 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
     const sid = ctx.sessionManager.getSessionId();
     clearLiveContextUsage(sid);
     scopedFloors.delete(sid);
+    await runtime.reloadConfig(ctx.cwd);
+    const acpEnabled = runtime.enabledFor(ctx);
+    toolActivation.sync(sid, acpEnabled);
+    if (!acpEnabled) {
+      clearLiveContextUsage(sid);
+      return;
+    }
     const revision = liveContextUsageRevision(sid);
     const requestedModel = ctx.model;
     const release = await runtime.acquireLock(sid);
     try {
-      await runtime.reloadConfig(ctx.cwd);
       const modelId = (ctx.model as { id?: string } | undefined)?.id ?? "default";
       const { state, coreMessages, entries } = await runtime.stateFor(ctx, event.messages);
+      toolActivation.noteBlocks(sid, state.blocks.length);
+      toolActivation.sync(sid, true);
       const configBase = runtime.configFor(ctx);
       const ov = runtime.overflowFor(sid);
       // Self-heal: a prior upstream overflow may have taught us the real window
@@ -951,11 +995,15 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
 
 let lastPackPromptGateKeys: string | null = null;
 
-function wireSystemPrompt(pi: ExtensionAPI, runtime: AcpRuntime): void {
+function wireSystemPrompt(pi: ExtensionAPI, runtime: AcpRuntime, toolActivation: ReturnType<typeof createToolActivation>): void {
   pi.on("before_agent_start", (event, ctx) => {
     // Refused host (OMP): don't inject the ACP system prompt — the model must
     // not learn about compress/decompress on a host where they can't work.
     if (runtime.refused) return;
+    const sid = ctx?.sessionManager?.getSessionId?.();
+    const acpEnabled = runtime.enabledFor(ctx);
+    if (sid) toolActivation.sync(sid, acpEnabled);
+    if (!acpEnabled) return;
     const m = ctx?.model as { provider?: string; id?: string } | undefined;
     const cwd = ctx?.cwd ?? process.cwd();
     const requested = resolvePackName(runtime.adapter, m?.provider, m?.id);
@@ -982,7 +1030,9 @@ function wireSystemPrompt(pi: ExtensionAPI, runtime: AcpRuntime): void {
       runtime.setPrompts(defaultPrompts);
     }
     const delegate = resolveDelegate(runtime.adapter).enabled && !runtime.delegateStoodDown;
-    const acp = buildAcpSystemPrompt(runtime.prompts, merged.promptSections);
+    const acp = buildAcpSystemPrompt(runtime.prompts, merged.promptSections, {
+      deferredToolsVisible: sid ? toolActivation.deferredVisible(sid) : true,
+    });
     const delegateText = merged.delegatePrompt !== undefined ? merged.delegatePrompt : ACP_DELEGATE_PROMPT;
     const prompt = delegate && delegateText !== null ? `${acp}\n${delegateText}` : acp;
     return { systemPrompt: formatSystemPromptForEvent(event.systemPrompt, prompt) };
@@ -1007,6 +1057,7 @@ function activeNudgeSections(runtime: AcpRuntime, ctx?: ExtensionContext): Nudge
 // error surfaces; the next turn self-heals.
 function wireOverflowSelfHeal(pi: ExtensionAPI, runtime: AcpRuntime): void {
   pi.on("message_end", (event, ctx) => {
+    if (!runtime.enabledFor(ctx)) return;
     const msg = event.message;
     if (msg.role !== "assistant") return;
     const sid = ctx.sessionManager.getSessionId();
@@ -1073,6 +1124,7 @@ function wireOverflowSelfHeal(pi: ExtensionAPI, runtime: AcpRuntime): void {
 //     context and the system-prompt line guides the model to resume.
 function wireThrottleRetry(pi: ExtensionAPI, runtime: AcpRuntime): void {
   pi.on("message_end", (event, ctx) => {
+    if (!runtime.enabledFor(ctx)) return;
     const th = runtime.throttleFor(ctx.sessionManager.getSessionId());
     const msg = event.message;
     if (msg.role === "user") {
@@ -1104,6 +1156,7 @@ function wireThrottleRetry(pi: ExtensionAPI, runtime: AcpRuntime): void {
     return { message: { ...msg, errorMessage: THROTTLE_RETRY_ERROR_MESSAGE } };
   });
   pi.on("agent_settled", async (_event, ctx) => {
+    if (!runtime.enabledFor(ctx)) return;
     const th = runtime.throttleFor(ctx.sessionManager.getSessionId());
     const cfg = resolveThrottleRetry(runtime.adapter.throttleRetry);
     if (!cfg.enabled || !th.readyToKick(cfg.maxRetries)) return;

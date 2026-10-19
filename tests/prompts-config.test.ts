@@ -19,6 +19,22 @@ test("buildAcpSystemPrompt with defaults contains the philosophy and tier rules"
   assert.ok(prompt.includes(defaultPrompts.tier3CondenseRules.slice(0, 40)), "embeds tier3CondenseRules");
 });
 
+test("buildAcpSystemPrompt hides decompress/search_context before the first compression", () => {
+  const prompt = buildAcpSystemPrompt(defaultPrompts, undefined, { deferredToolsVisible: false });
+  assert.ok(!prompt.includes("- decompress —"), "no decompress bullet");
+  assert.ok(!prompt.includes("- search_context —"), "no search_context bullet");
+  assert.ok(!prompt.includes("THE PHILOSOPHY OF DECOMPRESS"), "no decompress philosophy section");
+  assert.ok(prompt.includes("You have two context-management tools:"), "tool count adjusted");
+  assert.ok(prompt.includes("- compress —"), "compress still documented");
+  assert.ok(prompt.includes("- acp_status —"), "acp_status still documented");
+});
+
+test("buildAcpSystemPrompt keeps user overrides even when deferred tools are hidden", () => {
+  const prompt = buildAcpSystemPrompt(defaultPrompts, { tools: "CUSTOM TOOLS BODY", decompressPhilosophy: "CUSTOM DECOMPRESS" }, { deferredToolsVisible: false });
+  assert.ok(prompt.includes("CUSTOM TOOLS BODY"), "user tools override wins");
+  assert.ok(prompt.includes("CUSTOM DECOMPRESS"), "user decompress override wins");
+});
+
 test("buildAcpSystemPrompt reflects acknowledged custom prompts", () => {
   const custom = resolvePrompts(
     { compressPhilosophy: "CUSTOM-PHILOSOPHY-MARKER" },

@@ -86,7 +86,23 @@ export function sanitizePromptSections(raw: unknown): Partial<PiPromptSections> 
   return out;
 }
 
-export function buildAcpSystemPrompt(prompts: Prompts, sections?: Partial<PiPromptSections>): string {
+export interface AcpSystemPromptOptions {
+  /** Default true. When false (no compression block exists yet), hide
+   *  decompress/search_context from the built-in tool list and drop the
+   *  decompress philosophy section so the model is not told about tools it
+   *  cannot see or call. User-supplied overrides are always honored verbatim. */
+  deferredToolsVisible?: boolean;
+}
+
+function withoutDeferredTools(text: string): string {
+  return text
+    .split("\n")
+    .filter((line) => !/^- (decompress|search_context)\b/.test(line.trim()))
+    .join("\n")
+    .replace("You have four context-management tools:", "You have two context-management tools:");
+}
+
+export function buildAcpSystemPrompt(prompts: Prompts, sections?: Partial<PiPromptSections>, options: AcpSystemPromptOptions = {}): string {
   const ruleSlots: Record<string, string> = {
     philosophy: prompts.compressPhilosophy,
     howToCompress: prompts.howToCompressRules,
@@ -95,7 +111,15 @@ export function buildAcpSystemPrompt(prompts: Prompts, sections?: Partial<PiProm
   };
   const filled = SECTIONS.map(([key, text]) => [key, text || (ruleSlots[key] ?? text)] as const);
   const sanitized = sanitizePromptSections(sections);
-  return "\nACP context management\n\n" + applySectionOverrides(filled, sanitized as Record<string, SectionOverride>).join("\n\n") + "\n";
+  const effective: Record<string, SectionOverride> = { ...sanitized };
+  if (options.deferredToolsVisible === false) {
+    if (!("tools" in sanitized)) {
+      const toolsText = filled.find(([key]) => key === "tools")?.[1] ?? "";
+      effective.tools = withoutDeferredTools(toolsText);
+    }
+    if (!("decompressPhilosophy" in sanitized)) effective.decompressPhilosophy = null;
+  }
+  return "\nACP context management\n\n" + applySectionOverrides(filled, effective).join("\n\n") + "\n";
 }
 
 export const ACP_DELEGATE_PROMPT = `

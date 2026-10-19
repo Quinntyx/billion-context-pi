@@ -152,6 +152,8 @@ billion-context-pi is built for the **Pi** coding agent (`@earendil-works/pi-cod
 
 The four `acp_delegate*` tools are optional: if you bring your own sub-agent extension, disable them with one `acp.json` key — see *Using your own sub-agent instead* below. `acp_rule` is likewise opt-in — off by default, enable it with `"rules": true`.
 
+`decompress` and `search_context` are deferred until the session has something to operate on: they are not declared to the model until at least one compression block exists (activated right after the first successful `compress`, or at session start when resuming a session with blocks). Individual models can also be switched off entirely with `compress.providers.<provider>.models.<model>.enabled: false` — see [CONFIGURATION.md](./CONFIGURATION.md#compressenabled).
+
 ### acp_delegate — clean-context delegation
 
 Hand a self-contained task to a fresh pi process running in a clean context. Five built-in roles, each with a system prompt and a **soft tool guardrail**:

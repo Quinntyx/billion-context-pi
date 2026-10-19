@@ -181,6 +181,7 @@ All keys below are currently **ACTIVE**.
 
 | Key | Type | Default | Status | Description |
 |-----|------|---------|--------|-------------|
+| `compress.enabled` | boolean | `true` | 🟢 ACTIVE | Per-model ACP switch. `false` at the global/provider/model level stands ACP down for the active model; Pi's native context management runs instead. |
 | `compress.maxContextLimit` | number \| string | `"75%"` | 🟢 ACTIVE | Context threshold that triggers forced compression nudges. |
 | `compress.emergencyThresholdPercent` | number \| string | `"95%"` | 🟢 ACTIVE | Context threshold that triggers emergency truncation. |
 | `compress.nudgeGrowthTokens` | number | `50000` | 🟢 ACTIVE | Token growth step for soft compression nudges. |
@@ -648,6 +649,30 @@ The flow is:
 2. **Forced nudges** (75–95%) — once usage crosses `compress.maxContextLimit`, nudges fire regardless of the growth gate. These are lossless.
 3. **Emergency truncation** (95%+) — once usage crosses `compress.emergencyThresholdPercent`, large tool outputs are truncated to prevent context overflow. This is lossy.
 
+### `compress.enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+- **Status:** 🟢 ACTIVE
+- **Description:** Per-model ACP switch, resolved through the standard `compress` cascade (`model > provider > global`, deepest wins). When the active model resolves to `false`, the adapter stands down for that model: no context transform, no ACP system prompt, no compaction cancellation, no ACP tool guardrails/self-heal, and the ACP tools (`compress`, `decompress`, `search_context`, `acp_status`, `acp_cache`, `acp_rule`, `acp_delegate*`) are removed from the active tool set. Pi's native context management takes over. This is evaluated live every turn, so switching models re-applies the gate in both directions. The top-level `enabled: false` master switch still disables the entire extension at load time and wins over this field.
+
+  A model can opt out while its provider stays on (and vice versa):
+  ```json
+  {
+    "compress": {
+      "providers": {
+        "openrouter": {
+          "models": {
+            "deepseek/deepseek-v4.1-flash-1017": { "enabled": false }
+          }
+        }
+      }
+    }
+  }
+  ```
+
+  `decompress` and `search_context` are additionally deferred until the session has at least one compression block: they are not declared to the model before the first successful `compress` (or immediately at session start when resuming a session that already has blocks).
+
 ### `compress.maxContextLimit`
 
 - **Type:** `number | string`
@@ -754,7 +779,21 @@ The provider key is the **Pi provider name** (e.g. `"anthropic"`, `"openai"`, `"
 }
 ```
 
-On `anthropic` / `claude-sonnet-4-5` the effective thresholds become `maxContextLimit=70%`, `nudgeGrowthTokens=30000`, and `emergencyThresholdPercent=95%` (inherited from global).
+On `anthropic` / `claude-sonnet-4-5` the effective thresholds become `maxContextLimit=70%`, `nudgeGrowthTokens=30000`, and `emergencyThresholdPercent=95%` (inherited from global). The same cascade carries `enabled`, so a single model can be switched off without affecting its provider:
+
+```json
+{
+  "compress": {
+    "providers": {
+      "openrouter": {
+        "models": {
+          "deepseek/deepseek-v4.1-flash-1017": { "enabled": false }
+        }
+      }
+    }
+  }
+}
+```
 
 ---
 

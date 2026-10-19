@@ -180,6 +180,7 @@
 
 | 键 | 类型 | 默认值 | 状态 | 说明 |
 |----|------|--------|------|------|
+| `compress.enabled` | boolean | `true` | 🟢 ACTIVE | 按模型启停 ACP。在 global/provider/model 层设为 `false` 时，当前模型让位给 Pi 原生上下文管理。 |
 | `compress.maxContextLimit` | number \| string | `"75%"` | 🟢 ACTIVE | 触发强制压缩 nudge 的上下文阈值。 |
 | `compress.emergencyThresholdPercent` | number \| string | `"95%"` | 🟢 ACTIVE | 触发紧急截断的上下文阈值。 |
 | `compress.nudgeGrowthTokens` | number | `50000` | 🟢 ACTIVE | 软压缩 nudge 的 token 增长步长。 |
@@ -644,6 +645,30 @@
 2. **强制 nudge**（75–95%）——当用量越过 `compress.maxContextLimit` 时，无论增长门控如何都会触发 nudge。此阶段无损。
 3. **紧急截断**（95%+）——当用量越过 `compress.emergencyThresholdPercent` 时，截断大型工具输出以防止上下文溢出。此阶段有损。
 
+### `compress.enabled`
+
+- **类型：** `boolean`
+- **默认值：** `true`
+- **状态：** 🟢 ACTIVE
+- **说明：** 按模型启停 ACP，走标准 `compress` 级联（`model > provider > global`，深层优先）。当前模型解析为 `false` 时，适配器对该模型整体让位：不做上下文变换、不注入 ACP 系统提示词、不取消 Pi 原生压缩、不执行 ACP 工具护栏/自愈，并从活动工具集中移除 ACP 工具（`compress`、`decompress`、`search_context`、`acp_status`、`acp_cache`、`acp_rule`、`acp_delegate*`）。Pi 原生上下文管理接管。该判断每轮实时求值，切换模型会双向重新应用。顶层 `enabled: false` 主开关仍在加载时关闭整个扩展，并优先于此字段。
+
+  可以只关掉某个模型而保留其 provider（反之亦然）：
+  ```json
+  {
+    "compress": {
+      "providers": {
+        "openrouter": {
+          "models": {
+            "deepseek/deepseek-v4.1-flash-1017": { "enabled": false }
+          }
+        }
+      }
+    }
+  }
+  ```
+
+  此外，`decompress` 与 `search_context` 会延迟到会话产生第一个压缩块后才暴露：首次成功 `compress` 之前不向模型声明（恢复已有块的会话则在 session start 时立即可用）。
+
 ### `compress.maxContextLimit`
 
 - **类型：** `number | string`
@@ -750,7 +775,21 @@ provider 的 key 是 **Pi provider 名**(如 `"anthropic"`、`"openai"`、`"zhip
 }
 ```
 
-在 `anthropic` / `claude-sonnet-4-5` 下,生效阈值变为 `maxContextLimit=70%`、`nudgeGrowthTokens=30000`、`emergencyThresholdPercent=95%`(继承自全局)。
+在 `anthropic` / `claude-sonnet-4-5` 下,生效阈值变为 `maxContextLimit=70%`、`nudgeGrowthTokens=30000`、`emergencyThresholdPercent=95%`(继承自全局)。同一级联也携带 `enabled`,因此可以只关掉单个模型而不影响其 provider:
+
+```json
+{
+  "compress": {
+    "providers": {
+      "openrouter": {
+        "models": {
+          "deepseek/deepseek-v4.1-flash-1017": { "enabled": false }
+        }
+      }
+    }
+  }
+}
+```
 
 ---
 

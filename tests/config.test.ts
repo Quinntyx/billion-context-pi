@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { resolveConfig, resolveCompress, mergeCompress, resolveDelegate, resolveRepetitionGuard, resolveHostSession, REPETITION_GUARD_DEFAULTS, type AdapterConfig } from "../src/config.js";
+import { resolveConfig, resolveCompress, mergeCompress, resolveAcpEnabled, resolveDelegate, resolveRepetitionGuard, resolveHostSession, REPETITION_GUARD_DEFAULTS, type AdapterConfig } from "../src/config.js";
 
 const EMPTY: AdapterConfig = {};
 
@@ -387,6 +387,35 @@ test("resolveCompress merges per-field (global/provider/model each set a differe
   assert.equal(c.maxContextLimit, "75%", "global field inherited");
   assert.equal(c.emergencyThresholdPercent, "90%", "provider field inherited");
   assert.equal(c.nudgeGrowthTokens, 30000, "model field applied");
+});
+
+test("resolveAcpEnabled defaults to true when no enabled field is set", () => {
+  assert.equal(resolveAcpEnabled(undefined, "openrouter", "deepseek/x"), true);
+  assert.equal(resolveAcpEnabled({ maxContextLimit: "75%" }, "openrouter", "deepseek/x"), true);
+});
+
+test("resolveAcpEnabled: model false disables only that model", () => {
+  const compress = { providers: { openrouter: { models: { "deepseek/x": { enabled: false } } } } };
+  assert.equal(resolveAcpEnabled(compress, "openrouter", "deepseek/x"), false);
+  assert.equal(resolveAcpEnabled(compress, "openrouter", "other"), true);
+  assert.equal(resolveAcpEnabled(compress, "anthropic", "deepseek/x"), true);
+});
+
+test("resolveAcpEnabled: provider true overrides a global false", () => {
+  const compress = { enabled: false, providers: { openrouter: { enabled: true } } };
+  assert.equal(resolveAcpEnabled(compress, "openrouter", "deepseek/x"), true);
+  assert.equal(resolveAcpEnabled(compress, "anthropic", "claude"), false);
+});
+
+test("resolveAcpEnabled: model true overrides provider false", () => {
+  const compress = { providers: { openrouter: { enabled: false, models: { "deepseek/x": { enabled: true } } } } };
+  assert.equal(resolveAcpEnabled(compress, "openrouter", "deepseek/x"), true);
+  assert.equal(resolveAcpEnabled(compress, "openrouter", "other"), false);
+});
+
+test("resolveAcpEnabled: a non-boolean value is ignored (never silently disables)", () => {
+  const compress = { providers: { openrouter: { models: { "deepseek/x": { enabled: "false" as unknown as boolean } } } } };
+  assert.equal(resolveAcpEnabled(compress, "openrouter", "deepseek/x"), true);
 });
 
 test("mergeCompress: undefined deeper field does not clear shallower value", () => {

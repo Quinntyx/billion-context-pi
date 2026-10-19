@@ -202,6 +202,7 @@ export function wireToolGuardrails(pi: ExtensionAPI, runtime: AcpRuntime): void 
   const pendingWarns = new Map<string, number>();
 
   pi.on("tool_call", (event, ctx) => {
+    if (runtime.enabledFor?.(ctx) === false) return;
     if (isBashToolCall(event)) {
       const t = resolveBashTimeout(event.input, runtime.adapter.toolBashDefaultTimeout);
       if (t !== undefined) {
@@ -236,7 +237,8 @@ export function wireToolGuardrails(pi: ExtensionAPI, runtime: AcpRuntime): void 
     }
   });
 
-  pi.on("tool_result", (event) => {
+  pi.on("tool_result", (event, ctx) => {
+    if (runtime.enabledFor?.(ctx) === false) return;
     const isBash = isBashToolResult(event);
     const fullPath = isBash ? event.details?.fullOutputPath : undefined;
     const timeoutSecs =

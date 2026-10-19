@@ -140,6 +140,14 @@ export const DEFAULT_DELEGATE_POLICY: DelegatePolicy = {
  *  Resolution is per-field, deepest-wins (model > provider > global); an
  *  undefined field at a deeper level does NOT clear a shallower value. */
 export interface CompressSettings {
+  /** Enable ACP for the matching model. Default: true. Resolved through the
+   *  same per-field cascade as the tuning fields, so a model (or provider) can
+   *  opt out while other models keep compression. A disabled model gets no
+   *  context transform, no ACP system prompt, no compaction override, and its
+   *  ACP tools are deactivated; Pi's native context management runs instead.
+   *  The top-level `enabled` master switch still disables the whole extension
+   *  at load time, regardless of this field. */
+  enabled?: boolean;
   /** Context usage percentage that triggers forced compression nudges
    *  (bypasses growth-gate + cadence). Accepts a ratio (0.75) or percent
    *  string ("75%"). Default: 0.75. Maps to kernel nudge.maxContextLimitPct. */
@@ -559,6 +567,7 @@ export function mergeCompress(
   model?: CompressSettings,
 ): CompressSettings {
   return {
+    enabled: model?.enabled ?? provider?.enabled ?? global?.enabled,
     maxContextLimit: model?.maxContextLimit ?? provider?.maxContextLimit ?? global?.maxContextLimit,
     emergencyThresholdPercent: model?.emergencyThresholdPercent ?? provider?.emergencyThresholdPercent ?? global?.emergencyThresholdPercent,
     nudgeGrowthTokens: model?.nudgeGrowthTokens ?? provider?.nudgeGrowthTokens ?? global?.nudgeGrowthTokens,
@@ -587,6 +596,27 @@ export function resolveCompress(
   const prov = provider ? compress.providers?.[provider] : undefined;
   const model = prov && modelId ? prov.models?.[modelId] : undefined;
   return mergeCompress(compress, prov, model);
+}
+
+const warnedCompressEnabled = new Set<string>();
+
+/** Resolve whether ACP is enabled for the active provider/model. Missing means
+ *  enabled; a non-boolean value is ignored with a once-per-model warning
+ *  (hand-edited acp.json must never silently disable or enable compression). */
+export function resolveAcpEnabled(
+  compress: CompressConfig | undefined,
+  provider: string | undefined,
+  modelId: string | undefined,
+): boolean {
+  const value: unknown = resolveCompress(compress, provider, modelId).enabled;
+  if (value === undefined) return true;
+  if (typeof value === "boolean") return value;
+  const key = `${provider ?? ""}/${modelId ?? ""}`;
+  if (!warnedCompressEnabled.has(key)) {
+    warnedCompressEnabled.add(key);
+    logWarn("config", { event: "compress-enabled-invalid", provider: provider ?? null, model: modelId ?? null, value: String(value), fallback: true });
+  }
+  return true;
 }
 
 export function resolveConfig(adapter: AdapterConfig, liveContextLimit: number, provider?: string, modelId?: string): Config {

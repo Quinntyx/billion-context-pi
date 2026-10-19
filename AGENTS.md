@@ -39,6 +39,7 @@ pi-acp/
 │   ├── compress-tool.ts      # compress tool handler
 │   ├── decompress-tool.ts    # decompress tool handler
 │   ├── search-tool.ts        # search_context tool (delegates to kernel.searchBlocks)
+│   ├── tool-activation.ts    # Per-model ACP switch + deferred tool surfaces
 │   ├── search-index.ts       # Builds SearchDoc[] from session log + ACP blocks
 │   ├── status-tool.ts        # acp_status tool (delegates to kernel.buildStatusReport)
 │   ├── rule-tool.ts          # acp_rule record tool handler (opt-in: "rules": true)
