@@ -17,8 +17,10 @@ const ACP_CORE_TOOL_NAMES = [
 ] as const;
 
 /** Tools that are useless before the first compression exists: decompress has
- *  no block to restore and search_context has no summaries to search. They
- *  stay registered (Pi cannot unregister) but inactive until a block exists. */
+ *  no block to restore and search_context has no summaries to search. With
+ *  `compress.deferTools: true` they stay registered (Pi cannot unregister) but
+ *  inactive until a block exists. Default: false — both are visible from the
+ *  first request. */
 export const DEFERRED_TOOL_NAMES = ["decompress", "search_context"] as const;
 
 export interface ToolActivationController {
@@ -28,14 +30,15 @@ export interface ToolActivationController {
   noteBlocks(sessionId: string, count: number): void;
   /** Whether decompress/search_context should be visible to the model. */
   deferredVisible(sessionId: string): boolean;
-  /** Apply the model gate + deferred gate to Pi's active tool set. */
-  sync(sessionId: string, acpEnabled: boolean): void;
+  /** Apply the model gate + optional deferred gate to Pi's active tool set. */
+  sync(sessionId: string, acpEnabled: boolean, deferTools: boolean): void;
 }
 
 export function createToolActivation(pi: ExtensionAPI): ToolActivationController {
   const supportsActiveSet = typeof pi.getActiveTools === "function" && typeof pi.setActiveTools === "function";
   const removedByGate = new Map<string, Set<string>>();
   const deferredUnlocked = new Set<string>();
+  const deferring = new Set<string>();
 
   function commit(sessionId: string, next: string[]): void {
     const current = pi.getActiveTools();
@@ -44,8 +47,10 @@ export function createToolActivation(pi: ExtensionAPI): ToolActivationController
     pi.setActiveTools(next);
   }
 
-  function sync(sessionId: string, acpEnabled: boolean): void {
+  function sync(sessionId: string, acpEnabled: boolean, deferTools: boolean): void {
     if (!supportsActiveSet) return;
+    if (deferTools) deferring.add(sessionId);
+    else deferring.delete(sessionId);
     const next = [...pi.getActiveTools()];
     const present = new Set(next);
 
@@ -73,7 +78,7 @@ export function createToolActivation(pi: ExtensionAPI): ToolActivationController
       removedByGate.delete(sessionId);
     }
 
-    if (deferredUnlocked.has(sessionId)) {
+    if (!deferTools || deferredUnlocked.has(sessionId)) {
       for (const name of DEFERRED_TOOL_NAMES) {
         if (present.has(name)) continue;
         next.push(name);
@@ -94,12 +99,13 @@ export function createToolActivation(pi: ExtensionAPI): ToolActivationController
     reset(sessionId: string): void {
       removedByGate.delete(sessionId);
       deferredUnlocked.delete(sessionId);
+      deferring.delete(sessionId);
     },
     noteBlocks(sessionId: string, count: number): void {
       if (count > 0) deferredUnlocked.add(sessionId);
     },
     deferredVisible(sessionId: string): boolean {
-      return deferredUnlocked.has(sessionId);
+      return !deferring.has(sessionId) || deferredUnlocked.has(sessionId);
     },
     sync,
   };

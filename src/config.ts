@@ -140,6 +140,13 @@ export const DEFAULT_DELEGATE_POLICY: DelegatePolicy = {
  *  Resolution is per-field, deepest-wins (model > provider > global); an
  *  undefined field at a deeper level does NOT clear a shallower value. */
 export interface CompressSettings {
+  /** Defer the decompress/search_context tools until the session has at
+   *  least one compression block. Default: false — both tools are visible
+   *  from the first request. When true, a model that has nothing to restore
+   *  or search does not pay for the two tool definitions, and the ACP system
+   *  prompt hides them until the first successful compress. Resolved through
+   *  the same per-field cascade as the tuning fields. */
+  deferTools?: boolean;
   /** Enable ACP for the matching model. Default: true. Resolved through the
    *  same per-field cascade as the tuning fields, so a model (or provider) can
    *  opt out while other models keep compression. A disabled model gets no
@@ -567,6 +574,7 @@ export function mergeCompress(
   model?: CompressSettings,
 ): CompressSettings {
   return {
+    deferTools: model?.deferTools ?? provider?.deferTools ?? global?.deferTools,
     enabled: model?.enabled ?? provider?.enabled ?? global?.enabled,
     maxContextLimit: model?.maxContextLimit ?? provider?.maxContextLimit ?? global?.maxContextLimit,
     emergencyThresholdPercent: model?.emergencyThresholdPercent ?? provider?.emergencyThresholdPercent ?? global?.emergencyThresholdPercent,
@@ -617,6 +625,28 @@ export function resolveAcpEnabled(
     logWarn("config", { event: "compress-enabled-invalid", provider: provider ?? null, model: modelId ?? null, value: String(value), fallback: true });
   }
   return true;
+}
+
+const warnedCompressDeferTools = new Set<string>();
+
+/** Resolve whether decompress/search_context are deferred until the first
+ *  compression block. Missing means false (visible immediately), preserving
+ *  the historical surface. A non-boolean value is ignored with a
+ *  once-per-model warning. */
+export function resolveDeferTools(
+  compress: CompressConfig | undefined,
+  provider: string | undefined,
+  modelId: string | undefined,
+): boolean {
+  const value: unknown = resolveCompress(compress, provider, modelId).deferTools;
+  if (value === undefined) return false;
+  if (typeof value === "boolean") return value;
+  const key = `${provider ?? ""}/${modelId ?? ""}`;
+  if (!warnedCompressDeferTools.has(key)) {
+    warnedCompressDeferTools.add(key);
+    logWarn("config", { event: "compress-defer-tools-invalid", provider: provider ?? null, model: modelId ?? null, value: String(value), fallback: false });
+  }
+  return false;
 }
 
 export function resolveConfig(adapter: AdapterConfig, liveContextLimit: number, provider?: string, modelId?: string): Config {

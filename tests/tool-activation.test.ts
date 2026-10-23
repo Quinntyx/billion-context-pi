@@ -22,28 +22,41 @@ test("tool activation: deferred tools stay hidden until a block exists", () => {
   const h = fakeActiveApi(["read", "compress", "decompress", "search_context", "acp_status", "acp_cache"]);
   const controller = createToolActivation(h.api as any);
 
-  controller.sync("s", true);
+  controller.sync("s", true, true);
   assert.deepEqual(h.active, ["read", "compress", "acp_status", "acp_cache"]);
   assert.equal(controller.deferredVisible("s"), false);
 
   controller.noteBlocks("s", 1);
-  controller.sync("s", true);
+  controller.sync("s", true, true);
   assert.deepEqual(h.active, ["read", "compress", "acp_status", "acp_cache", "decompress", "search_context"]);
   assert.equal(controller.deferredVisible("s"), true);
+});
+
+test("tool activation: deferTools defaults off and keeps the tools visible", () => {
+  const h = fakeActiveApi(["read", "compress", "decompress", "search_context", "acp_status"]);
+  const controller = createToolActivation(h.api as any);
+
+  controller.sync("s", true, false);
+  assert.deepEqual(h.active, ["read", "compress", "decompress", "search_context", "acp_status"]);
+  assert.equal(controller.deferredVisible("s"), true);
+
+  controller.sync("s", true, true);
+  assert.deepEqual(h.active, ["read", "compress", "acp_status"]);
+  assert.equal(controller.deferredVisible("s"), false);
 });
 
 test("tool activation: model gate removes the ACP surface and restores it on switch", () => {
   const h = fakeActiveApi(["read", "compress", "decompress", "search_context", "acp_status"]);
   const controller = createToolActivation(h.api as any);
 
-  controller.sync("s", false);
+  controller.sync("s", false, true);
   assert.deepEqual(h.active, ["read"], "all ACP tools removed");
 
-  controller.sync("s", true);
+  controller.sync("s", true, true);
   assert.deepEqual(h.active, ["read", "compress", "acp_status"], "remembered tools restored; deferred still hidden");
 
   controller.noteBlocks("s", 1);
-  controller.sync("s", true);
+  controller.sync("s", true, true);
   assert.deepEqual(h.active, ["read", "compress", "acp_status", "decompress", "search_context"]);
 });
 
@@ -51,18 +64,18 @@ test("tool activation: reset forgets the unlocked deferred state", () => {
   const h = fakeActiveApi(["read", "compress"]);
   const controller = createToolActivation(h.api as any);
   controller.noteBlocks("s", 2);
-  controller.sync("s", true);
+  controller.sync("s", true, true);
   assert.ok(h.active.includes("decompress"));
 
   controller.reset("s");
-  controller.sync("s", true);
+  controller.sync("s", true, true);
   assert.ok(!h.active.includes("decompress"));
   assert.ok(!h.active.includes("search_context"));
 });
 
 test("tool activation: hosts without getActiveTools/setActiveTools are a no-op", () => {
   const controller = createToolActivation({} as any);
-  assert.doesNotThrow(() => controller.sync("s", false));
+  assert.doesNotThrow(() => controller.sync("s", false, true));
 });
 
 function fakeExtensionApi(initialActive: string[]) {
@@ -105,7 +118,7 @@ function fakeCtx(model: { provider: string; id: string }) {
   };
 }
 
-function withExtension(prefix: string, initialActive: string[], fn: (h: ReturnType<typeof fakeExtensionApi>) => void): void {
+function withExtension(prefix: string, initialActive: string[], fn: (h: ReturnType<typeof fakeExtensionApi>) => void, deferTools = true): void {
   const h = fakeExtensionApi(initialActive);
   const prev = process.env.PI_CODING_AGENT_DIR;
   process.env.PI_CODING_AGENT_DIR = `/tmp/bcp-activation-empty-${prefix}`;
@@ -115,6 +128,7 @@ function withExtension(prefix: string, initialActive: string[], fn: (h: ReturnTy
       compress: {
         providers: {
           openrouter: {
+            ...(deferTools ? { deferTools: true } : {}),
             models: { "deepseek/x": { enabled: false } },
           },
         },
@@ -126,6 +140,19 @@ function withExtension(prefix: string, initialActive: string[], fn: (h: ReturnTy
     else process.env.PI_CODING_AGENT_DIR = prev;
   }
 }
+
+test("extension: compress.deferTools defaults off, so enabled models see both tools immediately", () => {
+  withExtension("default-surface", ["read"], (h) => {
+    const ctx = fakeCtx({ provider: "openrouter", id: "other" });
+    h.handlers.get("before_agent_start")![0]!({ systemPrompt: "BASE" }, ctx);
+    assert.ok(h.active.includes("compress"), "compress active");
+    assert.ok(h.active.includes("decompress"), "decompress active by default");
+    assert.ok(h.active.includes("search_context"), "search_context active by default");
+
+    const prompt = h.handlers.get("before_agent_start")![0]!({ systemPrompt: "BASE" }, ctx);
+    assert.ok(prompt.systemPrompt.includes("- decompress —"), "prompt lists decompress by default");
+  }, false);
+});
 
 test("extension: per-model compress.enabled=false hides the ACP surface and prompt", () => {
   withExtension("disabled", ["read"], (h) => {

@@ -182,6 +182,7 @@ All keys below are currently **ACTIVE**.
 | Key | Type | Default | Status | Description |
 |-----|------|---------|--------|-------------|
 | `compress.enabled` | boolean | `true` | 🟢 ACTIVE | Per-model ACP switch. `false` at the global/provider/model level stands ACP down for the active model; Pi's native context management runs instead. |
+| `compress.deferTools` | boolean | `false` | 🟢 ACTIVE | **Opt-in** deferral of `decompress`/`search_context` until the session has a compression block. Off by default: both tools are visible from the first request. |
 | `compress.maxContextLimit` | number \| string | `"75%"` | 🟢 ACTIVE | Context threshold that triggers forced compression nudges. |
 | `compress.emergencyThresholdPercent` | number \| string | `"95%"` | 🟢 ACTIVE | Context threshold that triggers emergency truncation. |
 | `compress.nudgeGrowthTokens` | number | `50000` | 🟢 ACTIVE | Token growth step for soft compression nudges. |
@@ -671,7 +672,28 @@ The flow is:
   }
   ```
 
-  `decompress` and `search_context` are additionally deferred until the session has at least one compression block: they are not declared to the model before the first successful `compress` (or immediately at session start when resuming a session that already has blocks).
+  `decompress` and `search_context` are only deferred when `compress.deferTools` is enabled for the active model. With the default (`false`) both tools are visible from the first request.
+
+### `compress.deferTools`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Status:** 🟢 ACTIVE
+- **Description:** Opt-in deferral of the `decompress` and `search_context` tools until the session has at least one compression block. They stay registered either way, but with `true` they are removed from the active tool set (and from the ACP system prompt) until the first successful `compress`; they are restored immediately after it, or at session start when resuming a session that already has blocks. Useful for models that should not pay for two tool definitions before there is anything to restore or search. Resolved through the standard `compress` cascade (`model > provider > global`). Because the default is `false`, enabling this field is the only way to change tool visibility:
+
+  ```json
+  {
+    "compress": {
+      "providers": {
+        "openrouter": {
+          "models": {
+            "glm-5.3-flash": { "deferTools": true }
+          }
+        }
+      }
+    }
+  }
+  ```
 
 ### `compress.maxContextLimit`
 

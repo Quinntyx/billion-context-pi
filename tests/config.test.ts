@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { resolveConfig, resolveCompress, mergeCompress, resolveAcpEnabled, resolveDelegate, resolveRepetitionGuard, resolveHostSession, REPETITION_GUARD_DEFAULTS, type AdapterConfig } from "../src/config.js";
+import { resolveConfig, resolveCompress, mergeCompress, resolveAcpEnabled, resolveDeferTools, resolveDelegate, resolveRepetitionGuard, resolveHostSession, REPETITION_GUARD_DEFAULTS, type AdapterConfig } from "../src/config.js";
 
 const EMPTY: AdapterConfig = {};
 
@@ -418,11 +418,46 @@ test("resolveAcpEnabled: a non-boolean value is ignored (never silently disables
   assert.equal(resolveAcpEnabled(compress, "openrouter", "deepseek/x"), true);
 });
 
+test("resolveDeferTools defaults to false when no deferTools field is set", () => {
+  assert.equal(resolveDeferTools(undefined, "openrouter", "deepseek/x"), false);
+  assert.equal(resolveDeferTools({ maxContextLimit: "75%" }, "openrouter", "deepseek/x"), false);
+});
+
+test("resolveDeferTools: model true defers only that model", () => {
+  const compress = { providers: { openrouter: { models: { "deepseek/x": { deferTools: true } } } } };
+  assert.equal(resolveDeferTools(compress, "openrouter", "deepseek/x"), true);
+  assert.equal(resolveDeferTools(compress, "openrouter", "other"), false);
+  assert.equal(resolveDeferTools(compress, "anthropic", "deepseek/x"), false);
+});
+
+test("resolveDeferTools: provider true overrides a global false", () => {
+  const compress = { deferTools: false, providers: { openrouter: { deferTools: true } } };
+  assert.equal(resolveDeferTools(compress, "openrouter", "deepseek/x"), true);
+  assert.equal(resolveDeferTools(compress, "anthropic", "claude"), false);
+});
+
+test("resolveDeferTools: model false overrides provider true", () => {
+  const compress = { providers: { openrouter: { deferTools: true, models: { "deepseek/x": { deferTools: false } } } } };
+  assert.equal(resolveDeferTools(compress, "openrouter", "deepseek/x"), false);
+  assert.equal(resolveDeferTools(compress, "openrouter", "other"), true);
+});
+
+test("resolveDeferTools: a non-boolean value is ignored (never silently defers)", () => {
+  const compress = { providers: { openrouter: { models: { "deepseek/x": { deferTools: "true" as unknown as boolean } } } } };
+  assert.equal(resolveDeferTools(compress, "openrouter", "deepseek/x"), false);
+});
+
 test("mergeCompress: undefined deeper field does not clear shallower value", () => {
   const merged = mergeCompress({ maxContextLimit: "75%", nudgeGrowthTokens: 50000 }, { emergencyThresholdPercent: "90%" }, {});
   assert.equal(merged.maxContextLimit, "75%");
   assert.equal(merged.emergencyThresholdPercent, "90%");
   assert.equal(merged.nudgeGrowthTokens, 50000);
+});
+
+test("mergeCompress: deferTools follows the deepest defined value", () => {
+  assert.equal(mergeCompress({ deferTools: true }, {}, {}).deferTools, true);
+  assert.equal(mergeCompress({ deferTools: true }, { deferTools: false }, {}).deferTools, false);
+  assert.equal(mergeCompress({ deferTools: true }, { deferTools: false }, { deferTools: true }).deferTools, true);
 });
 
 test("resolveConfig applies provider/model cascade to kernel config", () => {

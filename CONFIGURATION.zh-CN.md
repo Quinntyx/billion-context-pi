@@ -181,6 +181,7 @@
 | 键 | 类型 | 默认值 | 状态 | 说明 |
 |----|------|--------|------|------|
 | `compress.enabled` | boolean | `true` | 🟢 ACTIVE | 按模型启停 ACP。在 global/provider/model 层设为 `false` 时，当前模型让位给 Pi 原生上下文管理。 |
+| `compress.deferTools` | boolean | `false` | 🟢 ACTIVE | **可选开启**：`decompress`/`search_context` 延迟到会话产生第一个压缩块后才暴露。默认关闭——两个工具从首个请求起就可见。 |
 | `compress.maxContextLimit` | number \| string | `"75%"` | 🟢 ACTIVE | 触发强制压缩 nudge 的上下文阈值。 |
 | `compress.emergencyThresholdPercent` | number \| string | `"95%"` | 🟢 ACTIVE | 触发紧急截断的上下文阈值。 |
 | `compress.nudgeGrowthTokens` | number | `50000` | 🟢 ACTIVE | 软压缩 nudge 的 token 增长步长。 |
@@ -667,7 +668,28 @@
   }
   ```
 
-  此外，`decompress` 与 `search_context` 会延迟到会话产生第一个压缩块后才暴露：首次成功 `compress` 之前不向模型声明（恢复已有块的会话则在 session start 时立即可用）。
+  只有当 `compress.deferTools` 对当前模型开启时，`decompress` 与 `search_context` 才会延迟暴露。默认值 `false` 下两个工具从首个请求起即可见。
+
+### `compress.deferTools`
+
+- **类型：** `boolean`
+- **默认值：** `false`
+- **状态：** 🟢 ACTIVE
+- **说明：** **可选开启**：`decompress` 与 `search_context` 延迟到会话产生第一个压缩块后才暴露。无论开关如何，两个工具始终注册；开启后它们会从活动工具集和 ACP 系统提示词中移除，直到首次成功 `compress`，随后立即恢复（恢复已有块的会话则在 session start 时恢复）。适用于不值得在无可恢复/可搜索内容前承担两个工具定义开销的模型。走标准 `compress` 三级级联（`model > provider > global`）。默认 `false`，因此只有显式开启本字段才会改变工具可见性：
+
+  ```json
+  {
+    "compress": {
+      "providers": {
+        "openrouter": {
+          "models": {
+            "glm-5.3-flash": { "deferTools": true }
+          }
+        }
+      }
+    }
+  }
+  ```
 
 ### `compress.maxContextLimit`
 

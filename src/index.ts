@@ -234,7 +234,7 @@ function wireToolActivationEvents(pi: ExtensionAPI, runtime: AcpRuntime, toolAct
     if (!isCompressSuccessText(extractText(event.content))) return;
     const sid = ctx.sessionManager.getSessionId();
     toolActivation.noteBlocks(sid, 1);
-    toolActivation.sync(sid, runtime.enabledFor(ctx));
+    toolActivation.sync(sid, runtime.enabledFor(ctx), runtime.deferToolsFor(ctx));
   });
 }
 
@@ -245,7 +245,7 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
   pi.on("model_select", (_event, ctx) => {
     const sid = ctx.sessionManager.getSessionId();
     clearLiveContextUsage(sid);
-    toolActivation.sync(sid, runtime.enabledFor(ctx));
+    toolActivation.sync(sid, runtime.enabledFor(ctx), runtime.deferToolsFor(ctx));
   });
   pi.on("session_tree", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
   pi.on("session_before_switch", (_event, ctx) => clearLiveContextUsage(ctx.sessionManager.getSessionId()));
@@ -318,7 +318,7 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       } catch (e) {
         logWarn("tools", { sid, event: "activation-state-load-failed", error: e instanceof Error ? e.message : String(e) });
       }
-      toolActivation.sync(sid, runtime.enabledFor(ctx));
+      toolActivation.sync(sid, runtime.enabledFor(ctx), runtime.deferToolsFor(ctx));
       const delegateCfg = resolveDelegate(runtime.adapter);
       setDelegateDisplayUsage(delegateCfg.displayUsage);
       setDelegatePolicy(delegateCfg);
@@ -379,7 +379,7 @@ function wireSessionLifecycle(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
     }
     // Delegate/rule tools register after the first gate sync; re-apply it so a
     // model with compress.enabled:false also hides the rest of the ACP surface.
-    toolActivation.sync(sid, runtime.enabledFor(ctx));
+    toolActivation.sync(sid, runtime.enabledFor(ctx), runtime.deferToolsFor(ctx));
     // Headless hosts exit as soon as the turn ends; awaiting the check keeps
     // the process alive until a running install finishes. TUI stays
     // fire-and-forget so interactive startup is never blocked by npm.
@@ -455,7 +455,7 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
   withSystem.on("context_with_system", (event, ctx) => {
     const sid = ctx.sessionManager.getSessionId();
     const acpEnabled = runtime.enabledFor(ctx);
-    toolActivation.sync(sid, acpEnabled);
+    toolActivation.sync(sid, acpEnabled, runtime.deferToolsFor(ctx));
     if (runtime.refused || !acpEnabled || standDownIfProxied(ctx)) {
       clearLiveContextUsage(sid);
       return;
@@ -490,7 +490,7 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
     scopedFloors.delete(sid);
     await runtime.reloadConfig(ctx.cwd);
     const acpEnabled = runtime.enabledFor(ctx);
-    toolActivation.sync(sid, acpEnabled);
+    toolActivation.sync(sid, acpEnabled, runtime.deferToolsFor(ctx));
     if (!acpEnabled) {
       clearLiveContextUsage(sid);
       return;
@@ -502,7 +502,7 @@ function wireContextTransform(pi: ExtensionAPI, runtime: AcpRuntime, standDownIf
       const modelId = (ctx.model as { id?: string } | undefined)?.id ?? "default";
       const { state, coreMessages, entries } = await runtime.stateFor(ctx, event.messages);
       toolActivation.noteBlocks(sid, state.blocks.length);
-      toolActivation.sync(sid, true);
+      toolActivation.sync(sid, true, runtime.deferToolsFor(ctx));
       const configBase = runtime.configFor(ctx);
       const ov = runtime.overflowFor(sid);
       // Self-heal: a prior upstream overflow may have taught us the real window
@@ -1002,7 +1002,7 @@ function wireSystemPrompt(pi: ExtensionAPI, runtime: AcpRuntime, toolActivation:
     if (runtime.refused) return;
     const sid = ctx?.sessionManager?.getSessionId?.();
     const acpEnabled = runtime.enabledFor(ctx);
-    if (sid) toolActivation.sync(sid, acpEnabled);
+    if (sid) toolActivation.sync(sid, acpEnabled, runtime.deferToolsFor(ctx));
     if (!acpEnabled) return;
     const m = ctx?.model as { provider?: string; id?: string } | undefined;
     const cwd = ctx?.cwd ?? process.cwd();

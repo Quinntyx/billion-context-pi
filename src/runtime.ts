@@ -10,7 +10,7 @@ import {
   type Config,
   type Prompts,
 } from "acp-kernel";
-import { resolveAcpEnabled, resolveCompress, resolveConfig, type AdapterConfig } from "./config.js";
+import { resolveAcpEnabled, resolveCompress, resolveConfig, resolveDeferTools, type AdapterConfig } from "./config.js";
 import { applyStrictReasoningGate, resolveReasoningDrop, type CompressReasoningConfig } from "./reasoning-drop.js";
 import { entriesToCoreMessages, EntryProjectionCache, extractText, matchesStoredText, messageIdentity, messageRef } from "./messages.js";
 import { SessionStateStore, deriveChildState, type LiveRefOrigin } from "./state.js";
@@ -153,6 +153,9 @@ export interface AcpRuntime {
   /** Per-model ACP switch resolved live from `compress.enabled`; false means
    *  stand down to Pi's native context management for the active model. */
   enabledFor(ctx: ExtensionContext): boolean;
+  /** Per-model deferral of decompress/search_context from `compress.deferTools`.
+   *  False (the default) keeps both tools visible from the first request. */
+  deferToolsFor(ctx: ExtensionContext): boolean;
   /** [#336] Effective compress.reasoning drop settings for the active model
    *  (three-level merge + defaults). Feeds the request-time pass in the
    *  context transform. */
@@ -652,6 +655,11 @@ export function createRuntime(adapter: AdapterConfig): AcpRuntime {
     return resolveAcpEnabled(adapterRef.compress, m?.provider, m?.id);
   }
 
+  function deferToolsFor(ctx: ExtensionContext): boolean {
+    const m = ctx.model as { provider?: string; id?: string } | undefined;
+    return resolveDeferTools(adapterRef.compress, m?.provider, m?.id);
+  }
+
   function reasoningDropFor(ctx: ExtensionContext): Required<CompressReasoningConfig> {
     const m = ctx.model as { provider?: string; id?: string; baseUrl?: string } | undefined;
     const resolved = resolveReasoningDrop(resolveCompress(adapterRef.compress, m?.provider, m?.id).reasoning);
@@ -814,4 +822,4 @@ export function createRuntime(adapter: AdapterConfig): AcpRuntime {
   let refused = false;
   let refusalMessage: string | null = null;
   let delegateStoodDown = false;
-  return { core, store, get refused() { return refused; }, set refused(v: boolean) { refused = v; }, get refusalMessage() { return refusalMessage; }, set refusalMessage(v: string | null) { refusalMessage = v; }, get delegateStoodDown() { return delegateStoodDown; }, set delegateStoodDown(v: boolean) { delegateStoodDown = v; }, get adapter() { return adapterRef; }, setAdapter: (a) => { adapterRef = a; }, get prompts() { return promptsRef; }, setPrompts: (p) => { promptsRef = p; }, markNudgeShown, nudgeShownFor, nudgeShownTokensFor, clearNudgeTracking, clearNudgeTokenStamps, markNudgeRecorded, nudgeRecordedFor, noteCompressOutcomes, compressRetryCappedFor, clearCompressRetryTracking, liveContextLimit, configFor, enabledFor, reasoningDropFor, reloadConfig, stateFor, save, deriveChildState: deriveChild, acquireLock, overflowFor, overflowDrop, noteSentViewCount, peekSentViewCount, dropSentViewCount, dropProjectionCache, noteDeadCompress, clearDeadCompress, throttleFor, throttleDrop , noteTokenScale, dropTokenScale, noteHostUsage, dropHostUsageSamples, noteSizeDivergence, dropSizeDivergence, noteTerminalEscape, dropTerminalEscape, noteTruncationSkipped, dropTruncationSkipped, stripImagesFor };}
+  return { core, store, get refused() { return refused; }, set refused(v: boolean) { refused = v; }, get refusalMessage() { return refusalMessage; }, set refusalMessage(v: string | null) { refusalMessage = v; }, get delegateStoodDown() { return delegateStoodDown; }, set delegateStoodDown(v: boolean) { delegateStoodDown = v; }, get adapter() { return adapterRef; }, setAdapter: (a) => { adapterRef = a; }, get prompts() { return promptsRef; }, setPrompts: (p) => { promptsRef = p; }, markNudgeShown, nudgeShownFor, nudgeShownTokensFor, clearNudgeTracking, clearNudgeTokenStamps, markNudgeRecorded, nudgeRecordedFor, noteCompressOutcomes, compressRetryCappedFor, clearCompressRetryTracking, liveContextLimit, configFor, enabledFor, deferToolsFor, reasoningDropFor, reloadConfig, stateFor, save, deriveChildState: deriveChild, acquireLock, overflowFor, overflowDrop, noteSentViewCount, peekSentViewCount, dropSentViewCount, dropProjectionCache, noteDeadCompress, clearDeadCompress, throttleFor, throttleDrop , noteTokenScale, dropTokenScale, noteHostUsage, dropHostUsageSamples, noteSizeDivergence, dropSizeDivergence, noteTerminalEscape, dropTerminalEscape, noteTruncationSkipped, dropTruncationSkipped, stripImagesFor };}
